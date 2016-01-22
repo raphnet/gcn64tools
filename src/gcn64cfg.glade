@@ -123,7 +123,7 @@ Author: Raphaël Assénat
   </object>
   <object class="GtkWindow" id="mainWindow">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">GCN64CFG</property>
+    <property name="title" translatable="yes">raphnet GC-N64 adapter manager</property>
     <signal name="destroy" handler="gtk_main_quit" swapped="no"/>
     <signal name="show" handler="onMainWindowShow" swapped="no"/>
     <child>
