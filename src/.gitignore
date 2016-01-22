@@ -12,3 +12,4 @@ gcn64ctl_gui
 *.mpk
 *.n64
 *.exe
+*.o
