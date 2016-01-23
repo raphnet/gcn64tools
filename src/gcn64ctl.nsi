@@ -64,13 +64,21 @@ Section "gcn64ctl (required)"
   
 SectionEnd
 
+Section "Install driver for updating adapter firmware (dfu-programmer)"
+	${If} ${RunningX64}
+		ExecWait '"$INSTDIR\dfu-prog-usb-1.2.2\dpinst_amd64.exe" /PATH "$INSTDIR\dfu-prog-usb-1.2.2"'
+	${Else}
+		EXecWait '"$INSTDIR\dfu-prog-usb-1.2.2\dpinst_x86.exe" /PATH "$INSTDIR\dfu-prog-usb-1.2.2"'
+	${EndIf}	
+SectionEnd
+
 ; Optional section (can be disabled by the user)
 Section "Start Menu Shortcuts"
 
-  CreateDirectory "$SMPROGRAMS\raphnet-tech GC/N64 adapter manager"
-  CreateShortCut "$SMPROGRAMS\raphnet-tech GC/N64 adapter manager\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\raphnet-tech GC/N64 adapter manager\Commandi-line tools.lnk" "$SYSDIR\cmd.exe" '/K "cd /d $INSTDIR"' "$SYSDIR\cmd.exe" 0
-  CreateShortCut "$SMPROGRAMS\raphnet-tech GC/N64 adapter manager\GC/N64 adapter manager.lnk" "$INSTDIR\gcn64ctl_gui.exe" "" "$INSTDIR\gcn64ctl_gui.exe" 0
+  CreateDirectory "$SMPROGRAMS\raphnet-tech GC-N64 adapter manager"
+  CreateShortCut "$SMPROGRAMS\raphnet-tech GC-N64 adapter manager\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  CreateShortCut "$SMPROGRAMS\raphnet-tech GC-N64 adapter manager\Command-line tools.lnk" "$SYSDIR\cmd.exe" '/K "cd /d $INSTDIR"' "$SYSDIR\cmd.exe" 0
+  CreateShortCut "$SMPROGRAMS\raphnet-tech GC-N64 adapter manager\GC/N64 adapter manager.lnk" "$INSTDIR\gcn64ctl_gui.exe" "" "$INSTDIR\gcn64ctl_gui.exe" 0
   
 SectionEnd
 
@@ -88,10 +96,10 @@ Section "Uninstall"
   Delete "$INSTDIR\*.*"
 
   ; Remove shortcuts, if any
-  Delete "$SMPROGRAMS\raphnet-tech GC/N64 adapter manager\*.*"
+  Delete "$SMPROGRAMS\raphnet-tech GC-N64 adapter manager\*.lnk"
 
   ; Remove directories used
-  RMDir "$SMPROGRAMS\gcn64ctl"
+  RMDir "$SMPROGRAMS\raphnet-tech GC-N64 adapter manager"
   RMDir "$INSTDIR"
 
 SectionEnd
