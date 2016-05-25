@@ -836,6 +836,8 @@ main( int    argc,
     /* Show window. All other widgets are automatically shown by GtkBuilder */
     gtk_widget_show( GTK_WIDGET(window) );
 
+	gtk_about_dialog_set_version((GtkAboutDialog*)gtk_builder_get_object(app.builder, "aboutdialog1"), VERSION_STR);
+
     /* Start main loop */
     gtk_main();
 
