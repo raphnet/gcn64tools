@@ -44,10 +44,22 @@ static char isProductIdHandled(unsigned short pid, int interface_number)
 {
 	switch (pid)
 	{
-		case 0x0017: // GC/N64 USB v3
+		case 0x0017: // GC/N64 USB v3.0, 3.1.0, 3.1.1
 			if (interface_number == 1)
 				return 1;
 			break;
+		case 0x001D: // GC/N64 USB v3.2.0 ...
+			if (interface_number == 1)
+				return 1;
+			break;
+
+		case 0x0020: // For future use
+		case 0x0021: // For future use
+		case 0x0022: // For future use
+			if (interface_number == 1)
+				return 1;
+			break;
+
 	}
 	return 0;
 }
