@@ -1,0 +1,5 @@
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="0017", MODE="0664", GROUP="plugdev"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="001D", MODE="0664", GROUP="plugdev"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="0020", MODE="0664", GROUP="plugdev"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="0021", MODE="0664", GROUP="plugdev"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="0022", MODE="0664", GROUP="plugdev"
