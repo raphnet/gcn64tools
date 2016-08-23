@@ -115,6 +115,8 @@ static void printUsage(void)
 #define OPT_GET_VERSION					323
 #define OPT_GET_SIGNATURE				324
 #define OPT_GET_CTLTYPE					325
+#define OPT_SET_MODE					326
+#define OPT_GET_MODE					327
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -122,6 +124,8 @@ struct option longopts[] = {
 	{ "force", 0, NULL, 'f' },
 	{ "set_serial", 1, NULL, OPT_SET_SERIAL },
 	{ "get_serial", 0, NULL, OPT_GET_SERIAL },
+	{ "set_mode", 1, NULL, OPT_SET_MODE },
+	{ "get_mode", 0, NULL, OPT_GET_MODE },
 	{ "bootloader", 0, NULL, OPT_BOOTLOADER },
 	{ "n64_getstatus", 0, NULL, OPT_N64_GETSTATUS },
 	{ "gc_getstatus", 0, NULL, OPT_GC_GETSTATUS },
@@ -294,6 +298,19 @@ int main(int argc, char **argv)
 
 		switch (opt)
 		{
+			case OPT_SET_MODE:
+				cmd[0] = atoi(optarg);
+				printf("Setting mode to %d\n", cmd[0]);
+				gcn64lib_setConfig(hdl, CFG_PARAM_MODE, cmd, 1);
+				break;
+
+			case OPT_GET_MODE:
+				n = gcn64lib_getConfig(hdl, CFG_PARAM_MODE, cmd, sizeof(cmd));
+				if (n == 1) {
+					printf("Current mode: %d\n", cmd[0]);
+				}
+				break;
+
 			case OPT_SET_POLL_INTERVAL:
 				cmd[0] = atoi(optarg);
 				printf("Setting poll interval to %d ms\n", cmd[0]);
