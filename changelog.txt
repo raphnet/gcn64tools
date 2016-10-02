@@ -1,5 +1,9 @@
 === Version 1.2 ==
-Date: TBD
+Date: 2016-10-02
+ - Add a 'recover adapter' function to recover "bricked" adapters
+ - Fix a bug when updating (Displayed 'Update failed' but it was not
+ really the case and the user just had to disconnect and reconnect the
+ adapter.
  - Implement set/get mode
 
 === Version 1.1 ==
