@@ -81,6 +81,21 @@ void gcn64_freeListCtx(struct gcn64_list_ctx *ctx)
 	}
 }
 
+int gcn64_countDevices(void)
+{
+	struct gcn64_list_ctx *ctx;
+	struct gcn64_info inf;
+	int count = 0;
+
+	ctx = gcn64_allocListCtx();
+	while (gcn64_listDevices(&inf, ctx)) {
+		count++;
+	}
+	gcn64_freeListCtx(ctx);
+
+	return count;
+}
+
 /**
  * \brief List instances of our rgbleds device on the USB busses.
  * \param info Pointer to gcn64_info structure to store data

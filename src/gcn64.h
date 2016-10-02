@@ -27,6 +27,7 @@ void gcn64_shutdown(void);
 struct gcn64_list_ctx *gcn64_allocListCtx(void);
 void gcn64_freeListCtx(struct gcn64_list_ctx *ctx);
 struct gcn64_info *gcn64_listDevices(struct gcn64_info *info, struct gcn64_list_ctx *ctx);
+int gcn64_countDevices(void);
 
 gcn64_hdl_t gcn64_openDevice(struct gcn64_info *dev);
 
