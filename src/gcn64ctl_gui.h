@@ -18,6 +18,7 @@ struct application {
 	struct gcn64_info current_adapter_info;
 	GThread *updater_thread;
 
+	int recovery_mode;
 	const char *update_status;
 	const char *updateHexFile;
 	int update_percent;

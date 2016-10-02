@@ -201,6 +201,15 @@ Author: Raphaël Assénat
                         <signal name="activate" handler="gtk_widget_show" object="win_mempak_edit" swapped="yes"/>
                       </object>
                     </child>
+                    <child>
+                      <object class="GtkMenuItem" id="menuitem8">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Recover adapter...</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="recover_usbadapter_firmware" swapped="no"/>
+                      </object>
+                    </child>
                   </object>
                 </child>
               </object>
