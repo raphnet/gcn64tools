@@ -43,6 +43,8 @@ static void printUsage(void)
 	printf("  -o, --outfile file    Output file for read operations (eg: --n64-mempak-dump)\n");
 	//printf("  -i, --infile file     Input file for write operations (eg: --gc_to_n64_update)\n");
 	printf("      --nonstop         Continue testing forever or until an error occurs.\n");
+	printf("  -c, --channel chn     Specify channel to use where applicable (for multi-player adapters\n");
+	printf("                        and raw commands, development commands and GC2N64 I/O)\n");
 	printf("\n");
 	printf("Configuration commands:\n");
 	printf("  --get_version                      Read adapter firmware version\n");
@@ -89,6 +91,7 @@ static void printUsage(void)
 
 #define OPT_OUTFILE					'o'
 #define OPT_INFILE					'i'
+#define OPT_CHANNEL					'c'
 #define OPT_SET_SERIAL				257
 #define OPT_GET_SERIAL				258
 #define OPT_BOOTLOADER				300
@@ -124,6 +127,7 @@ struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
 	{ "list", 0, NULL, 'l' },
 	{ "force", 0, NULL, 'f' },
+	{ "channel", 1, NULL, OPT_CHANNEL },
 	{ "set_serial", 1, NULL, OPT_SET_SERIAL },
 	{ "get_serial", 0, NULL, OPT_GET_SERIAL },
 	{ "set_mode", 1, NULL, OPT_SET_MODE },
@@ -199,10 +203,10 @@ int main(int argc, char **argv)
 	int cmd_list = 0;
 #define TARGET_SERIAL_CHARS 128
 	wchar_t target_serial[TARGET_SERIAL_CHARS];
-	const char *short_optstr = "hls:vfo:";
+	const char *short_optstr = "hls:vfo:c:";
 	const char *outfile = NULL;
 	const char *infile = NULL;
-	int gc2n64_channel = 0;
+	int channel = 0;
 
 	while((opt = getopt_long(argc, argv, short_optstr, longopts, NULL)) != -1) {
 		switch(opt)
@@ -237,6 +241,10 @@ int main(int argc, char **argv)
 			case 'i':
 				infile = optarg;
 				printf("Input file: %s\n", infile);
+				break;
+			case OPT_CHANNEL:
+				channel = atoi(optarg);
+				printf("SI channel: %d\n", channel);
 				break;
 			case OPT_NONSTOP:
 				nonstop = 1;
@@ -358,7 +366,7 @@ int main(int argc, char **argv)
 
 			case OPT_N64_GETSTATUS:
 				cmd[0] = N64_GET_STATUS;
-				n = gcn64lib_rawSiCommand(hdl, 0, cmd, 1, cmd, sizeof(cmd));
+				n = gcn64lib_rawSiCommand(hdl, channel, cmd, 1, cmd, sizeof(cmd));
 				if (n >= 0) {
 					printf("N64 Get status[%d]: ", n);
 					printHexBuf(cmd, n);
@@ -370,7 +378,7 @@ int main(int argc, char **argv)
 				cmd[0] = GC_GETSTATUS1;
 				cmd[1] = GC_GETSTATUS2;
 				cmd[2] = GC_GETSTATUS3(opt == OPT_GC_GETSTATUS_RUMBLE);
-				n = gcn64lib_rawSiCommand(hdl, 0, cmd, 3, cmd, sizeof(cmd));
+				n = gcn64lib_rawSiCommand(hdl, channel, cmd, 3, cmd, sizeof(cmd));
 				if (n >= 0) {
 					printf("GC Get status[%d]: ", n);
 					printHexBuf(cmd, n);
@@ -380,7 +388,7 @@ int main(int argc, char **argv)
 			case OPT_N64_GETCAPS:
 				cmd[0] = N64_GET_CAPABILITIES;
 				//cmd[0] = 0xff;
-				n = gcn64lib_rawSiCommand(hdl, 0, cmd, 1, cmd, sizeof(cmd));
+				n = gcn64lib_rawSiCommand(hdl, channel, cmd, 1, cmd, sizeof(cmd));
 				if (n >= 0) {
 					printf("N64 Get caps[%d]: ", n);
 					printHexBuf(cmd, n);
@@ -478,7 +486,7 @@ int main(int argc, char **argv)
 				{
 					struct gc2n64_adapter_info inf;
 
-					gc2n64_adapter_getInfo(hdl, gc2n64_channel, &inf);
+					gc2n64_adapter_getInfo(hdl, channel, &inf);
 					gc2n64_adapter_printInfo(&inf);
 				}
 				break;
@@ -488,7 +496,7 @@ int main(int argc, char **argv)
 					int i=0;
 
 					do {
-						n = gc2n64_adapter_echotest(hdl, gc2n64_channel, 1);
+						n = gc2n64_adapter_echotest(hdl, channel, 1);
 						if (n != 0) {
 							printf("Test failed\n");
 							return -1;
@@ -504,20 +512,20 @@ int main(int argc, char **argv)
 				break;
 
 			case OPT_GC_TO_N64_UPDATE:
-				gc2n64_adapter_updateFirmware(hdl, gc2n64_channel, optarg);
+				gc2n64_adapter_updateFirmware(hdl, channel, optarg);
 				break;
 
 			case OPT_GC_TO_N64_DUMP:
-				gc2n64_adapter_dumpFlash(hdl, gc2n64_channel);
+				gc2n64_adapter_dumpFlash(hdl, channel);
 				break;
 
 			case OPT_GC_TO_N64_ENTER_BOOTLOADER:
-				gc2n64_adapter_enterBootloader(hdl, gc2n64_channel);
-				gc2n64_adapter_waitForBootloader(hdl, gc2n64_channel, 5);
+				gc2n64_adapter_enterBootloader(hdl, channel);
+				gc2n64_adapter_waitForBootloader(hdl, channel, 5);
 				break;
 
 			case OPT_GC_TO_N64_BOOT_APPLICATION:
-				gc2n64_adapter_bootApplication(hdl, gc2n64_channel);
+				gc2n64_adapter_bootApplication(hdl, channel);
 				break;
 
 			case OPT_GC_TO_N64_READ_MAPPING:
@@ -531,7 +539,7 @@ int main(int argc, char **argv)
 						return -1;
 					}
 
-					gc2n64_adapter_getInfo(hdl, gc2n64_channel, &inf);
+					gc2n64_adapter_getInfo(hdl, channel, &inf);
 					printf("Mapping %d : { ", map_id);
 					gc2n64_adapter_printMapping(&inf.app.mappings[map_id-1]);
 					printf(" }\n");
@@ -557,7 +565,7 @@ int main(int argc, char **argv)
 					gc2n64_adapter_printMapping(mapping);
 					printf(" }\n");
 
-					gc2n64_adapter_setMapping(hdl, gc2n64_channel, mapping);
+					gc2n64_adapter_setMapping(hdl, channel, mapping);
 
 					free(mapping);
 				}
@@ -574,7 +582,7 @@ int main(int argc, char **argv)
 						return -1;
 					}
 
-					if (0 == gc2n64_adapter_storeCurrentMapping(hdl, gc2n64_channel, slot)) {
+					if (0 == gc2n64_adapter_storeCurrentMapping(hdl, channel, slot)) {
 						printf("Stored mapping to slot %d (%s)\n", slot, gc2n64_adapter_getMappingSlotName(slot, 0));
 					} else {
 						printf("Error storing mapping\n");
