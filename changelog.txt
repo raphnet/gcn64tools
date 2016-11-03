@@ -1,4 +1,9 @@
-=== Version 1.2 ==
+=== Version 1.3 ===
+Date: 2016-11-02
+ - Support for adapters with firmware 3.3.x
+ - Add multi-channel support (for command-line tools only at the moment)
+
+=== Version 1.2 ===
 Date: 2016-10-02
  - Add a 'recover adapter' function to recover "bricked" adapters
  - Fix a bug when updating (Displayed 'Update failed' but it was not
@@ -6,7 +11,7 @@ Date: 2016-10-02
  adapter.
  - Implement set/get mode
 
-=== Version 1.1 ==
+=== Version 1.1 ===
 Date: 2016-05-23
 
 	- Add product ID for adapter version 2.3.0
