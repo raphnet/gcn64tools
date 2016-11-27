@@ -50,5 +50,7 @@ int gcn64_poll_result(gcn64_hdl_t hdl, unsigned char *cmd, int cmdlen);
 
 int gcn64_exchange(gcn64_hdl_t hdl, unsigned char *outcmd, int outlen, unsigned char *result, int result_max);
 
+int gcn64_info_supported_channels(const struct gcn64_info *inf);
+
 #endif // _gcn64_h__
 

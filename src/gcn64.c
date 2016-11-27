@@ -326,4 +326,23 @@ int gcn64_exchange(gcn64_hdl_t hdl, unsigned char *outcmd, int outlen, unsigned 
 	return n;
 }
 
+/** \brief Get the number of raw channels supported by the adapter
+ *
+ * Based on the product ID.
+ **/
+int gcn64_info_supported_channels(const struct gcn64_info *inf)
+{
+	if (inf->usb_vid != OUR_VENDOR_ID)
+		return 0;
+
+	switch (inf->usb_pid)
+	{
+		case 0x0022: // GCN64->USB v3.3.0 (2x GC/N64 mode)
+		case 0x0030: // GCN64->USB v3.3.0 (2x N64-only mode)
+		case 0x0031: // GCN64->USB v3.3.0 (2x GC-only mode)
+			return 2;
+	}
+
+	return 1;
+}
 
