@@ -69,6 +69,9 @@ static void printUsage(void)
 	printf("  --n64_getcaps                      Get N64 controller capabilities (or status such as pak present)\n");
 	printf("  --n64_mempak_dump                  Dump N64 mempak contents (Use with --outfile to write to file)\n");
 	printf("  --n64_mempak_write file            Write file to N64 mempak\n");
+	// Those do not currently work. Need to check why...
+	//printf("  --n64_init_rumble                  Send rumble pack init command\n");
+	//printf("  --n64_control_rumble value         Turn rumble on when value != 0\n");
 	printf("\n");
 	printf("GC to N64 adapter commands: (For GC to N64 adapter connected to GC/N64 to USB adapter)\n");
 	printf("  --gc_to_n64_info                   Display info on adapter (version, config, etc)\n");
@@ -122,6 +125,8 @@ static void printUsage(void)
 #define OPT_GET_CTLTYPE					325
 #define OPT_SET_MODE					326
 #define OPT_GET_MODE					327
+#define OPT_N64_INIT_RUMBLE				328
+#define OPT_N64_CONTROL_RUMBLE			329
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -160,6 +165,8 @@ struct option longopts[] = {
 	{ "get_version", 0, NULL, OPT_GET_VERSION },
 	{ "get_signature", 0, NULL, OPT_GET_SIGNATURE },
 	{ "get_controller_type", 0, NULL, OPT_GET_CTLTYPE },
+	{ "n64_init_rumble", 0, NULL, OPT_N64_INIT_RUMBLE },
+	{ "n64_control_rumble", 1, NULL, OPT_N64_CONTROL_RUMBLE },
 	{ },
 };
 
@@ -171,7 +178,7 @@ static int mempak_progress_cb(int addr, void *ctx)
 
 static int listDevices(void)
 {
-	int n_found = 0;
+	int n_found = 0, n_raw;
 	struct gcn64_list_ctx *listctx;
 	struct gcn64_info inf;
 
@@ -183,7 +190,9 @@ static int listDevices(void)
 	while (gcn64_listDevices(&inf, listctx))
 	{
 		n_found++;
-		printf("Found device '%ls', serial '%ls'\n", inf.str_prodname, inf.str_serial);
+		n_raw = gcn64_info_supported_channels(&inf);
+		printf("Found device '%ls', serial '%ls'. Supports %d raw channel(s)\n", inf.str_prodname, inf.str_serial, n_raw);
+
 	}
 	gcn64_freeListCtx(listctx);
 	printf("%d device(s) found\n", n_found);
@@ -363,6 +372,42 @@ int main(int argc, char **argv)
 			case OPT_RESUME_POLLING:
 				gcn64lib_suspendPolling(hdl, 0);
 				break;
+
+			case OPT_N64_INIT_RUMBLE:
+				{
+					unsigned char cmdbuf[35] = {
+						N64_EXPANSION_WRITE, 0x80, 0x01, [3 ... 34] = 0x80
+					};
+					n = gcn64lib_rawSiCommand(hdl, channel, cmdbuf, sizeof(cmdbuf), cmd, sizeof(cmd));
+					printHexBuf(cmdbuf, sizeof(cmdbuf));
+					if (n >= 0) {
+						printf("Init rumble result [%d]: ", n);
+						printHexBuf(cmd, n);
+					} else {
+						printf("Error %d\n", n);
+					}
+
+				}
+				break;
+
+			case OPT_N64_CONTROL_RUMBLE:
+				{
+					int on = atoi(optarg);
+					unsigned char cmdbuf[35] = {
+						N64_EXPANSION_WRITE, 0xc0, 0x00, [3 ... 34] = on ? 0x01 : 0x00,
+					};
+					printHexBuf(cmdbuf, 35);
+					n = gcn64lib_rawSiCommand(hdl, channel, cmdbuf, sizeof(cmdbuf), cmd, sizeof(cmd));
+					if (n >= 0) {
+						printf("Control rumble [%d]: ", n);
+						printHexBuf(cmd, n);
+					} else {
+						printf("Error %d\n", n);
+					}
+
+				}
+				break;
+
 
 			case OPT_N64_GETSTATUS:
 				cmd[0] = N64_GET_STATUS;
