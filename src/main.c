@@ -29,6 +29,7 @@
 #include "mempak_gcn64usb.h"
 #include "requests.h"
 #include "gcn64_protocol.h"
+#include "perftest.h"
 
 static void printUsage(void)
 {
@@ -72,6 +73,7 @@ static void printUsage(void)
 	// Those do not currently work. Need to check why...
 	//printf("  --n64_init_rumble                  Send rumble pack init command\n");
 	//printf("  --n64_control_rumble value         Turn rumble on when value != 0\n");
+	printf("  --perftest                         Do a performance test (raw IO timing)\n");
 	printf("\n");
 	printf("GC to N64 adapter commands: (For GC to N64 adapter connected to GC/N64 to USB adapter)\n");
 	printf("  --gc_to_n64_info                   Display info on adapter (version, config, etc)\n");
@@ -127,6 +129,7 @@ static void printUsage(void)
 #define OPT_GET_MODE					327
 #define OPT_N64_INIT_RUMBLE				328
 #define OPT_N64_CONTROL_RUMBLE			329
+#define OPT_PERFTEST					330
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -167,6 +170,7 @@ struct option longopts[] = {
 	{ "get_controller_type", 0, NULL, OPT_GET_CTLTYPE },
 	{ "n64_init_rumble", 0, NULL, OPT_N64_INIT_RUMBLE },
 	{ "n64_control_rumble", 1, NULL, OPT_N64_CONTROL_RUMBLE },
+	{ "perftest", 0, NULL, OPT_PERFTEST },
 	{ },
 };
 
@@ -661,6 +665,10 @@ int main(int argc, char **argv)
 					type = gcn64lib_getControllerType(hdl, 0);
 					printf("Controller type 0x%02x: %s\n", type, gcn64lib_controllerName(type));
 				}
+				break;
+
+			case OPT_PERFTEST:
+				perftest1(hdl, channel);
 				break;
 		}
 
