@@ -1,5 +1,5 @@
 === Version 1.3 ===
-Date: 2016-11-02
+Date: 2016-11-27
  - Support for adapters with firmware 3.3.x
  - Add multi-channel support (for command-line tools only at the moment)
 
