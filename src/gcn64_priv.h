@@ -2,6 +2,7 @@
 #define _gcn64_priv_h__
 
 #include "hidapi.h"
+#include "gcn64.h"
 
 struct gcn64_list_ctx {
 	struct hid_device_info *devs, *cur_dev;
