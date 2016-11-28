@@ -182,7 +182,7 @@ static int mempak_progress_cb(int addr, void *ctx)
 
 static int listDevices(void)
 {
-	int n_found = 0, n_raw;
+	int n_found = 0;
 	struct gcn64_list_ctx *listctx;
 	struct gcn64_info inf;
 
@@ -194,8 +194,7 @@ static int listDevices(void)
 	while (gcn64_listDevices(&inf, listctx))
 	{
 		n_found++;
-		n_raw = gcn64_info_supported_channels(&inf);
-		printf("Found device '%ls', serial '%ls'. Supports %d raw channel(s)\n", inf.str_prodname, inf.str_serial, n_raw);
+		printf("Found device '%ls', serial '%ls'. Supports %d raw channel(s), Block io: %s\n", inf.str_prodname, inf.str_serial, inf.caps.n_raw_channels, inf.caps.bio_support ? "Yes":"No");
 
 	}
 	gcn64_freeListCtx(listctx);

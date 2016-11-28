@@ -8,18 +8,23 @@
 #define SERIAL_MAXCHARS		256
 #define PATH_MAXCHARS		256
 
+struct gcn64_adapter_caps {
+	int n_raw_channels;
+	int bio_support;
+};
+
 struct gcn64_info {
 	wchar_t str_prodname[PRODNAME_MAXCHARS];
 	wchar_t str_serial[SERIAL_MAXCHARS];
 	char str_path[PATH_MAXCHARS];
 	int usb_vid, usb_pid;
-	int major, minor;
 	int access; // True unless direct access to read serial/prodname failed due to permissions.
+	struct gcn64_adapter_caps caps;
 };
 
 struct gcn64_list_ctx;
 
-typedef void* gcn64_hdl_t; // Cast from hid_device
+typedef struct _gcn64_hdl_t *gcn64_hdl_t; // Cast from hid_device
 
 int gcn64_init(int verbose);
 void gcn64_shutdown(void);
@@ -49,8 +54,6 @@ int gcn64_send_cmd(gcn64_hdl_t hdl, const unsigned char *cmd, int len);
 int gcn64_poll_result(gcn64_hdl_t hdl, unsigned char *cmd, int cmdlen);
 
 int gcn64_exchange(gcn64_hdl_t hdl, unsigned char *outcmd, int outlen, unsigned char *result, int result_max);
-
-int gcn64_info_supported_channels(const struct gcn64_info *inf);
 
 #endif // _gcn64_h__
 

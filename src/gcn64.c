@@ -17,16 +17,54 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 #include "gcn64.h"
 #include "gcn64_priv.h"
+#include "gcn64lib.h"
 #include "requests.h"
 
 #include "hidapi.h"
 
 static int dusbr_verbose = 0;
 
-#define GCN64_HID_DATA_REPORT_SIZE	40
 #define IS_VERBOSE()	(dusbr_verbose)
+
+struct supported_adapter {
+	uint16_t vid, pid;
+	int if_number;
+	struct gcn64_adapter_caps caps;
+};
+
+static struct supported_adapter supported_adapters[] = {
+	/* vid, pid, if_no, { n_raw, bio_support } */
+
+	{ OUR_VENDOR_ID, 0x0017, 1, { 1, 0 } },	// GC/N64 USB v3.0, 3.1.0, 3.1.1
+	{ OUR_VENDOR_ID, 0x001D, 1, { 1, 0 } }, // GC/N64 USB v3.2.0 ... v3.3.x
+	{ OUR_VENDOR_ID, 0x0020, 1, { 1, 0 } }, // GCN64->USB v3.2.1 (N64 mode)
+	{ OUR_VENDOR_ID, 0x0021, 1, { 1, 0 } }, // GCN64->USB v3.2.1 (GC mode)
+	{ OUR_VENDOR_ID, 0x0022, 1, { 2, 0 } }, // GCN64->USB v3.3.x (2x GC/N64 mode)
+	{ OUR_VENDOR_ID, 0x0030, 1, { 2, 0 } }, // GCN64->USB v3.3.0 (2x N64-only mode)
+	{ OUR_VENDOR_ID, 0x0031, 1, { 2, 0 } }, // GCN64->USB v3.3.0 (2x GC-only mode)
+
+	{ OUR_VENDOR_ID, 0x0032, 1, { 1, 1 } }, // GC/N64 USB v3.4.x (GC/N64 mode)
+	{ OUR_VENDOR_ID, 0x0033, 1, { 1, 1 } }, // GC/N64 USB v3.4.x (N64 mode)
+	{ OUR_VENDOR_ID, 0x0034, 1, { 1, 1 } }, // GC/N64 USB v3.4.x (GC mode)
+	{ OUR_VENDOR_ID, 0x0035, 1, { 2, 1 } }, // GC/N64 USB v3.4.x (2x GC/N64 mode)
+	{ OUR_VENDOR_ID, 0x0036, 1, { 2, 1 } }, // GC/N64 USB v3.4.x (2x N64-only mode)
+	{ OUR_VENDOR_ID, 0x0037, 1, { 2, 1 } }, // GC/N64 USB v3.4.x (2x GC-only mode)
+
+	// For future use...
+	{ OUR_VENDOR_ID, 0x0038, 1, { 2, 1 } },
+	{ OUR_VENDOR_ID, 0x0039, 1, { 2, 1 } },
+	{ OUR_VENDOR_ID, 0x003A, 1, { 2, 1 } },
+	{ OUR_VENDOR_ID, 0x003B, 1, { 2, 1 } },
+	{ OUR_VENDOR_ID, 0x003C, 1, { 2, 1 } },
+	{ OUR_VENDOR_ID, 0x003D, 1, { 2, 1 } },
+	{ OUR_VENDOR_ID, 0x003E, 1, { 2, 1 } },
+	{ OUR_VENDOR_ID, 0x003F, 1, { 2, 1 } },
+
+	{ }, // terminator
+};
 
 int gcn64_init(int verbose)
 {
@@ -40,42 +78,21 @@ void gcn64_shutdown(void)
 	hid_exit();
 }
 
-static char isProductIdHandled(unsigned short pid, int interface_number)
+static char isProductIdHandled(unsigned short pid, int interface_number, struct gcn64_adapter_caps *caps)
 {
-	switch (pid)
-	{
-		case 0x0017: // GC/N64 USB v3.0, 3.1.0, 3.1.1
-			if (interface_number == 1)
-				return 1;
-			break;
-		case 0x001D: // GC/N64 USB v3.2.0 ...
-			if (interface_number == 1)
-				return 1;
-			break;
+	int i;
 
-		case 0x0020: // GCN64->USB v3.2.1 (N64 mode)
-		case 0x0021: // GCN64->USB v3.2.1 (GC mode)
-		case 0x0022: // GCN64->USB v3.3.0 (2x GC/N64 mode)
-		case 0x0030: // GCN64->USB v3.3.0 (2x N64-only mode)
-		case 0x0031: // GCN64->USB v3.3.0 (2x GC-only mode)
-		case 0x0032: // For future use....
-		case 0x0033: // For future use....
-		case 0x0034: // For future use....
-		case 0x0035: // For future use....
-		case 0x0036: // For future use....
-		case 0x0037: // For future use....
-		case 0x0038: // For future use....
-		case 0x0039: // For future use....
-		case 0x003A: // For future use....
-		case 0x003B: // For future use....
-		case 0x003C: // For future use....
-		case 0x003D: // For future use....
-		case 0x003E: // For future use....
-		case 0x003F: // For future use....
-			if (interface_number == 1)
+	for (i=0; supported_adapters[i].vid; i++) {
+		if (pid == supported_adapters[i].pid) {
+			if (interface_number == supported_adapters[i].if_number) {
+				if (caps) {
+					memcpy(caps, &supported_adapters[i].caps, sizeof (struct gcn64_adapter_caps));
+				}
 				return 1;
-			break;
+			}
+		}
 	}
+
 	return 0;
 }
 
@@ -119,6 +136,8 @@ int gcn64_countDevices(void)
  */
 struct gcn64_info *gcn64_listDevices(struct gcn64_info *info, struct gcn64_list_ctx *ctx)
 {
+	struct gcn64_adapter_caps caps;
+
 	memset(info, 0, sizeof(struct gcn64_info));
 
 	if (!ctx) {
@@ -144,13 +163,14 @@ struct gcn64_info *gcn64_listDevices(struct gcn64_info *info, struct gcn64_list_
 		if (IS_VERBOSE()) {
 			printf("Considering 0x%04x:0x%04x\n", ctx->cur_dev->vendor_id, ctx->cur_dev->product_id);
 		}
-		if (isProductIdHandled(ctx->cur_dev->product_id, ctx->cur_dev->interface_number))
+		if (isProductIdHandled(ctx->cur_dev->product_id, ctx->cur_dev->interface_number, &caps))
 		{
 				info->usb_vid = ctx->cur_dev->vendor_id;
 				info->usb_pid = ctx->cur_dev->product_id;
 				wcsncpy(info->str_prodname, ctx->cur_dev->product_string, PRODNAME_MAXCHARS-1);
 				wcsncpy(info->str_serial, ctx->cur_dev->serial_number, SERIAL_MAXCHARS-1);
 				strncpy(info->str_path, ctx->cur_dev->path, PATH_MAXCHARS-1);
+				memcpy(&info->caps, &caps, sizeof(info->caps));
 				return info;
 		}
 
@@ -165,6 +185,7 @@ struct gcn64_info *gcn64_listDevices(struct gcn64_info *info, struct gcn64_list_
 gcn64_hdl_t gcn64_openDevice(struct gcn64_info *dev)
 {
 	hid_device *hdev;
+	gcn64_hdl_t hdl;
 
 	if (!dev)
 		return NULL;
@@ -178,7 +199,22 @@ gcn64_hdl_t gcn64_openDevice(struct gcn64_info *dev)
 		return NULL;
 	}
 
-	return hdev;
+	hdl = malloc(sizeof(struct _gcn64_hdl_t));
+	if (!hdl) {
+		perror("malloc");
+		hid_close(hdev);
+		return NULL;
+	}
+	hdl->hdev = hdev;
+	hdl->report_size = 63;
+	memcpy(&hdl->caps, &dev->caps, sizeof(hdl->caps));
+
+	if (!dev->caps.bio_support) {
+		printf("Pre-3.4 version detected. Setting report size to 40 bytes\n");
+		hdl->report_size = 40;
+	}
+
+	return hdl;
 }
 
 gcn64_hdl_t gcn64_openBy(struct gcn64_info *dev, unsigned char flags)
@@ -232,17 +268,19 @@ gcn64_hdl_t gcn64_openBy(struct gcn64_info *dev, unsigned char flags)
 
 void gcn64_closeDevice(gcn64_hdl_t hdl)
 {
-	hid_device *hdev = (hid_device*)hdl;
+	hid_device *hdev = hdl->hdev;
 
 	if (hdev) {
 		hid_close(hdev);
 	}
+
+	free(hdl);
 }
 
 int gcn64_send_cmd(gcn64_hdl_t hdl, const unsigned char *cmd, int cmdlen)
 {
-	hid_device *hdev = (hid_device*)hdl;
-	unsigned char buffer[GCN64_HID_DATA_REPORT_SIZE+1];
+	hid_device *hdev = hdl->hdev;
+	unsigned char buffer[hdl->report_size+1];
 	int n;
 
 	if (cmdlen > (sizeof(buffer)-1)) {
@@ -266,8 +304,8 @@ int gcn64_send_cmd(gcn64_hdl_t hdl, const unsigned char *cmd, int cmdlen)
 
 int gcn64_poll_result(gcn64_hdl_t hdl, unsigned char *cmd, int cmd_maxlen)
 {
-	hid_device *hdev = (hid_device*)hdl;
-	unsigned char buffer[GCN64_HID_DATA_REPORT_SIZE+1];
+	hid_device *hdev = hdl->hdev;
+	unsigned char buffer[hdl->report_size+1];
 	int res_len;
 	int n;
 
