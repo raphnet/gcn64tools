@@ -30,6 +30,7 @@
 #include "requests.h"
 #include "gcn64_protocol.h"
 #include "perftest.h"
+#include "biosensor.h"
 
 static void printUsage(void)
 {
@@ -73,6 +74,7 @@ static void printUsage(void)
 	// Those do not currently work. Need to check why...
 	//printf("  --n64_init_rumble                  Send rumble pack init command\n");
 	//printf("  --n64_control_rumble value         Turn rumble on when value != 0\n");
+	printf("  --biosensor                        Display heart beat using bio sensor\n");
 	printf("  --perftest                         Do a performance test (raw IO timing)\n");
 	printf("\n");
 	printf("GC to N64 adapter commands: (For GC to N64 adapter connected to GC/N64 to USB adapter)\n");
@@ -130,6 +132,7 @@ static void printUsage(void)
 #define OPT_N64_INIT_RUMBLE				328
 #define OPT_N64_CONTROL_RUMBLE			329
 #define OPT_PERFTEST					330
+#define OPT_BIOSENSOR					331
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -171,6 +174,7 @@ struct option longopts[] = {
 	{ "n64_init_rumble", 0, NULL, OPT_N64_INIT_RUMBLE },
 	{ "n64_control_rumble", 1, NULL, OPT_N64_CONTROL_RUMBLE },
 	{ "perftest", 0, NULL, OPT_PERFTEST },
+	{ "biosensor", 0, NULL, OPT_BIOSENSOR },
 	{ },
 };
 
@@ -411,6 +415,9 @@ int main(int argc, char **argv)
 				}
 				break;
 
+			case OPT_BIOSENSOR:
+				gcn64lib_biosensorMonitor(hdl);
+				break;
 
 			case OPT_N64_GETSTATUS:
 				cmd[0] = N64_GET_STATUS;
