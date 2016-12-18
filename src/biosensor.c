@@ -22,11 +22,11 @@ int gcn64lib_biosensorPoll(gcn64_hdl_t hdl)
 		return res;
 	}
 
-	/* In Idle, the sensor returs a buffer full of zeroes:
+	/* Between beats, the sensor returs a buffer full of 0x03:
 	 *
 	 *    03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03 03
 	 *
-	 * At each pulse, the sensor returns a buffer full of 0x03:
+	 * At each pulse, the sensor returns a buffer full of 0x00:
 	 *
 	 *    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
 	 *
@@ -50,12 +50,17 @@ int gcn64lib_biosensorPoll(gcn64_hdl_t hdl)
 	return res;
 }
 
+#define MIN_PULSE_LENGTH	5
+#define AVERAGES			3
+
 int gcn64lib_biosensorMonitor(gcn64_hdl_t hdl)
 {
 	int res;
 	int in_pulse = 0;
 	struct timeval prev_pulse, cur_pulse;
 	int first = 1;
+	int averages[AVERAGES];
+	int avg_cur = 0;
 
 	/* Stating the obvious(tm) */
 	printf("********************************************\n");
@@ -83,18 +88,30 @@ int gcn64lib_biosensorMonitor(gcn64_hdl_t hdl)
 		}
 
 		if (res) {
-			if (in_pulse)
+			in_pulse++;
+			if (in_pulse < MIN_PULSE_LENGTH)
+				continue;
+			if (in_pulse > MIN_PULSE_LENGTH)
 				continue;
 
-			in_pulse = 1;
 			gettimeofday(&cur_pulse, NULL);
 
 			if (!first) {
-				int elaps_ms;
+				int elaps_ms, i, avg_bpm;
 
 				elaps_ms = (cur_pulse.tv_sec - prev_pulse.tv_sec) * 1000 + (cur_pulse.tv_usec - prev_pulse.tv_usec) / 1000;
 
-				printf("BPM: %d\n", 60000 / elaps_ms);
+				averages[avg_cur] = 60000 / elaps_ms;
+				avg_cur++;
+				if (avg_cur >= AVERAGES)
+					avg_cur = 0;
+
+				for (i=0,avg_bpm=0; i < AVERAGES; i++) {
+					avg_bpm += averages[i];
+				}
+				avg_bpm /= AVERAGES;
+
+				printf("BPM: %d\n", avg_bpm);
 				fflush(stdout);
 			}
 			else {
