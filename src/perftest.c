@@ -138,7 +138,7 @@ int perftest1(gcn64_hdl_t hdl, int channel)
 		}
 	}
 
-	printTestResult(total_us, N_CYCLES);
+	printTestResult(total_us, N_CYCLESLONG);
 
 
 
