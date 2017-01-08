@@ -52,7 +52,12 @@ static void printUsage(void)
 	printf("  --get_version                      Read adapter firmware version\n");
 	printf("  --set_serial serial                Assign a new device serial number\n");
 	printf("  --get_serial                       Read serial from eeprom\n");
-	printf("  --set_mode mode                    Set the adapter personality (0: GC/N64 to USB, 1: N64-only, 2: GC-only)\n");
+	printf("  --set_mode mode                    Set the adapter personality\n");
+	printf("                                         0: GC/N64 to USB\n");
+	printf("                                         1: N64-only\n");
+	printf("                                         2: GC-only\n");
+	printf("                                         17: Dual N64-only\n");
+	printf("                                         18: Dual GC-only\n");
 	printf("  --get_mode                         Read the current adapter mode\n");
 	printf("  --set_poll_rate ms                 Set time between controller polls in milliseconds\n");
 	printf("  --get_poll_rate                    Read configured poll rate\n");
