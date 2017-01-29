@@ -28,7 +28,7 @@ PREFIX=/usr/local
 
 PROGS=gcn64ctl mempak_ls mempak_format mempak_extract_note mempak_insert_note mempak_rm mempak_convert gcn64ctl_gui
 MEMPAKLIB_OBJS=mempak.o mempak_fs.o $(COMPAT_OBJS)
-GUI_OBJS=gcn64ctl_gui.o gui_mpkedit.o gui_fwupd.o gui_logger.o
+GUI_OBJS=gcn64ctl_gui.o gui_mpkedit.o gui_fwupd.o gui_logger.o gui_dfu_programmer.o
 
 
 .PHONY : clean install release_windows

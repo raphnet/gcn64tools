@@ -2,8 +2,25 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include "gui_fwupd.h"
 #include "ihex_signature.h"
+
+#define BOOTLOADER_DELAY	5
+#define ERASE_RETRIES	10
+#define ERASE_DELAY_S	5
+#define PROGRAMMING_RETRIES	3
+#define PROGRAMMING_DELAY_S	5
+
+/* Called when the 'Start update' button is clicked in the firmware update dialog */
+G_MODULE_EXPORT void updatestart_btn_clicked_cb(GtkWidget *w, gpointer data)
+{
+	struct application *app = data;
+	GET_UI_ELEMENT(GtkButtonBox, update_dialog_btnBox);
+
+	app->updater_thread = g_thread_new("updater", updateThreadFunc, app);
+	gtk_widget_set_sensitive(GTK_WIDGET(update_dialog_btnBox), FALSE);
+}
 
 gboolean updateDonefunc(gpointer data)
 {
@@ -42,134 +59,151 @@ gboolean closeAdapter(gpointer data)
 	return FALSE;
 }
 
+/** \brief Set the update status fields
+ *
+ * Update the fields in app and schedule a call to updateProgress for updating the GUI.
+ *
+ * \param app Application context
+ * \param status_str The status string. (If NULL, current status string stays unchanged)
+ * \param percent The current progress given in percent.
+ */
+void setUpdateStatus(struct application *app, const char *status_str, int percent)
+{
+	app->update_percent = percent;
+	if (status_str) {
+		app->update_status = status_str;
+	}
+
+	updatelog_append("Update status [%d%%] : %s\n", percent, app->update_status);
+
+	gdk_threads_add_idle(updateProgress, app);
+}
+
+/* Monitor the dfu-programmer output to give feedback when the verify step is reached */
+static void dfu_flash_outputCallback(void *ctx, const char *ln)
+{
+	struct application *app = ctx;
+
+	if (strstr(ln, "Validating")) {
+		setUpdateStatus(app, "Validating...", 70);
+	}
+}
+
+/* This is the thread that handles the update. Started when the 'Start update'
+ * button is clicked.  */
 gpointer updateThreadFunc(gpointer data)
 {
 	struct application *app = data;
 	int res;
-	FILE *dfu_fp;
-	char linebuf[256];
-	char cmd[256];
 	int retries = 10;
 	int n_adapters_before;
+	const char *mcu = "atmega32u2";
+	const char *xtra = "";
+	char cmdstr[256];
+
+#ifndef WINDOWS
+	xtra = " 2>&1";
+#endif
+
+	if (app->at90usb1287) {
+		mcu = "at90usb1287";
+	}
 
 	app->inhibit_periodic_updates = 1;
 
-	app->update_status = "Starting...";
-	app->update_percent = 1;
-	gdk_threads_add_idle(updateProgress, data);
+	setUpdateStatus(app, "Starting...", 1);
 
 	if (!app->recovery_mode) {
-		app->update_percent = 10;
-		app->update_status = "Enter bootloader...";
+		setUpdateStatus(app, "Enter bootloader...", 10);
 
 		gcn64lib_bootloader(app->current_adapter_handle);
-		gdk_threads_add_idle(closeAdapter, data);
 	} else {
 		/* In recovery mode, the adapter is already in the bootloader. */
 		n_adapters_before = gcn64_countDevices();
-		printf("%d adapters present before recovery\n", n_adapters_before);
+		updatelog_append("%d adapters present before recovery\n", n_adapters_before);
 	}
 
-	app->update_percent = 19;
-	app->update_status = "Erasing chip...";
-	do {
-		app->update_percent++;
-		gdk_threads_add_idle(updateProgress, data);
+	sleep(BOOTLOADER_DELAY);
 
-		if (app->at90usb1287) {
-			dfu_fp = popen("dfu-programmer at90usb1287 erase --suppress-validation", "r");
-		} else {
-			dfu_fp = popen("dfu-programmer atmega32u2 erase --suppress-validation", "r");
-		}
-		if (!dfu_fp) {
+	/************* ERASE CHIP **************/
+	setUpdateStatus(app, "Erasing chip...", 19);
+	snprintf(cmdstr, sizeof(cmdstr),
+							"dfu-programmer %s erase --suppress-validation --debug 99%s",
+							mcu, xtra);
+	for (retries = 0; retries < ERASE_RETRIES; retries++)
+	{
+		res = dfu_wrapper(cmdstr, NULL, NULL);
+		if (res == DFU_OK)
+			break;
+
+		if (res == DFU_POPEN_FAILED) {
 			app->update_dialog_response = GTK_RESPONSE_REJECT;
 			gdk_threads_add_idle(updateDonefunc, data);
+			updatelog_append("Could not run dfu-programmer to erase chip");
 			return NULL;
 		}
 
-		do {
-			fgets(linebuf, sizeof(linebuf), dfu_fp);
-		} while(!feof(dfu_fp));
+		setUpdateStatus(app, NULL, ++app->update_percent);
+		sleep(ERASE_DELAY_S);
+	}
 
-		res = pclose(dfu_fp);
-		printf("Pclose: %d\n", res);
+	if (retries == ERASE_RETRIES) {
+		updatelog_append("Failed to erase chip\n");
+		app->update_dialog_response = GTK_RESPONSE_REJECT;
+		gdk_threads_add_idle(updateDonefunc, data);
+		return NULL;
+	}
 
-		if (res==0) {
+	setUpdateStatus(app, "Chip erased", 20);
+
+	/************* PROGRAMMING CHIP **************/
+	setUpdateStatus(app, "Programming...", 30);
+	snprintf(cmdstr, sizeof(cmdstr),
+							"dfu-programmer %s flash %s --debug 99%s",
+							mcu, app->updateHexFile, xtra);
+
+	for (retries = 0; retries < PROGRAMMING_RETRIES; retries++)
+	{
+		/* Note: dfu_flash_outputCallback updates the status to Validating */
+		res = dfu_wrapper(cmdstr, dfu_flash_outputCallback, app);
+		if (res == DFU_OK)
 			break;
-		}
-		sleep(1);
-	} while (retries--);
 
-	if (!retries) {
-		app->update_dialog_response = GTK_RESPONSE_REJECT;
-		gdk_threads_add_idle(updateDonefunc, data);
-	}
-
-	app->update_status = "Chip erased";
-	app->update_percent = 20;
-	gdk_threads_add_idle(updateProgress, data);
-
-
-	app->update_status = "Programming ...";
-	app->update_percent = 30;
-	gdk_threads_add_idle(updateProgress, data);
-
-	snprintf(cmd, sizeof(cmd), "dfu-programmer %s flash %s",
-				app->at90usb1287 ? "at90usb1287" : "atmega32u2",
-				app->updateHexFile);
-	dfu_fp = popen(cmd, "r");
-	if (!dfu_fp) {
-		app->update_dialog_response = GTK_RESPONSE_REJECT;
-		gdk_threads_add_idle(updateDonefunc, data);
-		return NULL;
-	}
-
-	do {
-		fgets(linebuf, sizeof(linebuf), dfu_fp);
-		printf("ln: %s\n\n", linebuf);
-		if (strstr(linebuf, "Validating")) {
-			app->update_status = "Validating...";
-			app->update_percent = 70;
+		if (res == DFU_POPEN_FAILED)
+		{
+			app->update_dialog_response = GTK_RESPONSE_REJECT;
 			gdk_threads_add_idle(updateDonefunc, data);
+			updatelog_append("Could not run dfu-programmer to flash chip\n");
+			return NULL;
 		}
-	} while(!feof(dfu_fp));
 
-	res = pclose(dfu_fp);
-	printf("Pclose: %d\n", res);
+		setUpdateStatus(app, NULL, ++app->update_percent);
+		sleep(PROGRAMMING_DELAY_S);
+	}
 
-	if (res != 0) {
+	if (retries == PROGRAMMING_RETRIES) {
+		updatelog_append("Failed to flash chip\n");
 		app->update_dialog_response = GTK_RESPONSE_REJECT;
 		gdk_threads_add_idle(updateDonefunc, data);
 		return NULL;
 	}
 
-	app->update_status = "Starting firmware...";
-	app->update_percent = 80;
-	gdk_threads_add_idle(updateProgress, data);
 
-	if (app->at90usb1287) {
-		dfu_fp = popen("dfu-programmer at90usb1287 start", "r");
-	} else {
-		dfu_fp = popen("dfu-programmer atmega32u2 start", "r");
-	}
-	if (!dfu_fp) {
+	/************* START **************/
+	setUpdateStatus(app, "Starting firmware...", 80);
+	snprintf(cmdstr, sizeof(cmdstr),
+						"dfu-programmer %s start%s",
+						mcu, xtra);
+
+	res = dfu_wrapper(cmdstr, NULL, NULL);
+	if (res != DFU_OK) {
 		app->update_dialog_response = GTK_RESPONSE_REJECT;
 		gdk_threads_add_idle(updateDonefunc, data);
 		return NULL;
 	}
 
-	res = pclose(dfu_fp);
-	printf("Pclose: %d\n", res);
 
-	if (res!=0) {
-		app->update_dialog_response = GTK_RESPONSE_REJECT;
-		gdk_threads_add_idle(updateDonefunc, data);
-		return NULL;
-	}
-
-	app->update_status = "Waiting for device...";
-	app->update_percent = 90;
-	gdk_threads_add_idle(updateProgress, data);
+	setUpdateStatus(app, "Waiting for device...", 90);
 
 	retries = 6;
 	do {
@@ -186,8 +220,7 @@ gpointer updateThreadFunc(gpointer data)
 		}
 
 		sleep(1);
-		app->update_percent++;
-		gdk_threads_add_idle(updateProgress, data);
+		setUpdateStatus(app, NULL, ++app->update_percent);
 	} while (retries--);
 
 	/* In recovery mode, don't bother selecting the now functional adapter. The
@@ -200,9 +233,7 @@ gpointer updateThreadFunc(gpointer data)
 		}
 	}
 
-	app->update_status = "Done";
-	app->update_percent = 100;
-	gdk_threads_add_idle(updateProgress, data);
+	setUpdateStatus(app, "Done", 100);
 
 	printf("Update done\n");
 	app->update_dialog_response = GTK_RESPONSE_OK;
@@ -210,15 +241,7 @@ gpointer updateThreadFunc(gpointer data)
 	return NULL;
 }
 
-G_MODULE_EXPORT void updatestart_btn_clicked_cb(GtkWidget *w, gpointer data)
-{
-	struct application *app = data;
-	GET_UI_ELEMENT(GtkButtonBox, update_dialog_btnBox);
-
-	app->updater_thread = g_thread_new("updater", updateThreadFunc, app);
-	gtk_widget_set_sensitive(GTK_WIDGET(update_dialog_btnBox), FALSE);
-}
-
+/** Called when the 'Recover adapter' menu is selected */
 G_MODULE_EXPORT void recover_usbadapter_firmware(GtkWidget *w, gpointer data)
 {
 	struct application *app = data;
@@ -229,7 +252,6 @@ G_MODULE_EXPORT void recover_usbadapter_firmware(GtkWidget *w, gpointer data)
 	GET_UI_ELEMENT(GtkDialog, firmware_update_dialog);
 	GET_UI_ELEMENT(GtkLabel, lbl_firmware_filename);
 	GET_UI_ELEMENT(GtkButtonBox, update_dialog_btnBox);
-	FILE *dfu_fp;
 	char *filename = NULL, *basename = NULL;
 //	char adap_sig[64];
 #ifndef WINDOWS
@@ -238,29 +260,17 @@ G_MODULE_EXPORT void recover_usbadapter_firmware(GtkWidget *w, gpointer data)
 	const char *notfound = "dfu-programmer.exe not found. Cannot perform update.";
 #endif
 
+	updatelog_init(app);
+	updatelog_append("Recover adapter clicked\n");
+
 	app->recovery_mode = 1;
 
-	/* Test for dfu-programmer presence in path*/
-	dfu_fp = popen("dfu-programmer --version", "r");
-	//dfu_fp = popen("dfu2-programmer --version", "r");
-	if (!dfu_fp) {
-		perror("popen");
+	res = dfu_wrapper("dfu-programmer --version", NULL, NULL);
+	if (res == DFU_POPEN_FAILED) {
 		errorPopup(app, notfound);
+		updatelog_appendln(notfound);
+		updatelog_shutdown();
 		return;
-	}
-	res = pclose(dfu_fp);
-#ifdef WINDOWS
-	// Under Mingw, 0 is returned when dfu-programmmer was found 
-	// and executed. Otherwise 1.
-	if (res != 0) {
-#else
-	// Under Unix, the usual is available.
-	if (!WIFEXITED(res) || (WEXITSTATUS(res)!=1)) {
-#endif
-		if (res) {
-			errorPopup(app, notfound);
-			return;
-		}
 	}
 
 	dialog = gtk_file_chooser_dialog_new("Open .hex file",
@@ -274,6 +284,7 @@ G_MODULE_EXPORT void recover_usbadapter_firmware(GtkWidget *w, gpointer data)
 
 	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), hexfilter);
 
+	updatelog_appendln("Running file dialog...");
 	res = gtk_dialog_run (GTK_DIALOG(dialog));
 	if (res == GTK_RESPONSE_ACCEPT) {
 		GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
@@ -284,17 +295,20 @@ G_MODULE_EXPORT void recover_usbadapter_firmware(GtkWidget *w, gpointer data)
 		gtk_widget_destroy(dialog);
 		dialog = NULL;
 
-		printf("File selected: %s\n", filename);
 		app->updateHexFile = filename;
+		updatelog_appendln("Selected file: %s", filename);
 
 		if (check_ihex_for_signature(filename, "e106420a-7c54-11e5-ae9a-001bfca3c593")) {
 			app->at90usb1287 = 1;
 		} else if (check_ihex_for_signature(filename, "9c3ea8b8-753f-11e5-a0dc-001bfca3c593")) {
 			app->at90usb1287 = 0;
 		} else {
-			errorPopup(app, "Signature not found - This file is invalid or not meant for this adapter");
+			const char *errstr = "Signature not found - This file is invalid or not meant for this adapter";
+			errorPopup(app, errstr);
+			updatelog_appendln(errstr);
 			goto done;
 		}
+		updatelog_append("Signature OK\n");
 
 		/* Prepare the update dialog widgets... */
 		gtk_label_set_text(lbl_firmware_filename, basename);
@@ -304,19 +318,26 @@ G_MODULE_EXPORT void recover_usbadapter_firmware(GtkWidget *w, gpointer data)
 		updateProgress(data);
 
 		/* Run the dialog */
+		updatelog_append("Running the update dialog...\n");
 		res = gtk_dialog_run(firmware_update_dialog);
 		gtk_widget_hide( GTK_WIDGET(firmware_update_dialog));
 
 		if (res == GTK_RESPONSE_OK) {
-			infoPopup(app, "Update succeeded.");
+			const char *msg = "Update succeeded.";
+			infoPopup(app, msg);
+			updatelog_appendln(msg);
 		} else if (res == GTK_RESPONSE_REJECT) {
-			errorPopup(app, "Update failed.");
+			const char *msg = "Update failed.";
+			errorPopup(app, msg);
+			updatelog_appendln(msg);
 		}
-		printf("Update dialog done\n");
+		updatelog_append("Update dialog done\n");
 
 	}
 
 done:
+	updatelog_shutdown();
+
 	if (filename)
 		g_free(filename);
 	if (basename)
@@ -325,6 +346,7 @@ done:
 		gtk_widget_destroy(dialog);
 }
 
+/* Called when the 'Update firmware...' button is clicked in the main GUI */
 G_MODULE_EXPORT void update_usbadapter_firmware(GtkWidget *w, gpointer data)
 {
 	struct application *app = data;
@@ -335,7 +357,6 @@ G_MODULE_EXPORT void update_usbadapter_firmware(GtkWidget *w, gpointer data)
 	GET_UI_ELEMENT(GtkDialog, firmware_update_dialog);
 	GET_UI_ELEMENT(GtkLabel, lbl_firmware_filename);
 	GET_UI_ELEMENT(GtkButtonBox, update_dialog_btnBox);
-	FILE *dfu_fp;
 	char *filename = NULL, *basename = NULL;
 	char adap_sig[64];
 #ifndef WINDOWS
@@ -344,34 +365,25 @@ G_MODULE_EXPORT void update_usbadapter_firmware(GtkWidget *w, gpointer data)
 	const char *notfound = "dfu-programmer.exe not found. Cannot perform update.";
 #endif
 
+	updatelog_init(app);
+	updatelog_append("Update firmware clicked\n");
+
 	app->recovery_mode = 0;
 
 	if (gcn64lib_getSignature(app->current_adapter_handle, adap_sig, sizeof(adap_sig))) {
-		errorPopup(app, "Could not read adapter signature - This file may not be meant for it (Bricking hazard!)");
+		char *errmsg = "Could not read adapter signature - This file may not be meant for it (Bricking hazard!)";
+		errorPopup(app, errmsg);
+		updatelog_appendln(errmsg);
 		goto done;
 	}
 
 	/* Test for dfu-programmer presence in path*/
-	dfu_fp = popen("dfu-programmer --version", "r");
-	//dfu_fp = popen("dfu2-programmer --version", "r");
-	if (!dfu_fp) {
-		perror("popen");
+	res = dfu_wrapper("dfu-programmer --version", NULL, NULL);
+	if (res == DFU_POPEN_FAILED) {
 		errorPopup(app, notfound);
+		updatelog_appendln(notfound);
+		updatelog_shutdown();
 		return;
-	}
-	res = pclose(dfu_fp);
-#ifdef WINDOWS
-	// Under Mingw, 0 is returned when dfu-programmmer was found 
-	// and executed. Otherwise 1.
-	if (res != 0) {
-#else
-	// Under Unix, the usual is available.
-	if (!WIFEXITED(res) || (WEXITSTATUS(res)!=1)) {
-#endif
-		if (res) {
-			errorPopup(app, notfound);
-			return;
-		}
 	}
 
 	dialog = gtk_file_chooser_dialog_new("Open .hex file",
@@ -385,6 +397,7 @@ G_MODULE_EXPORT void update_usbadapter_firmware(GtkWidget *w, gpointer data)
 
 	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), hexfilter);
 
+	updatelog_appendln("Running file dialog...");
 	res = gtk_dialog_run (GTK_DIALOG(dialog));
 	if (res == GTK_RESPONSE_ACCEPT) {
 		GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
@@ -395,14 +408,17 @@ G_MODULE_EXPORT void update_usbadapter_firmware(GtkWidget *w, gpointer data)
 		gtk_widget_destroy(dialog);
 		dialog = NULL;
 
-		printf("File selected: %s\n", filename);
 		app->updateHexFile = filename;
+		updatelog_appendln("Selected file: %s", filename);
 
-		printf("Checking file for signature...\n");
+		updatelog_append("Checking file for signature...\n");
 		if (!check_ihex_for_signature(filename, adap_sig)) {
-			errorPopup(app, "Signature not found - This file is invalid or not meant for this adapter");
+			const char *errstr = "Signature not found - This file is invalid or not meant for this adapter";
+			errorPopup(app, errstr);
+			updatelog_appendln(errstr);
 			goto done;
 		}
+		updatelog_append("Signature OK\n");
 
 		// For my development board based on at90usb1287. Need to pass the correct
 		// MCU argument to dfu-programmer
@@ -420,19 +436,26 @@ G_MODULE_EXPORT void update_usbadapter_firmware(GtkWidget *w, gpointer data)
 		updateProgress(data);
 
 		/* Run the dialog */
+		updatelog_append("Running the update dialog...\n");
 		res = gtk_dialog_run(firmware_update_dialog);
 		gtk_widget_hide( GTK_WIDGET(firmware_update_dialog));
 
 		if (res == GTK_RESPONSE_OK) {
-			infoPopup(app, "Update succeeded.");
+			const char *msg = "Update succeeded.";
+			infoPopup(app, msg);
+			updatelog_appendln(msg);
 		} else if (res == GTK_RESPONSE_REJECT) {
-			errorPopup(app, "Update failed.");
+			const char *msg = "Update failed.";
+			errorPopup(app, msg);
+			updatelog_appendln(msg);
 		}
-		printf("Update dialog done\n");
+		updatelog_append("Update dialog done\n");
 
 	}
 
 done:
+	updatelog_shutdown();
+
 	if (filename)
 		g_free(filename);
 	if (basename)

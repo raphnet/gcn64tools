@@ -8,6 +8,8 @@
 #include "gcn64lib.h"
 #include "gui_mpkedit.h"
 #include "gui_fwupd.h"
+#include "gui_logger.h"
+#include "gui_dfu_programmer.h"
 
 #define GET_ELEMENT(TYPE, ELEMENT)	(TYPE *)gtk_builder_get_object(app->builder, #ELEMENT)
 #define GET_UI_ELEMENT(TYPE, ELEMENT)   TYPE *ELEMENT = GET_ELEMENT(TYPE, ELEMENT)

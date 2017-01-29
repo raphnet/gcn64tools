@@ -22,6 +22,7 @@ int dfu_wrapper(const char *command, void (*lineCallback)(void *ctx, const char 
 	int res;
 	char linebuf[256];
 
+	updatelog_append("popen(%s)\n", command);
 	dfu_fp = popen(command, "r");
 	if (!dfu_fp) {
 		updatelog_append("Could not run dfu-programmer to erase chip (%s)", strerror(errno));
@@ -29,8 +30,16 @@ int dfu_wrapper(const char *command, void (*lineCallback)(void *ctx, const char 
 	}
 
 	do {
+		char *nl = "\n";
+
 		fgets(linebuf, sizeof(linebuf), dfu_fp);
-		updatelog_append("[dfu-update message] : %s\n", linebuf);
+
+		if (strrchr(linebuf, '\n'))
+			nl = "";
+		if (strrchr(linebuf, '\r'))
+			nl = "";
+
+		updatelog_append("[dfu-update message] : %s%s", linebuf, nl);
 
 		if (lineCallback) {
 			lineCallback(linebuf, ctx);
