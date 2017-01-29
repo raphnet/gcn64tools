@@ -101,9 +101,7 @@ gpointer updateThreadFunc(gpointer data)
 	const char *xtra = "";
 	char cmdstr[256];
 
-#ifndef WINDOWS
 	xtra = " 2>&1";
-#endif
 
 	if (app->at90usb1287) {
 		mcu = "at90usb1287";
@@ -159,7 +157,7 @@ gpointer updateThreadFunc(gpointer data)
 	/************* PROGRAMMING CHIP **************/
 	setUpdateStatus(app, "Programming...", 30);
 	snprintf(cmdstr, sizeof(cmdstr),
-							"dfu-programmer %s flash %s --debug 99%s",
+							"dfu-programmer %s flash \"%s\" --debug 99%s",
 							mcu, app->updateHexFile, xtra);
 
 	for (retries = 0; retries < PROGRAMMING_RETRIES; retries++)
