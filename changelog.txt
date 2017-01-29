@@ -1,3 +1,9 @@
+=== Version 1.4.1 ===
+Date: 2017-01-29
+ - Improved firmware update reliability.
+ - Firmware update now logs to a file (raphnetupdatelog.txt in user's home
+ directory.).
+
 === Version 1.4 ===
 Date: 2017-01-16
  - Support for adapters with firmware 3.4.x
