@@ -7,6 +7,7 @@
 #include "ihex_signature.h"
 
 #define BOOTLOADER_DELAY	5
+#define FORCE_ERASE_DELAY	2
 #define ERASE_RETRIES	10
 #define ERASE_DELAY_S	5
 #define PROGRAMMING_RETRIES	3
@@ -99,7 +100,7 @@ gpointer updateThreadFunc(gpointer data)
 	int n_adapters_before;
 	const char *mcu = "atmega32u2";
 	const char *xtra = "";
-	char cmdstr[256];
+	char cmdstr[1024];
 
 	xtra = " 2>&1";
 
@@ -125,12 +126,28 @@ gpointer updateThreadFunc(gpointer data)
 
 	/************* ERASE CHIP **************/
 	setUpdateStatus(app, "Erasing chip...", 19);
-	snprintf(cmdstr, sizeof(cmdstr),
-							"dfu-programmer %s erase --suppress-validation --debug 99%s",
-							mcu, xtra);
 	for (retries = 0; retries < ERASE_RETRIES; retries++)
 	{
+		snprintf(cmdstr, sizeof(cmdstr), "dfu-programmer %s erase --debug 99%s", mcu, xtra);
 		res = dfu_wrapper(cmdstr, NULL, NULL);
+
+		/* For some reason, many users got in a situation where the adapter
+		 * was erased according to dfu-programmer:
+		 *
+		 *  "Chip already blank, to force erase use --force".
+		 *
+		 * Yet, flashing the firmware would fail until the command with --force
+		 * was run manually...
+		 *
+		 * I would just use --force here, but since it is not available on older
+		 * dfu-programmer versions, I run the old command too and ignore the result
+		 * from the second.
+		 */
+		sleep(FORCE_ERASE_DELAY);
+		snprintf(cmdstr, sizeof(cmdstr), "dfu-programmer %s erase --force --debug 99%s", mcu, xtra);
+		dfu_wrapper(cmdstr, NULL, NULL);
+
+		// res from the first dfu-programmer execution without --force.
 		if (res == DFU_OK)
 			break;
 
