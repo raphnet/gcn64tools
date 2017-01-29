@@ -33,14 +33,11 @@ MEMPAKLIB_OBJS=mempak.o mempak_fs.o $(COMPAT_OBJS)
 
 all: $(PROGS) gui.xml
 
-gcn64ctl_gui: gcn64ctl_gui.o gcn64ctl_gui_mpkedit.o gcn64.o gcn64lib.o hexdump.o ihex.o mempak_gcn64usb.o $(MEMPAKLIB_OBJS)
+gcn64ctl_gui: gcn64ctl_gui.o gui_mpkedit.o gui_fwupd.o gcn64.o gcn64lib.o hexdump.o ihex.o ihex_signature.o mempak_gcn64usb.o $(MEMPAKLIB_OBJS)
 	$(LD) $^ $(LDFLAGS) $(GTK_LDFLAGS) -o $@ $(EXTRA_LDFLAGS)
 
 gcn64ctl: main.o gcn64.o gcn64lib.o hexdump.o gc2n64_adapter.o ihex.o delay.o mempak_gcn64usb.o perftest.o biosensor.o $(MEMPAKLIB_OBJS)
 	$(LD) $^ $(LDFLAGS) -o $@
-
-gcn64ctl_gui.o: gcn64ctl_gui.c gcn64ctl_gui.h
-	$(CC) $(CFLAGS) $(GTK_CFLAGS) -c $<
 
 app.o: app.rc icon.ico
 	windres app.rc -o app.o
@@ -48,7 +45,10 @@ app.o: app.rc icon.ico
 gui.xml: gcn64cfg.glade
 	grep -v requires gcn64cfg.glade > gui.xml
 
-gcn64ctl_gui_mpkedit.o: gcn64ctl_gui_mpkedit.c gcn64ctl_gui_mpkedit.h
+gcn64ctl_gui.o: gcn64ctl_gui.c gcn64ctl_gui.h
+	$(CC) $(CFLAGS) $(GTK_CFLAGS) -c $<
+
+gui_%.o: gui_%.c gui_%.h
 	$(CC) $(CFLAGS) $(GTK_CFLAGS) -c $<
 
 mempak_convert: mempak_convert.o $(MEMPAKLIB_OBJS)

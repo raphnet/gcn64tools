@@ -1,14 +1,17 @@
+#ifndef _gcn64ctl_gui_h__
+#define _gcn64ctl_gui_h__
+
 #include <glib.h>
 #include <gtk/gtk.h>
 
 #include "gcn64.h"
 #include "gcn64lib.h"
-#include "gcn64ctl_gui_mpkedit.h"
+#include "gui_mpkedit.h"
+#include "gui_fwupd.h"
 
 #define GET_ELEMENT(TYPE, ELEMENT)	(TYPE *)gtk_builder_get_object(app->builder, #ELEMENT)
 #define GET_UI_ELEMENT(TYPE, ELEMENT)   TYPE *ELEMENT = GET_ELEMENT(TYPE, ELEMENT)
 
-void errorPopup(struct application *app, const char *message);
 
 struct application {
 	GtkBuilder *builder;
@@ -32,4 +35,16 @@ struct application {
 	int at90usb1287;
 };
 
+void errorPopup(struct application *app, const char *message);
+void infoPopup(struct application *app, const char *message);
+
+/** Deselect the current adapter */
+void deselect_adapter(struct application *app);
+
+/** Based on app->current_adapter_handle, update GUI elements */
 void syncGuiToCurrentAdapter(struct application *app);
+
+/** Scan for device and rebuild the list for the UI */
+gboolean rebuild_device_list_store(gpointer data);
+
+#endif // _gcn64ctl_gui_h__
