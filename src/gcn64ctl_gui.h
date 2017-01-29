@@ -32,4 +32,4 @@ struct application {
 	int at90usb1287;
 };
 
-
+void syncGuiToCurrentAdapter(struct application *app);

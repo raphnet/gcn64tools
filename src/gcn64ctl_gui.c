@@ -25,7 +25,6 @@
 #include "mempak_gcn64usb.h"
 #include "gcn64lib.h"
 
-static void updateGuiFromAdapter(struct application *app);
 gboolean rebuild_device_list_store(gpointer data);
 void deselect_adapter(struct application *app);
 
@@ -39,7 +38,7 @@ gboolean updateDonefunc(gpointer data)
 	g_thread_join(app->updater_thread);
 
 	rebuild_device_list_store(data);
-	updateGuiFromAdapter(app);
+	syncGuiToCurrentAdapter(app);
 	app->inhibit_periodic_updates = 0;
 
 	return FALSE;
@@ -572,7 +571,7 @@ static gboolean periodic_updater(gpointer data)
 	return TRUE;
 }
 
-static void updateGuiFromAdapter(struct application *app)
+void syncGuiToCurrentAdapter(struct application *app)
 {
 	unsigned char buf[32];
 	int n;
@@ -777,7 +776,7 @@ G_MODULE_EXPORT void adapterSelected(GtkComboBox *cb, gpointer data)
 
 		memcpy(&app->current_adapter_info, info, sizeof(struct gcn64_info));
 
-		updateGuiFromAdapter(app);
+		syncGuiToCurrentAdapter(app);
 		gtk_widget_set_sensitive(adapter_details, TRUE);
 	}
 }
