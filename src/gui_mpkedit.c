@@ -425,8 +425,7 @@ G_MODULE_EXPORT void mpke_delete(GtkWidget *win, gpointer data)
 
 G_MODULE_EXPORT void n64_note_activated(GtkTreeView *tree_view, GtkTreePath *path, GtkTreeViewColumn *column, gpointer data)
 {
-	struct application *app = data;
-
+	//struct application *app = data;
 	printf("Yo!\n");
 }
 
