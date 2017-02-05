@@ -21,6 +21,8 @@ struct application {
 
 	gcn64_hdl_t current_adapter_handle;
 	struct gcn64_info current_adapter_info;
+
+	GThreadFunc updater_thread_func;
 	GThread *updater_thread;
 
 	int recovery_mode;

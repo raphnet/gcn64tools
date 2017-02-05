@@ -4,6 +4,7 @@
 #include <string.h>
 #include <errno.h>
 #include "gui_fwupd.h"
+#include "gui_update_progress_dialog.h"
 #include "ihex_signature.h"
 
 #define BOOTLOADER_DELAY	5
@@ -13,44 +14,6 @@
 #define PROGRAMMING_RETRIES	3
 #define PROGRAMMING_DELAY_S	5
 
-/* Called when the 'Start update' button is clicked in the firmware update dialog */
-G_MODULE_EXPORT void updatestart_btn_clicked_cb(GtkWidget *w, gpointer data)
-{
-	struct application *app = data;
-	GET_UI_ELEMENT(GtkButtonBox, update_dialog_btnBox);
-
-	app->updater_thread = g_thread_new("updater", updateThreadFunc, app);
-	gtk_widget_set_sensitive(GTK_WIDGET(update_dialog_btnBox), FALSE);
-}
-
-gboolean updateDonefunc(gpointer data)
-{
-	struct application *app = data;
-	GET_UI_ELEMENT(GtkDialog, firmware_update_dialog);
-
-	printf("updateDonefunc\n");
-	gtk_dialog_response(firmware_update_dialog, app->update_dialog_response);
-	g_thread_join(app->updater_thread);
-
-	rebuild_device_list_store(data);
-	syncGuiToCurrentAdapter(app);
-	app->inhibit_periodic_updates = 0;
-
-	return FALSE;
-}
-
-gboolean updateProgress(gpointer data)
-{
-	struct application *app = data;
-	GET_UI_ELEMENT(GtkProgressBar, updateProgress);
-	GET_UI_ELEMENT(GtkLabel, updateStatus);
-
-	gtk_progress_bar_set_fraction(updateProgress, app->update_percent / 100.0);
-	gtk_label_set_text(updateStatus, app->update_status);
-
-	return FALSE;
-}
-
 gboolean closeAdapter(gpointer data)
 {
 	struct application *app = data;
@@ -58,26 +21,6 @@ gboolean closeAdapter(gpointer data)
 	deselect_adapter(app);
 
 	return FALSE;
-}
-
-/** \brief Set the update status fields
- *
- * Update the fields in app and schedule a call to updateProgress for updating the GUI.
- *
- * \param app Application context
- * \param status_str The status string. (If NULL, current status string stays unchanged)
- * \param percent The current progress given in percent.
- */
-void setUpdateStatus(struct application *app, const char *status_str, int percent)
-{
-	app->update_percent = percent;
-	if (status_str) {
-		app->update_status = status_str;
-	}
-
-	updatelog_append("Update status [%d%%] : %s\n", percent, app->update_status);
-
-	gdk_threads_add_idle(updateProgress, app);
 }
 
 /* Monitor the dfu-programmer output to give feedback when the verify step is reached */
@@ -92,7 +35,7 @@ static void dfu_flash_outputCallback(void *ctx, const char *ln)
 
 /* This is the thread that handles the update. Started when the 'Start update'
  * button is clicked.  */
-gpointer updateThreadFunc(gpointer data)
+gpointer gcn64usb_updateFunc(gpointer data)
 {
 	struct application *app = data;
 	int res;
@@ -152,8 +95,7 @@ gpointer updateThreadFunc(gpointer data)
 			break;
 
 		if (res == DFU_POPEN_FAILED) {
-			app->update_dialog_response = GTK_RESPONSE_REJECT;
-			gdk_threads_add_idle(updateDonefunc, data);
+			updateThreadDone(app, GTK_RESPONSE_REJECT);
 			updatelog_append("Could not run dfu-programmer to erase chip");
 			return NULL;
 		}
@@ -164,8 +106,7 @@ gpointer updateThreadFunc(gpointer data)
 
 	if (retries == ERASE_RETRIES) {
 		updatelog_append("Failed to erase chip\n");
-		app->update_dialog_response = GTK_RESPONSE_REJECT;
-		gdk_threads_add_idle(updateDonefunc, data);
+		updateThreadDone(app, GTK_RESPONSE_REJECT);
 		return NULL;
 	}
 
@@ -186,8 +127,7 @@ gpointer updateThreadFunc(gpointer data)
 
 		if (res == DFU_POPEN_FAILED)
 		{
-			app->update_dialog_response = GTK_RESPONSE_REJECT;
-			gdk_threads_add_idle(updateDonefunc, data);
+			updateThreadDone(app, GTK_RESPONSE_REJECT);
 			updatelog_append("Could not run dfu-programmer to flash chip\n");
 			return NULL;
 		}
@@ -198,8 +138,7 @@ gpointer updateThreadFunc(gpointer data)
 
 	if (retries == PROGRAMMING_RETRIES) {
 		updatelog_append("Failed to flash chip\n");
-		app->update_dialog_response = GTK_RESPONSE_REJECT;
-		gdk_threads_add_idle(updateDonefunc, data);
+		updateThreadDone(app, GTK_RESPONSE_REJECT);
 		return NULL;
 	}
 
@@ -212,8 +151,7 @@ gpointer updateThreadFunc(gpointer data)
 
 	res = dfu_wrapper(cmdstr, NULL, NULL);
 	if (res != DFU_OK) {
-		app->update_dialog_response = GTK_RESPONSE_REJECT;
-		gdk_threads_add_idle(updateDonefunc, data);
+		updateThreadDone(app, GTK_RESPONSE_REJECT);
 		return NULL;
 	}
 
@@ -242,8 +180,7 @@ gpointer updateThreadFunc(gpointer data)
 	 * list of serial numbers would need to be stored before programming, etc etc. */
 	if (!app->recovery_mode) {
 		if (!app->current_adapter_handle) {
-			app->update_dialog_response = GTK_RESPONSE_REJECT;
-			gdk_threads_add_idle(updateDonefunc, data);
+			updateThreadDone(app, GTK_RESPONSE_REJECT);
 			return NULL;
 		}
 	}
@@ -251,8 +188,7 @@ gpointer updateThreadFunc(gpointer data)
 	setUpdateStatus(app, "Done", 100);
 
 	printf("Update done\n");
-	app->update_dialog_response = GTK_RESPONSE_OK;
-	gdk_threads_add_idle(updateDonefunc, data);
+	updateThreadDone(app, GTK_RESPONSE_OK);
 	return NULL;
 }
 
@@ -264,9 +200,10 @@ G_MODULE_EXPORT void recover_usbadapter_firmware(GtkWidget *w, gpointer data)
 	GtkWidget *dialog = NULL;
 	GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
 	GET_UI_ELEMENT(GtkFileFilter, hexfilter);
-	GET_UI_ELEMENT(GtkDialog, firmware_update_dialog);
-	GET_UI_ELEMENT(GtkLabel, lbl_firmware_filename);
-	GET_UI_ELEMENT(GtkButtonBox, update_dialog_btnBox);
+	GET_UI_ELEMENT(GtkWindow, mainWindow);
+	//GET_UI_ELEMENT(GtkDialog, firmware_update_dialog);
+	//GET_UI_ELEMENT(GtkLabel, lbl_firmware_filename);
+//	GET_UI_ELEMENT(GtkButtonBox, update_dialog_btnBox);
 	char *filename = NULL, *basename = NULL;
 //	char adap_sig[64];
 #ifndef WINDOWS
@@ -325,6 +262,8 @@ G_MODULE_EXPORT void recover_usbadapter_firmware(GtkWidget *w, gpointer data)
 		}
 		updatelog_append("Signature OK\n");
 
+		res = update_progress_dialog_run(app, mainWindow, basename, gcn64usb_updateFunc);
+#if 0
 		/* Prepare the update dialog widgets... */
 		gtk_label_set_text(lbl_firmware_filename, basename);
 		gtk_widget_set_sensitive(GTK_WIDGET(update_dialog_btnBox), TRUE);
@@ -336,6 +275,7 @@ G_MODULE_EXPORT void recover_usbadapter_firmware(GtkWidget *w, gpointer data)
 		updatelog_append("Running the update dialog...\n");
 		res = gtk_dialog_run(firmware_update_dialog);
 		gtk_widget_hide( GTK_WIDGET(firmware_update_dialog));
+#endif
 
 		if (res == GTK_RESPONSE_OK) {
 			const char *msg = "Update succeeded.";
@@ -348,6 +288,9 @@ G_MODULE_EXPORT void recover_usbadapter_firmware(GtkWidget *w, gpointer data)
 		}
 		updatelog_append("Update dialog done\n");
 
+		rebuild_device_list_store(data);
+		syncGuiToCurrentAdapter(app);
+		app->inhibit_periodic_updates = 0;
 	}
 
 done:
@@ -369,9 +312,10 @@ G_MODULE_EXPORT void update_usbadapter_firmware(GtkWidget *w, gpointer data)
 	GtkWidget *dialog = NULL;
 	GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
 	GET_UI_ELEMENT(GtkFileFilter, hexfilter);
-	GET_UI_ELEMENT(GtkDialog, firmware_update_dialog);
-	GET_UI_ELEMENT(GtkLabel, lbl_firmware_filename);
-	GET_UI_ELEMENT(GtkButtonBox, update_dialog_btnBox);
+	GET_UI_ELEMENT(GtkWindow, mainWindow);
+	//GET_UI_ELEMENT(GtkDialog, firmware_update_dialog);
+	//GET_UI_ELEMENT(GtkLabel, lbl_firmware_filename);
+//	GET_UI_ELEMENT(GtkButtonBox, update_dialog_btnBox);
 	char *filename = NULL, *basename = NULL;
 	char adap_sig[64];
 #ifndef WINDOWS
@@ -443,6 +387,8 @@ G_MODULE_EXPORT void update_usbadapter_firmware(GtkWidget *w, gpointer data)
 			app->at90usb1287 = 0;
 		}
 
+		res = update_progress_dialog_run(app, mainWindow, basename, gcn64usb_updateFunc);
+#if 0
 		/* Prepare the update dialog widgets... */
 		gtk_label_set_text(lbl_firmware_filename, basename);
 		gtk_widget_set_sensitive(GTK_WIDGET(update_dialog_btnBox), TRUE);
@@ -454,6 +400,7 @@ G_MODULE_EXPORT void update_usbadapter_firmware(GtkWidget *w, gpointer data)
 		updatelog_append("Running the update dialog...\n");
 		res = gtk_dialog_run(firmware_update_dialog);
 		gtk_widget_hide( GTK_WIDGET(firmware_update_dialog));
+#endif
 
 		if (res == GTK_RESPONSE_OK) {
 			const char *msg = "Update succeeded.";
@@ -466,6 +413,9 @@ G_MODULE_EXPORT void update_usbadapter_firmware(GtkWidget *w, gpointer data)
 		}
 		updatelog_append("Update dialog done\n");
 
+		rebuild_device_list_store(data);
+		syncGuiToCurrentAdapter(app);
+		app->inhibit_periodic_updates = 0;
 	}
 
 done:

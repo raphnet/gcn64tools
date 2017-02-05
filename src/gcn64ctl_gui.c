@@ -290,12 +290,15 @@ G_MODULE_EXPORT void adapterSelected(GtkComboBox *cb, gpointer data)
 	GtkTreeIter iter;
 	GtkListStore *list_store = GTK_LIST_STORE( gtk_builder_get_object(app->builder, "adaptersList") );
 	GtkWidget *adapter_details = GTK_WIDGET( gtk_builder_get_object(app->builder, "adapterDetails") );
+	GET_UI_ELEMENT(GtkMenuItem, menu_manage_gc2n64);
 	struct gcn64_info *info;
 
 	if (app->current_adapter_handle) {
 		gcn64_closeDevice(app->current_adapter_handle);
 		app->current_adapter_handle = NULL;
 		gtk_widget_set_sensitive(adapter_details, FALSE);
+		gtk_widget_set_sensitive((GtkWidget*)menu_manage_gc2n64, FALSE);
+
 	}
 
 	if (gtk_combo_box_get_active_iter(cb, &iter)) {
@@ -313,6 +316,7 @@ G_MODULE_EXPORT void adapterSelected(GtkComboBox *cb, gpointer data)
 
 		syncGuiToCurrentAdapter(app);
 		gtk_widget_set_sensitive(adapter_details, TRUE);
+		gtk_widget_set_sensitive((GtkWidget*)menu_manage_gc2n64, TRUE);
 	}
 }
 
