@@ -26,7 +26,7 @@
 #include "gcn64_protocol.h"
 #include "requests.h"
 
-/* __calc_address_crc is from libdragon which is public domain. */
+/* pak_address_crc is renamed from __calc_address_crc from from libdragon which is public domain. */
 
 /**
  * @brief Calculate the 5 bit CRC on a mempak address
@@ -39,7 +39,7 @@
  *
  * @return The mempak address | CRC
  */
-static uint16_t __calc_address_crc( uint16_t address )
+uint16_t pak_address_crc( uint16_t address )
 {
     /* CRC table */
     uint16_t xor_table[16] = { 0x0, 0x0, 0x0, 0x0, 0x0, 0x15, 0x1F, 0x0B, 0x16, 0x19, 0x07, 0x0E, 0x1C, 0x0D, 0x1A, 0x01 };
@@ -120,7 +120,7 @@ int gcn64lib_mempak_readBlock(gcn64_hdl_t hdl, unsigned short addr, unsigned cha
 	uint16_t addr_crc;
 	unsigned char crc;
 
-	addr_crc = __calc_address_crc(addr);
+	addr_crc = pak_address_crc(addr);
 
 	cmd[0] = N64_EXPANSION_READ;
 	cmd[1] = addr_crc>>8; // Address high byte
@@ -147,7 +147,7 @@ int gcn64lib_mempak_detect(gcn64_hdl_t hdl)
 {
 	unsigned char buf[40];
 	int res;
-	unsigned short addr = __calc_address_crc(0x8000);
+	unsigned short addr = pak_address_crc(0x8000);
 	int first_read, second_read;
 
 	buf[0] = N64_GET_CAPABILITIES;
@@ -202,7 +202,6 @@ int gcn64lib_mempak_detect(gcn64_hdl_t hdl)
 	}
 	second_read = buf[0];
 
-
 	// Values seen here are
 	//
 	// - Official Nintendo rumble pack: 0x00
@@ -230,7 +229,7 @@ int gcn64lib_mempak_detect(gcn64_hdl_t hdl)
 
 int gcn64lib_mempak_writeBlock(gcn64_hdl_t hdl, unsigned short addr, unsigned char data[32])
 {
-	return gcn64lib_n64_expansionWrite(hdl, __calc_address_crc(addr), data, 32);
+	return gcn64lib_n64_expansionWrite(hdl, pak_address_crc(addr), data, 32);
 }
 
 /**

@@ -3,6 +3,8 @@
 
 #include "mempak.h"
 
+uint16_t pak_address_crc( uint16_t address );
+
 int gcn64lib_mempak_detect(gcn64_hdl_t hdl);
 int gcn64lib_mempak_readBlock(gcn64_hdl_t hdl, unsigned short addr, unsigned char dst[32]);
 int gcn64lib_mempak_writeBlock(gcn64_hdl_t hdl, unsigned short addr, unsigned char data[32]);
