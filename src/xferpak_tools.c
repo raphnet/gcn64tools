@@ -3,6 +3,7 @@
 #include <string.h>
 #include "xferpak.h"
 #include "xferpak_tools.h"
+#include "zlib.h"
 
 static int showProgress(xferpak_progress *progress)
 {
@@ -20,8 +21,8 @@ int gcn64lib_xferpak_writeRAM_from_file(gcn64_hdl_t hdl, int channel, const char
 {
 	xferpak *xpak;
 	unsigned char *mem;
-	long mem_size;
-	FILE *fptr;
+	int mem_size, read_size;
+	gzFile fptr;
 	struct gbcart_info cartinfo;
 	int res;
 	xferpak_progress progress = {
@@ -29,54 +30,24 @@ int gcn64lib_xferpak_writeRAM_from_file(gcn64_hdl_t hdl, int channel, const char
 		.update = showProgress,
 	};
 
-	/* Load file */
-	fptr = fopen(input_filename, "rb");
-	if (!fptr) {
-		perror("fopen");
-		return -1;
-	}
-
-	fseek(fptr, 0, SEEK_END);
-	mem_size = ftell(fptr);
-	fseek(fptr, 0, SEEK_SET);
-
-	mem = malloc(mem_size);
-	if (!mem) {
-		perror("could not allocate buffer to load file");
-		fclose(fptr);
-		return -1;
-	}
-	if (1 != fread(mem, mem_size, 1, fptr)) {
-		perror("could not read file");
-		free(mem);
-		fclose(fptr);
-		return -1;
-	}
-	fclose(fptr);
-
-	printf("Loaded '%s' (%ld bytes)\n", input_filename, mem_size);
-
 	/* Prepare xferpak */
 	xpak = gcn64lib_xferpak_init(hdl, channel);
 	if (!xpak) {
-		free(mem);
 		return -1;
 	}
 
 	/* Verify cartridge presence, check header to confirm presence of RAM and
-	 * make sure the size matches the file size. */
+	 * (uncompressed) file size to expect. */
 	res = xferpak_gb_readInfo(xpak, &cartinfo);
 	if (res < 0) {
 		fprintf(stderr, "Failed to read cartridge header\n");
 		xferpak_free(xpak);
-		free(mem);
 		return -1;
 	}
 
 	if (!(cartinfo.flags & GB_FLAG_RAM)) {
 		fprintf(stderr, "Current cartridge does not have RAM\n");
 		xferpak_free(xpak);
-		free(mem);
 		return -1;
 	}
 
@@ -84,13 +55,43 @@ int gcn64lib_xferpak_writeRAM_from_file(gcn64_hdl_t hdl, int channel, const char
 		fprintf(stderr, "Warning: Current cartridge does not have a battery. Writing probably makes no sense...\n");
 	}
 
-	if (mem_size != cartinfo.ram_size) {
-		// TODO : Detect gz files (for mednafen .sav format)
-		fprintf(stderr, "File size does not match cartridge memory size\n");
+	/* Allocate memory buffer */
+	mem_size = cartinfo.ram_size;
+	mem = malloc(mem_size);
+	if (!mem) {
+		perror("could not allocate buffer to load file");
 		xferpak_free(xpak);
-		free(mem);
 		return -1;
 	}
+
+	/* Load file */
+	fptr = gzopen(input_filename, "rb");
+	if (!fptr) {
+		perror("fopen");
+		free(mem);
+		xferpak_free(xpak);
+		return -1;
+	}
+
+	read_size = gzread(fptr, mem, mem_size);
+	if (read_size < 0) {
+		fprintf(stderr, "Failed to read file: %s\n", gzerror(fptr, NULL));
+		gzclose(fptr);
+		free(mem);
+		xferpak_free(xpak);
+		return -1;
+	}
+
+	gzclose(fptr);
+
+	if (mem_size != cartinfo.ram_size) {
+		fprintf(stderr, "File size does not match cartridge memory size\n");
+		free(mem);
+		xferpak_free(xpak);
+		return -1;
+	}
+
+	printf("Loaded '%s' (%d bytes)\n", input_filename, mem_size);
 
 	xferpak_setProgressStruct(xpak, &progress);
 
