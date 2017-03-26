@@ -14,17 +14,18 @@ void printGBCartType(unsigned char type)
 
 	flags = getGBCartTypeFlags(type);
 	if (!GB_MBC_MASK(flags)) {
-		fputs("ROM", stdout);
+		fputs("ROM ONLY", stdout);
 	} else {
+		fputs("ROM", stdout);
 		switch(flags & 0xFF)
 		{
-			case GB_FLAG_MBC1: fputs("MBC1", stdout); break;
-			case GB_FLAG_MBC2: fputs("MBC2", stdout); break;
-			case GB_FLAG_MBC3: fputs("MBC3", stdout); break;
-			case GB_FLAG_MBC4: fputs("MBC4", stdout); break;
-			case GB_FLAG_MBC5: fputs("MBC5", stdout); break;
-			case GB_FLAG_HUC1: fputs("HUC1", stdout); break;
-			case GB_FLAG_HUC3: fputs("HUC3", stdout); break;
+			case GB_FLAG_MBC1: fputs("+MBC1", stdout); break;
+			case GB_FLAG_MBC2: fputs("+MBC2", stdout); break;
+			case GB_FLAG_MBC3: fputs("+MBC3", stdout); break;
+			case GB_FLAG_MBC4: fputs("+MBC4", stdout); break;
+			case GB_FLAG_MBC5: fputs("+MBC5", stdout); break;
+			case GB_FLAG_HUC1: fputs("+HUC1", stdout); break;
+			case GB_FLAG_HUC3: fputs("+HUC3", stdout); break;
 		}
 	}
 	if (flags & GB_FLAG_RUMBLE) {
