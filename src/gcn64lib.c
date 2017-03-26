@@ -285,7 +285,7 @@ int gcn64lib_bootloader(gcn64_hdl_t hdl)
 	return 0;
 }
 
-int gcn64lib_n64_expansionWrite(gcn64_hdl_t hdl, unsigned short addr, unsigned char *data, int len)
+int gcn64lib_n64_expansionWrite(gcn64_hdl_t hdl, unsigned short addr, const unsigned char *data, int len)
 {
 	unsigned char cmd[3 + len];
 	int cmdlen;

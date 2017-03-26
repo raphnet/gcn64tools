@@ -227,7 +227,7 @@ int gcn64lib_mempak_detect(gcn64_hdl_t hdl)
 	}
 }
 
-int gcn64lib_mempak_writeBlock(gcn64_hdl_t hdl, unsigned short addr, unsigned char data[32])
+int gcn64lib_mempak_writeBlock(gcn64_hdl_t hdl, unsigned short addr, const unsigned char data[32])
 {
 	return gcn64lib_n64_expansionWrite(hdl, pak_address_crc(addr), data, 32);
 }
