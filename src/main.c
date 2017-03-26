@@ -1,5 +1,5 @@
-/*	gc_n64_usb : Gamecube or N64 controller to USB adapter firmware
-	Copyright (C) 2007-2015  Raphael Assenat <raph@raphnet.net>
+/*	gc_n64_usb : Gamecube/N64 to USB adapter management tools
+	Copyright (C) 2007-2017  Raphael Assenat <raph@raphnet.net>
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@
 #include "gcn64_protocol.h"
 #include "perftest.h"
 #include "biosensor.h"
+#include "xferpak.h"
+#include "xferpak_tools.h"
 
 static void printUsage(void)
 {
@@ -81,6 +83,12 @@ static void printUsage(void)
 	//printf("  --n64_control_rumble value         Turn rumble on when value != 0\n");
 	printf("  --biosensor                        Display heart beat using bio sensor\n");
 	printf("  --perftest                         Do a performance test (raw IO timing)\n");
+	printf("\n");
+	printf("Transfer PAK commands:\n");
+	printf("  --xfer_info                        Display information on the inserted gameboy cartridge\n");
+	printf("  --xfer_dump_rom file               Dump a gameboy cartridge ROM to a file.\n");
+	printf("  --xfer_dump_ram file               Dump a gameboy cartridge RAM to a file.\n");
+	printf("  --xfer_write_ram file              Write file to a gameboy cartridge RAM.\n");
 	printf("\n");
 	printf("GC to N64 adapter commands: (For GC to N64 adapter connected to GC/N64 to USB adapter)\n");
 	printf("  --gc_to_n64_info                   Display info on adapter (version, config, etc)\n");
@@ -138,6 +146,10 @@ static void printUsage(void)
 #define OPT_N64_CONTROL_RUMBLE			329
 #define OPT_PERFTEST					330
 #define OPT_BIOSENSOR					331
+#define OPT_XFERPAK_INFO				332
+#define OPT_XFERPAK_DUMP_ROM			333
+#define OPT_XFERPAK_DUMP_RAM			334
+#define OPT_XFERPAK_WRITE_RAM			335
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -180,6 +192,10 @@ struct option longopts[] = {
 	{ "n64_control_rumble", 1, NULL, OPT_N64_CONTROL_RUMBLE },
 	{ "perftest", 0, NULL, OPT_PERFTEST },
 	{ "biosensor", 0, NULL, OPT_BIOSENSOR },
+	{ "xfer_info", 0, NULL, OPT_XFERPAK_INFO },
+	{ "xfer_dump_rom", required_argument, NULL, OPT_XFERPAK_DUMP_ROM },
+	{ "xfer_dump_ram", required_argument, NULL, OPT_XFERPAK_DUMP_RAM },
+	{ "xfer_write_ram", required_argument, NULL, OPT_XFERPAK_WRITE_RAM },
 	{ },
 };
 
@@ -228,6 +244,7 @@ int main(int argc, char **argv)
 	const char *outfile = NULL;
 	const char *infile = NULL;
 	int channel = 0;
+	int res;
 
 	while((opt = getopt_long(argc, argv, short_optstr, longopts, NULL)) != -1) {
 		switch(opt)
@@ -422,6 +439,31 @@ int main(int argc, char **argv)
 
 			case OPT_BIOSENSOR:
 				gcn64lib_biosensorMonitor(hdl);
+				break;
+
+			case OPT_XFERPAK_INFO:
+				gcn64lib_xferpak_printInfo(hdl, channel);
+				break;
+
+			case OPT_XFERPAK_DUMP_ROM:
+				res = gcn64lib_xferpak_readROM_to_file(hdl, channel, optarg);
+				if (res == 0) {
+					printf("Wrote %s\n", optarg);
+				}
+				break;
+
+			case OPT_XFERPAK_DUMP_RAM:
+				res = gcn64lib_xferpak_readRAM_to_file(hdl, channel, optarg);
+				if (res == 0) {
+					printf("Wrote %s\n", optarg);
+				}
+				break;
+
+			case OPT_XFERPAK_WRITE_RAM:
+				res = gcn64lib_xferpak_writeRAM_from_file(hdl, channel, optarg, 1);
+				if (res == 0) {
+					printf("Wrote %s to cartridge\n", optarg);
+				}
 				break;
 
 			case OPT_N64_GETSTATUS:

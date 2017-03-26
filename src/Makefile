@@ -38,7 +38,7 @@ all: $(PROGS) gui.xml
 gcn64ctl_gui: $(GUI_OBJS) gcn64.o gcn64lib.o gc2n64_adapter.o delay.o hexdump.o ihex.o ihex_signature.o mempak_gcn64usb.o $(MEMPAKLIB_OBJS)
 	$(LD) $^ $(LDFLAGS) $(GTK_LDFLAGS) -o $@ $(EXTRA_LDFLAGS)
 
-gcn64ctl: main.o gcn64.o gcn64lib.o hexdump.o gc2n64_adapter.o ihex.o delay.o mempak_gcn64usb.o perftest.o biosensor.o $(MEMPAKLIB_OBJS)
+gcn64ctl: main.o gcn64.o gcn64lib.o hexdump.o gc2n64_adapter.o ihex.o delay.o mempak_gcn64usb.o perftest.o biosensor.o xferpak.o xferpak_tools.o gbcart.o $(MEMPAKLIB_OBJS)
 	$(LD) $^ $(LDFLAGS) -o $@
 
 app.o: app.rc icon.ico
