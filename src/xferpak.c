@@ -272,6 +272,21 @@ int xferpak_gb_mbc5_select_rom_bank(xferpak *xpak, int bank)
 	return 0;
 }
 
+int xferpak_gb_mbc1_select_rom_bank(xferpak *xpak, int bank)
+{
+	unsigned char buf[32];
+	int res;
+
+	// 0x2000 Lower 8 bits for ROM bank number
+	memset(buf, bank & 0xff, sizeof(buf));
+	res = xferpak_writeCart(xpak, 0x2000, sizeof(buf), buf);
+	if (res<0) {
+		return res;
+	}
+
+	return 0;
+}
+
 int xferpak_gb_mbc1235_enable_ram(xferpak *xpak, int enable)
 {
 	unsigned char buf[32];
@@ -287,7 +302,7 @@ int xferpak_gb_mbc1235_enable_ram(xferpak *xpak, int enable)
 	return 0;
 }
 
-int xferpak_gb_mbc5_select_ram_bank(xferpak *xpak, int bank)
+int xferpak_gb_mbc135_select_ram_bank(xferpak *xpak, int bank)
 {
 	unsigned char buf[32];
 	int res;
@@ -302,7 +317,7 @@ int xferpak_gb_mbc5_select_ram_bank(xferpak *xpak, int bank)
 	return 0;
 }
 
-int xferpak_gb_mbc5_writeRAM(xferpak *xpak, unsigned int ram_size, const unsigned char *data)
+int xferpak_gb_mbc35_writeRAM(xferpak *xpak, unsigned int ram_size, const unsigned char *data)
 {
 	int i, res;
 	unsigned char bankbuf[0x2000]; // 8K banks
@@ -324,7 +339,7 @@ int xferpak_gb_mbc5_writeRAM(xferpak *xpak, unsigned int ram_size, const unsigne
 		if ((i/sizeof(bankbuf)) != cur_bank) {
 			cur_bank = i/sizeof(bankbuf);
 //			printf("Selecting MBC5 RAM bank 0x%x\n", cur_bank);
-			res = xferpak_gb_mbc5_select_ram_bank(xpak, cur_bank);
+			res = xferpak_gb_mbc135_select_ram_bank(xpak, cur_bank);
 			if (res < 0) {
 				fprintf(stderr, "failed to set mbc5 ram bank\n");
 				xferpak_gb_mbc1235_enable_ram(xpak, 0);
@@ -348,7 +363,7 @@ int xferpak_gb_mbc5_writeRAM(xferpak *xpak, unsigned int ram_size, const unsigne
 	return 0;
 }
 
-int xferpak_gb_mbc5_readRAM(xferpak *xpak, unsigned int ram_size, unsigned char *dstbuf)
+int xferpak_gb_mbc35_readRAM(xferpak *xpak, unsigned int ram_size, unsigned char *dstbuf)
 {
 	int i, res;
 	unsigned char bankbuf[0x2000]; // 8K banks
@@ -370,7 +385,7 @@ int xferpak_gb_mbc5_readRAM(xferpak *xpak, unsigned int ram_size, unsigned char 
 		if ((i/sizeof(bankbuf)) != cur_bank) {
 			cur_bank = i/sizeof(bankbuf);
 //			printf("Selecting MBC5 RAM bank 0x%x\n", cur_bank);
-			res = xferpak_gb_mbc5_select_ram_bank(xpak, cur_bank);
+			res = xferpak_gb_mbc135_select_ram_bank(xpak, cur_bank);
 			if (res < 0) {
 				fprintf(stderr, "failed to set mbc5 ram bank\n");
 				xferpak_gb_mbc1235_enable_ram(xpak, 0);
@@ -425,6 +440,48 @@ int xferpak_gb_mbc5_readROM(xferpak *xpak, unsigned int rom_size, unsigned char 
 
 	return 0;
 }
+
+int xferpak_gb_mbc3_readROM(xferpak *xpak, unsigned int rom_size, unsigned char *dstbuf)
+{
+	int i, res;
+	unsigned char bankbuf[0x4000];
+	int cur_bank = -1;
+
+	/* First read bank 00 at its fixed address. */
+	res = xferpak_readCart(xpak, 0x0000, sizeof(bankbuf), bankbuf);
+	if (res < 0) {
+		fprintf(stderr, "transfer pak io error (%d)\n", res);
+		return -1;
+	}
+	memcpy(dstbuf, bankbuf, sizeof(bankbuf));
+	dstbuf += sizeof(bankbuf);
+
+	/* Now read all other banks */
+	for (i=sizeof(bankbuf); i<rom_size; i+= sizeof(bankbuf))
+	{
+		if ((i/sizeof(bankbuf)) != cur_bank) {
+			cur_bank = i/sizeof(bankbuf);
+			//printf("Selecting MBC5 ROM bank 0x%x\n", cur_bank);
+			res = xferpak_gb_mbc1_select_rom_bank(xpak, cur_bank);
+			if (res < 0) {
+				fprintf(stderr, "failed to set mbc5 bank\n");
+				return -1;
+			}
+		}
+
+		res = xferpak_readCart(xpak, 0x4000, sizeof(bankbuf), bankbuf);
+		if (res < 0) {
+			fprintf(stderr, "transfer pak io error (%d)\n", res);
+			return -1;
+		}
+
+		memcpy(dstbuf, bankbuf, sizeof(bankbuf));
+		dstbuf += sizeof(bankbuf);
+	}
+
+	return 0;
+}
+
 
 int xferpak_gb_readInfo(xferpak *xpak, struct gbcart_info *inf)
 {
@@ -524,6 +581,9 @@ static int xferpak_gb_readMEMORY(xferpak *xpak, struct gbcart_info *inf, int typ
 			case GB_FLAG_MBC5:
 				res = xferpak_gb_mbc5_readROM(xpak, memory_size, mem);
 				break;
+			case GB_FLAG_MBC3:
+				res = xferpak_gb_mbc3_readROM(xpak, memory_size, mem);
+				break;
 			default:
 				fprintf(stderr, "Cartridge type not yet supported\n");
 				free(mem);
@@ -533,8 +593,9 @@ static int xferpak_gb_readMEMORY(xferpak *xpak, struct gbcart_info *inf, int typ
 	else {
 		switch(GB_MBC_MASK(cartinfo.flags))
 		{
+			case GB_FLAG_MBC3:
 			case GB_FLAG_MBC5:
-				res = xferpak_gb_mbc5_readRAM(xpak, memory_size, mem);
+				res = xferpak_gb_mbc35_readRAM(xpak, memory_size, mem);
 				break;
 			default:
 				fprintf(stderr, "Cartridge type not yet supported\n");
@@ -578,8 +639,9 @@ int xferpak_gb_writeRAM(xferpak *xpak, unsigned int mem_size, const unsigned cha
 
 	switch(GB_MBC_MASK(cartinfo.flags))
 	{
+		case GB_FLAG_MBC3:
 		case GB_FLAG_MBC5:
-			res = xferpak_gb_mbc5_writeRAM(xpak, mem_size, mem);
+			res = xferpak_gb_mbc35_writeRAM(xpak, mem_size, mem);
 			break;
 		default:
 			fprintf(stderr, "Cartridge type not yet supported\n");

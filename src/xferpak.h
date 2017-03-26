@@ -36,12 +36,14 @@ int xferpak_readCart(xferpak *xpak, unsigned int start_addr, unsigned int len, u
 /* Gamecube MBC chips operations */
 int xferpak_gb_mbc5_select_rom_bank(xferpak *xpak, int bank);
 int xferpak_gb_mbc1235_enable_ram(xferpak *xpak, int enable);
-int xferpak_gb_mbc5_select_ram_bank(xferpak *xpak, int bank);
+int xferpak_gb_mbc1_select_rom_bank(xferpak *xpak, int bank);
+int xferpak_gb_mbc135_select_ram_bank(xferpak *xpak, int bank);
 
 /* RAM and ROM IO for various MBC chips */
-int xferpak_gb_mbc5_readRAM(xferpak *xpak, unsigned int ram_size, unsigned char *dstbuf);
+int xferpak_gb_mbc3_readROM(xferpak *xpak, unsigned int rom_size, unsigned char *dstbuf);
+int xferpak_gb_mbc35_readRAM(xferpak *xpak, unsigned int ram_size, unsigned char *dstbuf);
 int xferpak_gb_mbc5_readROM(xferpak *xpak, unsigned int rom_size, unsigned char *dstbuf);
-int xferpak_gb_mbc5_writeRAM(xferpak *xpak, unsigned int ram_size, const unsigned char *data);
+int xferpak_gb_mbc35_writeRAM(xferpak *xpak, unsigned int ram_size, const unsigned char *data);
 
 /* * * High level cartridge operations * * */
 
