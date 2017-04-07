@@ -27,6 +27,11 @@ struct gbcart_info {
 	int flags;
 };
 
+/** \brief Return a string describing the cartridge type.
+ *
+ * \return Pointer to string. Will be overwritten by subsequent calls.
+ */
+const char *getCartTypeString(unsigned char type);
 void printGBCartType(unsigned char type);
 int getGBCartROMSize(unsigned char code);
 int getGBCartRAMSize(unsigned char code);

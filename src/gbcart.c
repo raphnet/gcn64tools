@@ -1,45 +1,62 @@
 #include <stdio.h>
+#include <string.h>
 #include "gbcart.h"
 
-void printGBCartType(unsigned char type)
+// Based on pandocs.txt, "The Cartridge Header" section
+
+const char *getCartTypeString(unsigned char type)
 {
-	// Based on pandocs.txt, "The Cartridge Header" section
+	// Longest possible string today:
+	//
+	// "ROM+MBCx+RUMBLE+TIMER+RAM+BATTERY"
+	// (33 bytes)
+	static char cbuf[64];
 	int flags;
+
+	cbuf[0] = 0;
 
 	switch(type)
 	{
-		case 0xFC: fputs("POCKET CAMERA", stdout);
-		case 0xFD: fputs("BANDAI TAMA5", stdout);
+		case 0xFC: strcat(cbuf, "POCKET CAMERA"); break;
+		case 0xFD: strcat(cbuf, "BANDAI TAMA5"); break;
 	}
 
 	flags = getGBCartTypeFlags(type);
 	if (!GB_MBC_MASK(flags)) {
-		fputs("ROM ONLY", stdout);
+		strcat(cbuf, "ROM ONLY");
 	} else {
-		fputs("ROM", stdout);
+		strcat(cbuf, "ROM");
+
 		switch(flags & 0xFF)
 		{
-			case GB_FLAG_MBC1: fputs("+MBC1", stdout); break;
-			case GB_FLAG_MBC2: fputs("+MBC2", stdout); break;
-			case GB_FLAG_MBC3: fputs("+MBC3", stdout); break;
-			case GB_FLAG_MBC4: fputs("+MBC4", stdout); break;
-			case GB_FLAG_MBC5: fputs("+MBC5", stdout); break;
-			case GB_FLAG_HUC1: fputs("+HUC1", stdout); break;
-			case GB_FLAG_HUC3: fputs("+HUC3", stdout); break;
+			case GB_FLAG_MBC1: strcat(cbuf, "+MBC1"); break;
+			case GB_FLAG_MBC2: strcat(cbuf, "+MBC2"); break;
+			case GB_FLAG_MBC3: strcat(cbuf, "+MBC3"); break;
+			case GB_FLAG_MBC4: strcat(cbuf, "+MBC4"); break;
+			case GB_FLAG_MBC5: strcat(cbuf, "+MBC5"); break;
+			case GB_FLAG_HUC1: strcat(cbuf, "+HUC1"); break;
+			case GB_FLAG_HUC3: strcat(cbuf, "+HUC3"); break;
 		}
 	}
 	if (flags & GB_FLAG_RUMBLE) {
-		fputs("+RUMBLE", stdout);
+		strcat(cbuf, "+RUMBLE");
 	}
 	if (flags & GB_FLAG_TIMER) {
-		fputs("+TIMER", stdout);
+		strcat(cbuf, "+TIMER");
 	}
 	if (flags & GB_FLAG_RAM) {
-		fputs("+RAM", stdout);
+		strcat(cbuf, "+RAM");
 	}
 	if (flags & GB_FLAG_BATTERY) {
-		fputs("+BATTERY", stdout);
+		strcat(cbuf, "+BATTERY");
 	}
+
+	return cbuf;
+}
+
+void printGBCartType(unsigned char type)
+{
+	fputs(getCartTypeString(type), stdout);
 }
 
 int getGBCartROMSize(unsigned char code)
