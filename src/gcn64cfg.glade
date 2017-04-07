@@ -381,6 +381,7 @@ Author: Raphaël Assénat
                     <child>
                       <object class="GtkMenuItem" id="menuitem_display_cart_info">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Display cartridge information</property>
                         <property name="use_underline">True</property>
@@ -390,6 +391,7 @@ Author: Raphaël Assénat
                     <child>
                       <object class="GtkMenuItem" id="menuitem_read_cart_rom">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Read cartridge ROM to file...</property>
                         <property name="use_underline">True</property>
@@ -399,6 +401,7 @@ Author: Raphaël Assénat
                     <child>
                       <object class="GtkMenuItem" id="menuitem_read_cart_ram">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Read cartridge RAM to file...</property>
                         <property name="use_underline">True</property>
@@ -408,6 +411,7 @@ Author: Raphaël Assénat
                     <child>
                       <object class="GtkMenuItem" id="menuitem_write_cart_ram">
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Write file to cartridge RAM...</property>
                         <property name="use_underline">True</property>
