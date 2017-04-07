@@ -509,7 +509,7 @@ main( int    argc,
     app.builder = gtk_builder_new();
     /* Load UI from file. If error occurs, report it and quit application.
      * Replace "tut.glade" with your saved project. */
-    if( ! gtk_builder_add_from_file( app.builder, "gui.xml", &error ) )
+    if( ! gtk_builder_add_from_resource( app.builder, "/com/raphnet/gcn64ctl_gui/gui.xml", &error ) )
     {
         g_warning( "%s", error->message );
         g_free( error );

@@ -21,19 +21,22 @@ endif
 
 CFLAGS=-Wall -g `pkg-config $(HIDAPI_NAME) zlib --cflags` --std=c99 $(PLATFORM_CFLAGS) -DVERSION_STR=$(VERSION_STR)
 LDFLAGS=`pkg-config $(HIDAPI_NAME) zlib --libs` -g -lz
-GTK_CFLAGS=`pkg-config --cflags gtk+-3.0 gmodule-2.0`
-GTK_LDFLAGS=`pkg-config --libs gtk+-3.0 gmodule-2.0`
+GTK_CFLAGS=`pkg-config --cflags gtk+-3.0 gmodule-2.0 gio-2.0`
+GTK_LDFLAGS=`pkg-config --libs gtk+-3.0 gmodule-2.0 gio-2.0`
+GLIB_CRES=$(shell pkg-config --variable=glib_compile_resources gio-2.0)
+RESOURCES=$(shell $(GLIB_CRES) --sourcedir=. --generate-dependencies resources.xml)
 
 PREFIX=/usr/local
 
 PROGS=gcn64ctl mempak_ls mempak_format mempak_extract_note mempak_insert_note mempak_rm mempak_convert gcn64ctl_gui
 MEMPAKLIB_OBJS=mempak.o mempak_fs.o $(COMPAT_OBJS)
-GUI_OBJS=gcn64ctl_gui.o gui_mpkedit.o gui_fwupd.o gui_logger.o gui_dfu_programmer.o gui_gc2n64_manager.o gui_update_progress_dialog.o gui_xferpak.o
+GUI_OBJS=gcn64ctl_gui.o gui_mpkedit.o gui_fwupd.o gui_logger.o gui_dfu_programmer.o gui_gc2n64_manager.o gui_update_progress_dialog.o gui_xferpak.o resources.o
 
 
 .PHONY : clean install release_windows
 
 all: $(PROGS) gui.xml
+
 
 gcn64ctl_gui: $(GUI_OBJS) gcn64.o gcn64lib.o gc2n64_adapter.o delay.o hexdump.o ihex.o ihex_signature.o mempak_gcn64usb.o xferpak.o xferpak_tools.o gbcart.o uiio.o uiio_gtk.o $(MEMPAKLIB_OBJS)
 	$(LD) $^ $(LDFLAGS) $(GTK_LDFLAGS) -o $@ $(EXTRA_LDFLAGS)
@@ -46,6 +49,12 @@ app.o: app.rc icon.ico
 
 gui.xml: gcn64cfg.glade
 	grep -v requires gcn64cfg.glade > gui.xml
+
+resources.c: $(RESOURCES)
+	$(GLIB_CRES) $(RES_FILE) --target=$@ --sourcedir=. --generate-source resources.xml
+
+resources.o: resources.c
+	$(CC) $(CFLAGS) $(GTK_CFLAGS) -c $<
 
 gcn64ctl_gui.o: gcn64ctl_gui.c gcn64ctl_gui.h
 	$(CC) $(CFLAGS) $(GTK_CFLAGS) -c $<
