@@ -125,10 +125,12 @@ void syncGuiToCurrentAdapter(struct application *app)
 	GET_UI_ELEMENT(GtkLabel, label_firmware_version);
 	GET_UI_ELEMENT(GtkLabel, label_usb_id);
 	GET_UI_ELEMENT(GtkLabel, label_device_path);
+	GET_UI_ELEMENT(GtkLabel, label_n_ports);
 	GET_UI_ELEMENT(GtkSpinButton, pollInterval0);
 	int i;
 	struct gcn64_info *info = &app->current_adapter_info;
 	char adap_sig[64];
+	char ports_str[32];
 
 	if (!app->current_adapter_handle) {
 		deselect_adapter(app);
@@ -168,6 +170,9 @@ void syncGuiToCurrentAdapter(struct application *app)
 	gtk_label_set_text(label_usb_id, (char*)buf);
 
 	gtk_label_set_text(label_device_path, info->str_path);
+
+	sprintf(ports_str, "%d", info->caps.n_raw_channels);
+	gtk_label_set_text(label_n_ports, ports_str);
 
 	periodic_updater(app);
 }
