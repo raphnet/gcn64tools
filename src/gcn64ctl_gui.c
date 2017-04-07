@@ -76,6 +76,10 @@ static gboolean periodic_updater(gpointer data)
 	GET_UI_ELEMENT(GtkButton, btn_read_mempak);
 	GET_UI_ELEMENT(GtkButton, btn_write_mempak);
 	GET_UI_ELEMENT(GtkButton, btn_rumble_test);
+	GET_UI_ELEMENT(GtkWidget, menuitem_display_cart_info);
+	GET_UI_ELEMENT(GtkWidget, menuitem_read_cart_rom);
+	GET_UI_ELEMENT(GtkWidget, menuitem_read_cart_ram);
+	GET_UI_ELEMENT(GtkWidget, menuitem_write_cart_ram);
 
 	if (app->current_adapter_handle && !app->inhibit_periodic_updates) {
 		app->controller_type = gcn64lib_getControllerType(app->current_adapter_handle, 0);
@@ -87,11 +91,21 @@ static gboolean periodic_updater(gpointer data)
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_read_mempak), TRUE);
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_write_mempak), TRUE);
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_rumble_test), TRUE);
+
+				gtk_widget_set_sensitive(menuitem_display_cart_info, TRUE);
+				gtk_widget_set_sensitive(menuitem_read_cart_rom, TRUE);
+				gtk_widget_set_sensitive(menuitem_read_cart_ram, TRUE);
+				gtk_widget_set_sensitive(menuitem_write_cart_ram, TRUE);
 				break;
 			case CTL_TYPE_GC:
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_rumble_test), TRUE);
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_read_mempak), FALSE);
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_write_mempak), FALSE);
+
+				gtk_widget_set_sensitive(menuitem_display_cart_info, FALSE);
+				gtk_widget_set_sensitive(menuitem_read_cart_rom, FALSE);
+				gtk_widget_set_sensitive(menuitem_read_cart_ram, FALSE);
+				gtk_widget_set_sensitive(menuitem_write_cart_ram, FALSE);
 				break;
 
 			default:
@@ -99,6 +113,11 @@ static gboolean periodic_updater(gpointer data)
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_read_mempak), FALSE);
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_write_mempak), FALSE);
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_rumble_test), FALSE);
+
+				gtk_widget_set_sensitive(menuitem_display_cart_info, FALSE);
+				gtk_widget_set_sensitive(menuitem_read_cart_rom, FALSE);
+				gtk_widget_set_sensitive(menuitem_read_cart_ram, FALSE);
+				gtk_widget_set_sensitive(menuitem_write_cart_ram, FALSE);
 				break;
 		}
 

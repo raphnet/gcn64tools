@@ -369,7 +369,7 @@ Author: Raphaël Assénat
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem" id="menuitem9">
+              <object class="GtkMenuItem" id="menuitem_transferpak">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Transfer Pak</property>
@@ -379,7 +379,7 @@ Author: Raphaël Assénat
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkMenuItem" id="menuitem14">
+                      <object class="GtkMenuItem" id="menuitem_display_cart_info">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Display cartridge information</property>
@@ -388,7 +388,7 @@ Author: Raphaël Assénat
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="menuitem10">
+                      <object class="GtkMenuItem" id="menuitem_read_cart_rom">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Read cartridge ROM to file...</property>
@@ -397,7 +397,7 @@ Author: Raphaël Assénat
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="menuitem11">
+                      <object class="GtkMenuItem" id="menuitem_read_cart_ram">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Read cartridge RAM to file...</property>
@@ -406,7 +406,7 @@ Author: Raphaël Assénat
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="menuitem13">
+                      <object class="GtkMenuItem" id="menuitem_write_cart_ram">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Write file to cartridge RAM...</property>
@@ -662,7 +662,6 @@ Author: Raphaël Assénat
                           <object class="GtkLabel" id="label_n_ports">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">label</property>
                           </object>
                           <packing>
                             <property name="left_attach">1</property>
