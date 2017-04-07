@@ -218,6 +218,8 @@ G_MODULE_EXPORT void mpke_export_note(GtkWidget *win, gpointer data)
 				} else {
 					printf("Note saved to %s\n", filename);
 				}
+
+				g_free(filename);
 			}
 
 			gtk_widget_destroy(dialog);
@@ -280,10 +282,11 @@ G_MODULE_EXPORT void mpke_insert_note(GtkWidget *win, gpointer data)
 			mpke_syncModel(app);
 			mpke_syncTitle(app);
 		}
+
+		g_free(filename);
 	}
 
 	gtk_widget_destroy(dialog);
-
 }
 
 G_MODULE_EXPORT void mpke_new(GtkWidget *win, gpointer data)
@@ -327,6 +330,8 @@ G_MODULE_EXPORT void mpke_open(GtkWidget *win, gpointer data)
 		} else {
 			errorPopup(app, "Failed to load mempak");
 		}
+
+		g_free(filename);
 	}
 
 	gtk_widget_destroy(dialog);
@@ -379,6 +384,8 @@ G_MODULE_EXPORT void mpke_saveas(GtkWidget *win, gpointer data)
 		} else {
 			errorPopup(app, "Unknown file format specified");
 		}
+
+		g_free(filename);
 	}
 
 	gtk_widget_destroy(dialog);
