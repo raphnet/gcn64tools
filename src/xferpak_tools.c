@@ -4,20 +4,9 @@
 #include "xferpak.h"
 #include "xferpak_tools.h"
 #include "zlib.h"
+#include "uiio.h"
 
-static int showProgress(xferpak_progress *progress)
-{
-	printf("%s : 0x%04x / 0x%04x (%.2f%%)\r",
-			progress->caption,
-			progress->cur_addr,
-			progress->max_addr,
-			progress->cur_addr / (float)progress->max_addr * 100.0);
-	fflush(stdout);
-
-	return 0;
-}
-
-int gcn64lib_xferpak_writeRAM_from_file(gcn64_hdl_t hdl, int channel, const char *input_filename, int verify)
+int gcn64lib_xferpak_writeRAM_from_file(gcn64_hdl_t hdl, int channel, const char *input_filename, int verify, uiio *u)
 {
 	xferpak *xpak;
 	unsigned char *mem;
@@ -25,13 +14,12 @@ int gcn64lib_xferpak_writeRAM_from_file(gcn64_hdl_t hdl, int channel, const char
 	gzFile fptr;
 	struct gbcart_info cartinfo;
 	int res;
-	xferpak_progress progress = {
-		.caption = "Writing RAM...",
-		.update = showProgress,
-	};
+	u = getUIIO(u);
+	u->caption = "Writing RAM...",
+	u->multi_progress = verify;
 
 	/* Prepare xferpak */
-	xpak = gcn64lib_xferpak_init(hdl, channel);
+	xpak = gcn64lib_xferpak_init(hdl, channel, u);
 	if (!xpak) {
 		return -1;
 	}
@@ -40,26 +28,26 @@ int gcn64lib_xferpak_writeRAM_from_file(gcn64_hdl_t hdl, int channel, const char
 	 * (uncompressed) file size to expect. */
 	res = xferpak_gb_readInfo(xpak, &cartinfo);
 	if (res < 0) {
-		fprintf(stderr, "Failed to read cartridge header\n");
+		u->error("Failed to read cartridge header");
 		xferpak_free(xpak);
 		return -1;
 	}
 
 	if (!(cartinfo.flags & GB_FLAG_RAM)) {
-		fprintf(stderr, "Current cartridge does not have RAM\n");
+		u->error("Current cartridge does not have RAM");
 		xferpak_free(xpak);
 		return -1;
 	}
 
 	if (!(cartinfo.flags & GB_FLAG_BATTERY)) {
-		fprintf(stderr, "Warning: Current cartridge does not have a battery. Writing probably makes no sense...\n");
+		u->error("Warning: Current cartridge does not have a battery. Writing probably makes no sense...");
 	}
 
 	/* Allocate memory buffer */
 	mem_size = cartinfo.ram_size;
 	mem = malloc(mem_size);
 	if (!mem) {
-		perror("could not allocate buffer to load file");
+		u->perror("could not allocate buffer to load file");
 		xferpak_free(xpak);
 		return -1;
 	}
@@ -67,7 +55,7 @@ int gcn64lib_xferpak_writeRAM_from_file(gcn64_hdl_t hdl, int channel, const char
 	/* Load file */
 	fptr = gzopen(input_filename, "rb");
 	if (!fptr) {
-		perror("fopen");
+		u->perror("fopen");
 		free(mem);
 		xferpak_free(xpak);
 		return -1;
@@ -75,7 +63,7 @@ int gcn64lib_xferpak_writeRAM_from_file(gcn64_hdl_t hdl, int channel, const char
 
 	read_size = gzread(fptr, mem, mem_size);
 	if (read_size < 0) {
-		fprintf(stderr, "Failed to read file: %s\n", gzerror(fptr, NULL));
+		u->error("Failed to read file: %s\n", gzerror(fptr, NULL));
 		gzclose(fptr);
 		free(mem);
 		xferpak_free(xpak);
@@ -85,15 +73,13 @@ int gcn64lib_xferpak_writeRAM_from_file(gcn64_hdl_t hdl, int channel, const char
 	gzclose(fptr);
 
 	if (mem_size != cartinfo.ram_size) {
-		fprintf(stderr, "File size does not match cartridge memory size\n");
+		u->error("File size does not match cartridge memory size\n");
 		free(mem);
 		xferpak_free(xpak);
 		return -1;
 	}
 
 	printf("Loaded '%s' (%d bytes)\n", input_filename, mem_size);
-
-	xferpak_setProgressStruct(xpak, &progress);
 
 	/* Do the writing */
 	res = xferpak_gb_writeRAM(xpak, mem_size, mem);
@@ -108,23 +94,24 @@ int gcn64lib_xferpak_writeRAM_from_file(gcn64_hdl_t hdl, int channel, const char
 	if (verify) {
 		unsigned char *verify_buffer;
 		int verify_size;
-		progress.caption = "Verifying RAM...";
+		u->caption = "Verifying RAM...";
+		u->multi_progress = 0;
 
 		verify_size = xferpak_gb_readRAM(xpak, &cartinfo, &verify_buffer);
 		if (verify_buffer < 0) {
-			fprintf(stderr, "Verify failed\n");
+			u->error("Verify failed\n");
 			xferpak_free(xpak);
 			free(mem);
 			return verify_size;
 		}
 		if (verify_size != mem_size) {
-			fprintf(stderr, "Verify read size mismatch\n");
+			u->error("Verify read size mismatch\n");
 			xferpak_free(xpak);
 			free(mem);
 			return -1;
 		}
 		if (memcmp(verify_buffer, mem, mem_size)) {
-			fprintf(stderr, "Verify failed\n");
+			u->error("Verify failed\n");
 			xferpak_free(xpak);
 			free(mem);
 			return -1;
@@ -139,22 +126,18 @@ int gcn64lib_xferpak_writeRAM_from_file(gcn64_hdl_t hdl, int channel, const char
 	return 0;
 }
 
-int gcn64lib_xferpak_readRAM_to_file(gcn64_hdl_t hdl, int channel, const char *output_filename)
+int gcn64lib_xferpak_readRAM_to_file(gcn64_hdl_t hdl, int channel, const char *output_filename, uiio *u)
 {
 	xferpak *xpak;
 	unsigned char *mem;
 	int mem_size;
 	struct gbcart_info cartinfo;
-	xferpak_progress progress = {
-		.caption = "Reading RAM...",
-		.update = showProgress,
-	};
+	u = getUIIO(u);
+	u->caption = "Reading RAM...",
 
-	xpak = gcn64lib_xferpak_init(hdl, channel);
+	xpak = gcn64lib_xferpak_init(hdl, channel, u);
 	if (!xpak)
 		return -1;
-
-	xferpak_setProgressStruct(xpak, &progress);
 
 	mem_size = xferpak_gb_readRAM(xpak, &cartinfo, &mem);
 	if (mem_size < 0) {
@@ -170,7 +153,7 @@ int gcn64lib_xferpak_readRAM_to_file(gcn64_hdl_t hdl, int channel, const char *o
 			fwrite(mem, mem_size, 1, fptr);
 			fclose(fptr);
 		} else {
-			perror("fopen");
+			u->perror("fopen");
 		}
 	}
 
@@ -179,29 +162,24 @@ int gcn64lib_xferpak_readRAM_to_file(gcn64_hdl_t hdl, int channel, const char *o
 	return 0;
 }
 
-int gcn64lib_xferpak_readROM_to_file(gcn64_hdl_t hdl, int channel, const char *output_filename)
+int gcn64lib_xferpak_readROM_to_file(gcn64_hdl_t hdl, int channel, const char *output_filename, uiio *u)
 {
 	xferpak *xpak;
 	unsigned char *mem;
 	int mem_size;
 	struct gbcart_info cartinfo;
-	xferpak_progress progress = {
-		.caption = "Reading ROM...",
-		.update = showProgress,
-	};
+	u = getUIIO(u);
+	u->caption = "Reading ROM...",
 
-	xpak = gcn64lib_xferpak_init(hdl, channel);
+	xpak = gcn64lib_xferpak_init(hdl, channel, u);
 	if (!xpak)
 		return -1;
-
-	xferpak_setProgressStruct(xpak, &progress);
 
 	mem_size = xferpak_gb_readROM(xpak, &cartinfo, &mem);
 	if (mem_size < 0) {
 		xferpak_free(xpak);
 		return mem_size;
 	}
-	printf("\n");
 
 	if (mem_size > 0) {
 		FILE *fptr;
@@ -210,7 +188,7 @@ int gcn64lib_xferpak_readROM_to_file(gcn64_hdl_t hdl, int channel, const char *o
 			fwrite(mem, mem_size, 1, fptr);
 			fclose(fptr);
 		} else {
-			perror("fopen");
+			u->perror("fopen");
 		}
 	}
 
@@ -225,7 +203,7 @@ int gcn64lib_xferpak_printInfo(gcn64_hdl_t hdl, int channel)
 	struct gbcart_info cartinfo;
 	int res;
 
-	xpak = gcn64lib_xferpak_init(hdl, channel);
+	xpak = gcn64lib_xferpak_init(hdl, channel, NULL);
 	if (!xpak)
 		return -1;
 

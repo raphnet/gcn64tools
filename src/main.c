@@ -446,21 +446,21 @@ int main(int argc, char **argv)
 				break;
 
 			case OPT_XFERPAK_DUMP_ROM:
-				res = gcn64lib_xferpak_readROM_to_file(hdl, channel, optarg);
+				res = gcn64lib_xferpak_readROM_to_file(hdl, channel, optarg, NULL);
 				if (res == 0) {
 					printf("Wrote %s\n", optarg);
 				}
 				break;
 
 			case OPT_XFERPAK_DUMP_RAM:
-				res = gcn64lib_xferpak_readRAM_to_file(hdl, channel, optarg);
+				res = gcn64lib_xferpak_readRAM_to_file(hdl, channel, optarg, NULL);
 				if (res == 0) {
 					printf("Wrote %s\n", optarg);
 				}
 				break;
 
 			case OPT_XFERPAK_WRITE_RAM:
-				res = gcn64lib_xferpak_writeRAM_from_file(hdl, channel, optarg, 1);
+				res = gcn64lib_xferpak_writeRAM_from_file(hdl, channel, optarg, 1, NULL);
 				if (res == 0) {
 					printf("Wrote %s to cartridge\n", optarg);
 				}

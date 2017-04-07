@@ -31,7 +31,7 @@ Author: Raphaël Assénat
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
     <property name="program_name">GC/N64 to USB adapter manager</property>
-    <property name="copyright" translatable="yes">Copyright (C) 2015-2016 Raphaël Assénat &lt;raph@raphnet.net&gt;</property>
+    <property name="copyright" translatable="yes">Copyright (C) 2015-2017 Raphaël Assénat &lt;raph@raphnet.net&gt;</property>
     <property name="website">http://www.raphnet.net</property>
     <property name="website_label" translatable="yes">http://www.raphnet.net</property>
     <property name="authors">Raphaël Assénat</property>
@@ -202,6 +202,20 @@ Author: Raphaël Assénat
       <action-widget response="1">update_cancel_button</action-widget>
     </action-widgets>
   </object>
+  <object class="GtkFileFilter" id="gbram_filter">
+    <patterns>
+      <pattern>*.sav</pattern>
+      <pattern>*.SAV</pattern>
+    </patterns>
+  </object>
+  <object class="GtkFileFilter" id="gbrom_filter">
+    <patterns>
+      <pattern>*.gb</pattern>
+      <pattern>*.gbc</pattern>
+      <pattern>*.GB</pattern>
+      <pattern>*.GBC</pattern>
+    </patterns>
+  </object>
   <object class="GtkFileFilter" id="hexfilter">
     <patterns>
       <pattern>*.hex</pattern>
@@ -355,6 +369,56 @@ Author: Raphaël Assénat
               </object>
             </child>
             <child>
+              <object class="GtkMenuItem" id="menuitem9">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">Transfer Pak</property>
+                <property name="use_underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu" id="menu5">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <child>
+                      <object class="GtkMenuItem" id="menuitem14">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Display cartridge information</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="gui_xferpak_showinfo" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="menuitem10">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Read cartridge ROM to file...</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="gui_xferpak_readrom" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="menuitem11">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Read cartridge RAM to file...</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="gui_xferpak_readram" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="menuitem13">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Write file to cartridge RAM...</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="gui_xferpak_writeram" swapped="no"/>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
               <object class="GtkMenuItem" id="menuitem_help">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
@@ -377,6 +441,13 @@ Author: Raphaël Assénat
                     </child>
                   </object>
                 </child>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem" id="menuitem12">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="use_underline">True</property>
               </object>
             </child>
           </object>
@@ -531,7 +602,6 @@ Author: Raphaël Assénat
                         </child>
                         <child>
                           <object class="GtkLabel" id="label9">
-                            <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">end</property>
                             <property name="label" translatable="yes">Path:</property>
@@ -545,7 +615,6 @@ Author: Raphaël Assénat
                         </child>
                         <child>
                           <object class="GtkLabel" id="label_device_path">
-                            <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="ellipsize">end</property>
                           </object>
@@ -575,6 +644,29 @@ Author: Raphaël Assénat
                           <packing>
                             <property name="left_attach">1</property>
                             <property name="top_attach">4</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label20">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">Number of ports:</property>
+                            <property name="justify">right</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">0</property>
+                            <property name="top_attach">5</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label_n_ports">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="label" translatable="yes">label</property>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="top_attach">5</property>
                           </packing>
                         </child>
                       </object>
@@ -898,6 +990,153 @@ Author: Raphaël Assénat
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkDialog" id="gbcart_info_dialog">
+    <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Gameboy cartridge information</property>
+    <property name="modal">True</property>
+    <property name="type_hint">dialog</property>
+    <property name="transient_for">mainWindow</property>
+    <child internal-child="vbox">
+      <object class="GtkBox" id="dialog-vbox3">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="dialog-action_area3">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="button4">
+                <property name="label">gtk-close</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+                <property name="always_show_image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkGrid" id="grid3">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <child>
+              <object class="GtkLabel" id="label21">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">end</property>
+                <property name="label" translatable="yes">Title:</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label22">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">end</property>
+                <property name="valign">end</property>
+                <property name="label" translatable="yes">Cartridge type:</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label23">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">end</property>
+                <property name="label" translatable="yes">ROM size:</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="label24">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">end</property>
+                <property name="label" translatable="yes">RAM size:</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">3</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="lbl_gbcart_title">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_left">5</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="lbl_gbcart_cart_type">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_left">5</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="lbl_gbcart_rom_size">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_left">5</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">2</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="lbl_gbcart_ram_size">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="margin_left">5</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">3</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="0">button4</action-widget>
+    </action-widgets>
   </object>
   <object class="GtkWindow" id="win_gc2n64">
     <property name="can_focus">False</property>

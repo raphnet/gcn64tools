@@ -4,24 +4,28 @@
 #include <stdint.h>
 #include "gcn64.h"
 #include "gbcart.h"
+#include "uiio.h"
+
+#define XFERPAK_OK 0
+#define XFERPAK_BAD_PARAM -1
+#define XFERPAK_COULD_NOT_READ_HEADER -2
+#define XFERPAK_BAD_CHECKSUM -3
+#define XFERPAK_IO_ERROR -4
+#define XFERPAK_UNSUPPORTED -5
+#define XFERPAK_NO_RAM -6
+#define XFERPAK_USER_CANCELLED -7
+#define XFERPAK_OUT_OF_MEMORY	-8
 
 typedef struct _xferpak xferpak;
-
-typedef struct _xferpak_progress {
-	const char *caption;
-	uint32_t cur_addr;
-	uint32_t max_addr;
-	int (*update)(struct _xferpak_progress *progress);
-} xferpak_progress;
 
 /** \brief Allocate and initialize a transfer pak
  * \param hdl Handle to adapter
  * \param channel Adapter channel (port)
  * \return The xferpak object, or NULL if not detected or initialization failed.
  */
-xferpak *gcn64lib_xferpak_init(gcn64_hdl_t hdl, int channel);
+xferpak *gcn64lib_xferpak_init(gcn64_hdl_t hdl, int channel, uiio *uiio);
 void xferpak_free(xferpak *xpak);
-void xferpak_setProgressStruct(xferpak *pak, xferpak_progress *progress);
+void xferpak_setUIIO(xferpak *pak, uiio *uiio);
 
 /* Transfer Pak low level IO (N64 pak address space) */
 int xferpak_writeBlock(xferpak *xpak, unsigned int addr, const unsigned char data[32]);
@@ -36,13 +40,17 @@ int xferpak_readCart(xferpak *xpak, unsigned int start_addr, unsigned int len, u
 /* Gamecube MBC chips operations */
 int xferpak_gb_mbc5_select_rom_bank(xferpak *xpak, int bank);
 int xferpak_gb_mbc1235_enable_ram(xferpak *xpak, int enable);
+int xferpak_gb_mbc1_select_rom_mode(xferpak *xpak);
+int xferpak_gb_mbc1_select_ram_mode(xferpak *xpak);
 int xferpak_gb_mbc1_select_rom_bank(xferpak *xpak, int bank);
+int xferpak_gb_mbc3_select_rom_bank(xferpak *xpak, int bank);
 int xferpak_gb_mbc135_select_ram_bank(xferpak *xpak, int bank);
 
 /* RAM and ROM IO for various MBC chips */
 int xferpak_gb_mbc3_readROM(xferpak *xpak, unsigned int rom_size, unsigned char *dstbuf);
 int xferpak_gb_mbc35_readRAM(xferpak *xpak, unsigned int ram_size, unsigned char *dstbuf);
 int xferpak_gb_mbc5_readROM(xferpak *xpak, unsigned int rom_size, unsigned char *dstbuf);
+int xferpak_gb_mbc1_writeRAM(xferpak *xpak, unsigned int ram_size, const unsigned char *data);
 int xferpak_gb_mbc35_writeRAM(xferpak *xpak, unsigned int ram_size, const unsigned char *data);
 
 /* * * High level cartridge operations * * */
@@ -58,5 +66,6 @@ int xferpak_gb_readROM(xferpak *xpak, struct gbcart_info *inf, unsigned char **r
 int xferpak_gb_readRAM(xferpak *xpak, struct gbcart_info *inf, unsigned char **rombuffer);
 int xferpak_gb_writeRAM(xferpak *xpak, unsigned int mem_size, const unsigned char *mem);
 
+const char *xferpak_errStr(int error);
 
 #endif // _xferpak_h__
