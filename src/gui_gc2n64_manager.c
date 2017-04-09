@@ -32,7 +32,7 @@ G_MODULE_EXPORT void gc2n64_manager_on_show(GtkWidget *win, gpointer data)
 	struct application *app = data;
 	GET_UI_ELEMENT(GtkLabel, label_gc2n64_firmware);
 	GET_UI_ELEMENT(GtkLabel, label_gc2n64_upgradeable);
-	GET_UI_ELEMENT(GtkLabel, label_gc2n64_old_v15);
+	GET_UI_ELEMENT(GtkLabel, label_gc2n64_conversion_mode);
 	GET_UI_ELEMENT(GtkLabel, label_gc2n64_deadzone);
 	int channel = 0;
 
@@ -51,7 +51,7 @@ G_MODULE_EXPORT void gc2n64_manager_on_show(GtkWidget *win, gpointer data)
 	} else {
 		gtk_label_set_text(label_gc2n64_firmware, (char*)inf.app.version);
 		gtk_label_set_text(label_gc2n64_upgradeable, inf.app.upgradeable ? "Yes":"No");
-		gtk_label_set_text(label_gc2n64_old_v15, inf.app.old_v1_5_conversion ? "Yes":"No");
+		gtk_label_set_text(label_gc2n64_conversion_mode, gc2n64_adapter_getConversionModeName(&inf));
 		gtk_label_set_text(label_gc2n64_deadzone, inf.app.deadzone_enabled ? "Enabled":"Disabled");
 	}
 }

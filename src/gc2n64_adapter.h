@@ -15,10 +15,16 @@ struct gc2n64_adapter_mapping {
 	struct gc2n64_adapter_mapping_pair pairs[GC2N64_MAX_MAPPING_PAIRS];
 };
 
+#define GC2N64_CONVERSION_MODE_OLD_1v5	1
+#define GC2N64_CONVERSION_MODE_V2		2
+#define GC2N64_CONVERSION_MODE_EXTENDED	3
+
 struct gc2n64_adapter_info_app {
 	unsigned char default_mapping_id;
 	unsigned char deadzone_enabled;
 	unsigned char old_v1_5_conversion;
+	// conversion_mode: New field in v2.1. If non-zero, old_v1_5_conversion should be ignored.
+	unsigned char conversion_mode;
 	unsigned char upgradeable;
 	char version[16];
 	struct gc2n64_adapter_mapping mappings[GC2N64_NUM_MAPPINGS];
@@ -42,6 +48,7 @@ int gc2n64_adapter_echotest(gcn64_hdl_t hdl, int channel, int verbosee);
 int gc2n64_adapter_getInfo(gcn64_hdl_t hdl,  int channel, struct gc2n64_adapter_info *inf);
 void gc2n64_adapter_printInfo(struct gc2n64_adapter_info *inf);
 void gc2n64_adapter_printMapping(struct gc2n64_adapter_mapping *map);
+const char *gc2n64_adapter_getConversionModeName(struct gc2n64_adapter_info *inf);
 
 #define MAPPING_SLOT_BUILTIN_CURRENT	0
 #define MAPPING_SLOT_DPAD_UP			1
@@ -69,6 +76,7 @@ int gc2n64_adapter_bootApplication(gcn64_hdl_t hdl, int channel);
 int gc2n64_adapter_sendFirmwareBlocks(gcn64_hdl_t hdl, int channel, unsigned char *firmware, int len);
 int gc2n64_adapter_verifyFirmware(gcn64_hdl_t hdl, int channel, unsigned char *firmware, int len);
 int gc2n64_adapter_waitForBootloader(gcn64_hdl_t hdl, int channel, int timeout_s);
+
 
 #endif // _gc2n64_adapter_h__
 
