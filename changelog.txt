@@ -1,10 +1,13 @@
-=== Version 1.6 ==
-Date: 2016-04-06
+=== Version 1.6.1 ===
+Date: 2017-?
+
+=== Version 1.6 ===
+Date: 2017-04-06
  - Add support for the N64 Transfer Pak:
    - Read ROM from ROM-Only, MBC1, MBC3 and MBC5 cartridges.
    - Read/Write save RAM for MBC1, MBC3 and MBC5 cartridges.
 
-=== Version 1.5 ==
+=== Version 1.5 ===
 Date: 2016-02-04
  - Add gamecube to N64 controller adapter management features to the UI.
 
