@@ -455,6 +455,32 @@ int xferpak_gb_mbc1_writeRAM(xferpak *xpak, unsigned int ram_size, const unsigne
 	return 0;
 }
 
+int xferpak_gb_mbc2_writeRAM(xferpak *xpak, unsigned int ram_size, const unsigned char *data)
+{
+	int res;
+
+	if (ram_size != 0x200) {
+		fprintf(stderr, "MBC2 ram size must be 512\n");
+		return XFERPAK_BAD_PARAM;
+	}
+
+	res = xferpak_gb_mbc1235_enable_ram(xpak, 1);
+	if (res < 0) {
+		return res;
+	}
+
+	res = xferpak_writeCart(xpak, 0xA000, ram_size, data);
+	if (res < 0) {
+		fprintf(stderr, "transfer pak io error (%d)\n", res);
+		xferpak_gb_mbc1235_enable_ram(xpak, 0);
+		return XFERPAK_IO_ERROR;
+	}
+
+	xferpak_gb_mbc1235_enable_ram(xpak, 0);
+
+	return 0;
+}
+
 int xferpak_gb_mbc35_writeRAM(xferpak *xpak, unsigned int ram_size, const unsigned char *data)
 {
 	int i, res;
@@ -970,6 +996,9 @@ int xferpak_gb_writeRAM(xferpak *xpak, unsigned int mem_size, const unsigned cha
 		case GB_FLAG_MBC3:
 		case GB_FLAG_MBC5:
 			res = xferpak_gb_mbc35_writeRAM(xpak, mem_size, mem);
+			break;
+		case GB_FLAG_MBC2:
+			res = xferpak_gb_mbc2_writeRAM(xpak, mem_size, mem);
 			break;
 		case GB_FLAG_MBC1:
 			res = xferpak_gb_mbc1_writeRAM(xpak, mem_size, mem);
