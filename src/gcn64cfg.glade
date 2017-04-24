@@ -1221,7 +1221,7 @@ Author: Raphaël Assénat
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="halign">end</property>
-                        <property name="label" translatable="yes">Old v1.5 analog conversion:</property>
+                        <property name="label" translatable="yes">Stick conversion mode:</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
@@ -1229,7 +1229,7 @@ Author: Raphaël Assénat
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="label_gc2n64_old_v15">
+                      <object class="GtkLabel" id="label_gc2n64_conversion_mode">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                       </object>
@@ -1351,6 +1351,7 @@ Author: Raphaël Assénat
               <object class="GtkFrame" id="frame6">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="margin_left">5</property>
                 <property name="hexpand">False</property>
                 <property name="label_xalign">0</property>
                 <property name="shadow_type">in</property>

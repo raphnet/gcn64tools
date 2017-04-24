@@ -393,6 +393,18 @@ void gc2n64_adapter_printMapping(struct gc2n64_adapter_mapping *map)
 	}
 }
 
+const char *gc2n64_adapter_getConversionModeName(struct gc2n64_adapter_info *inf)
+{
+	switch(inf->app.conversion_mode) {
+		case 0: if (!inf->app.old_v1_5_conversion) { return "Version 2.0 (standard)"; }
+		// fallthrough
+		case GC2N64_CONVERSION_MODE_OLD_1v5: return "Version 1.5 (old)";
+		case GC2N64_CONVERSION_MODE_V2: return "Version 2.0 (standard)";
+		case GC2N64_CONVERSION_MODE_EXTENDED: return "Extended (no transform)";
+	}
+	return "(unknown - invalid)";
+}
+
 void gc2n64_adapter_printInfo(struct gc2n64_adapter_info *inf)
 {
 	int i;
@@ -402,7 +414,12 @@ void gc2n64_adapter_printInfo(struct gc2n64_adapter_info *inf)
 
 		printf("\tDefault mapping id: %d (%s)\n", inf->app.default_mapping_id, gc2n64_adapter_getMappingSlotName(inf->app.default_mapping_id, 1) );
 		printf("\tDeadzone enabled: %d\n", inf->app.deadzone_enabled);
-		printf("\tOld v1.5 conversion: %d\n", inf->app.old_v1_5_conversion);
+		if (inf->app.conversion_mode) {
+			printf("\tConversion mode: %s\n", gc2n64_adapter_getConversionModeName(inf));
+
+		} else {
+			printf("\tOld v1.5 conversion: %d\n", inf->app.old_v1_5_conversion);
+		}
 		printf("\tFirmware version: %s\n", inf->app.version);
 		printf("\tUpgradable: %s\n", inf->app.upgradeable ? "Yes":"No (Atmega8)");
 		for (i=0; i<GC2N64_NUM_MAPPINGS; i++) {
@@ -447,6 +464,7 @@ int gc2n64_adapter_getInfo(gcn64_hdl_t hdl, int channel, struct gc2n64_adapter_i
 			inf->app.default_mapping_id = buf[1];
 			inf->app.deadzone_enabled = buf[2];
 			inf->app.old_v1_5_conversion = buf[3];
+			inf->app.conversion_mode = buf[4];
 			inf->app.upgradeable = buf[9];
 			inf->app.version[sizeof(inf->app.version)-1]=0;
 			strncpy(inf->app.version, (char*)buf+10, sizeof(inf->app.version)-1);
