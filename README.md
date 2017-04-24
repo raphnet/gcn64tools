@@ -23,7 +23,8 @@ There are a few dependencies:
  - libhidapi-dev
  - libhidapi-hidraw0
  - pkg-config
- - gtk3 (for the gui only)
+ - libgtk-3-dev (for the gui only)
+ - libxml2-utils (for the gui)
 
 Provided you have all the dependencies installed, under Linux at least, it should
 compile without errors. For other environments such has MinGW, there are provisions
