@@ -50,7 +50,7 @@ app.o: app.rc icon.ico
 gui.xml: gcn64cfg.glade
 	grep -v requires gcn64cfg.glade > gui.xml
 
-resources.c: $(RESOURCES)
+resources.c: $(RESOURCES) gui.xml
 	$(GLIB_CRES) $(RES_FILE) --target=$@ --sourcedir=. --generate-source resources.xml
 
 resources.o: resources.c
