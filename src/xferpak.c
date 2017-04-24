@@ -501,6 +501,26 @@ int xferpak_gb_mbc35_writeRAM(xferpak *xpak, unsigned int ram_size, const unsign
 	return 0;
 }
 
+int xferpak_gb_mbc2_readRAM(xferpak *xpak, unsigned int ram_size, unsigned char *dstbuf)
+{
+	int res;
+
+	res = xferpak_gb_mbc1235_enable_ram(xpak, 1);
+	if (res < 0) {
+		return res;
+	}
+
+	res = xferpak_readCart(xpak, 0xA000, ram_size, dstbuf);
+	if (res < 0) {
+		xferpak_gb_mbc1235_enable_ram(xpak, 0);
+		return res;
+	}
+
+	xferpak_gb_mbc1235_enable_ram(xpak, 0);
+
+	return 0;
+}
+
 int xferpak_gb_mbc1_readRAM(xferpak *xpak, unsigned int ram_size, unsigned char *dstbuf)
 {
 	int i, res;
@@ -830,6 +850,12 @@ static int xferpak_gb_readMEMORY(xferpak *xpak, struct gbcart_info *inf, int typ
 	} else {
 		memory_size = cartinfo.rom_size;
 	}
+	if (GB_MBC_MASK(cartinfo.flags) == GB_FLAG_MBC2) {
+		if (cartinfo.flags & (GB_FLAG_RAM|GB_FLAG_BATTERY)) {
+			memory_size = 0x200;
+		}
+	}
+
 	if (memory_size <= 0) {
 		fprintf(stderr, "Error: Memory size is 0.\n");
 		return XFERPAK_NO_RAM;
@@ -882,6 +908,9 @@ static int xferpak_gb_readMEMORY(xferpak *xpak, struct gbcart_info *inf, int typ
 			case GB_FLAG_MBC3:
 			case GB_FLAG_MBC5:
 				res = xferpak_gb_mbc35_readRAM(xpak, memory_size, mem);
+				break;
+			case GB_FLAG_MBC2:
+				res = xferpak_gb_mbc2_readRAM(xpak, memory_size, mem);
 				break;
 			case GB_FLAG_MBC1:
 				res = xferpak_gb_mbc1_readRAM(xpak, memory_size, mem);
