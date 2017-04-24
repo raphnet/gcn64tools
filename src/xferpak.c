@@ -842,6 +842,15 @@ int xferpak_gb_readInfo(xferpak *xpak, struct gbcart_info *inf)
 		inf->flags |= GB_FLAG_JAPANESE_MARKET;
 	}
 
+	/* Cartridges with MBC2 512x4 RAM do not seem to set the RAM
+	 * flag. And the RAM size is also zero. Special handling is needed here. */
+	if (	(GB_MBC_MASK(inf->flags) == GB_FLAG_MBC2) &&
+			(inf->flags & (GB_FLAG_BATTERY)))
+	{
+		inf->ram_size = 0x200;
+		inf->flags |= GB_FLAG_RAM;
+	}
+
 	return 0;
 }
 
@@ -875,11 +884,6 @@ static int xferpak_gb_readMEMORY(xferpak *xpak, struct gbcart_info *inf, int typ
 		memory_size = cartinfo.ram_size;
 	} else {
 		memory_size = cartinfo.rom_size;
-	}
-	if (GB_MBC_MASK(cartinfo.flags) == GB_FLAG_MBC2) {
-		if (cartinfo.flags & (GB_FLAG_RAM|GB_FLAG_BATTERY)) {
-			memory_size = 0x200;
-		}
 	}
 
 	if (memory_size <= 0) {

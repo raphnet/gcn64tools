@@ -25,7 +25,6 @@ int gcn64lib_xferpak_writeRAM_from_file(gcn64_hdl_t hdl, int channel, const char
 	gzFile fptr;
 	struct gbcart_info cartinfo;
 	int res;
-	int mbc2_verify = 0;
 	u = getUIIO(u);
 	u->caption = "Writing RAM...",
 	u->multi_progress = verify;
@@ -46,19 +45,9 @@ int gcn64lib_xferpak_writeRAM_from_file(gcn64_hdl_t hdl, int channel, const char
 	}
 
 	if (!(cartinfo.flags & GB_FLAG_RAM)) {
-		/* Cartridges with MBC2 512x4 RAM do not seem to set the RAM
-		 * flag. And the RAM size is also zero. Special handling is needed here. */
-		if (	(GB_MBC_MASK(cartinfo.flags) == GB_FLAG_MBC2) &&
-				(cartinfo.flags & (GB_FLAG_BATTERY)))
-		{
-			cartinfo.ram_size = 0x200;
-			mbc2_verify = 1;
-		}
-		else {
-			u->error("Current cartridge does not have RAM");
-			xferpak_free(xpak);
-			return -1;
-		}
+		u->error("Current cartridge does not have RAM");
+		xferpak_free(xpak);
+		return -1;
 	}
 
 	if (!(cartinfo.flags & GB_FLAG_BATTERY)) {
@@ -132,7 +121,7 @@ int gcn64lib_xferpak_writeRAM_from_file(gcn64_hdl_t hdl, int channel, const char
 			free(mem);
 			return -1;
 		}
-		if (mbc2_verify) {
+		if (GB_MBC_MASK(cartinfo.flags) == GB_FLAG_MBC2) {
 			if (memcmp_lownibbles(verify_buffer, mem, mem_size)) {
 				u->error("Verify failed\n");
 				xferpak_free(xpak);
