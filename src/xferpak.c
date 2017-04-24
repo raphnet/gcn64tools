@@ -329,6 +329,26 @@ int xferpak_gb_mbc3_select_rom_bank(xferpak *xpak, int bank)
 	return 0;
 }
 
+int xferpak_gb_mbc2_select_rom_bank(xferpak *xpak, int bank)
+{
+	unsigned char buf[32];
+	int res;
+
+	res = xferpak_gb_mbc1_select_rom_mode(xpak);
+	if (res < 0) {
+		return res;
+	}
+
+	// 0x2000 Lower 4 bits for ROM bank number
+	memset(buf, bank & 0x0f, sizeof(buf));
+	res = xferpak_writeCart(xpak, 0x2100, sizeof(buf), buf);
+	if (res<0) {
+		return res;
+	}
+
+	return 0;
+}
+
 int xferpak_gb_mbc1_select_rom_bank(xferpak *xpak, int bank)
 {
 	unsigned char buf[32];
@@ -646,6 +666,45 @@ int xferpak_gb_mbc3_readROM(xferpak *xpak, unsigned int rom_size, unsigned char 
 	return 0;
 }
 
+int xferpak_gb_mbc2_readROM(xferpak *xpak, unsigned int rom_size, unsigned char *dstbuf)
+{
+	int i, res;
+	unsigned char bankbuf[0x4000];
+	int cur_bank = -1;
+
+	/* First read bank 00 at its fixed address. */
+	res = xferpak_readCart(xpak, 0x0000, sizeof(bankbuf), bankbuf);
+	if (res < 0) {
+		fprintf(stderr, "transfer pak io error (%d)\n", res);
+		return res;
+	}
+	memcpy(dstbuf, bankbuf, sizeof(bankbuf));
+	dstbuf += sizeof(bankbuf);
+
+	/* Now read all other banks */
+	for (i=sizeof(bankbuf); i<rom_size; i+= sizeof(bankbuf))
+	{
+		if ((i/sizeof(bankbuf)) != cur_bank) {
+			cur_bank = i/sizeof(bankbuf);
+			res = xferpak_gb_mbc2_select_rom_bank(xpak, cur_bank);
+			if (res < 0) {
+				fprintf(stderr, "failed to set mbc1 bank\n");
+				return XFERPAK_IO_ERROR;
+			}
+		}
+
+		res = xferpak_readCart(xpak, 0x4000, sizeof(bankbuf), bankbuf);
+		if (res < 0) {
+			return res;
+		}
+
+		memcpy(dstbuf, bankbuf, sizeof(bankbuf));
+		dstbuf += sizeof(bankbuf);
+	}
+
+	return 0;
+}
+
 int xferpak_gb_mbc1_readROM(xferpak *xpak, unsigned int rom_size, unsigned char *dstbuf)
 {
 	int i, res;
@@ -805,6 +864,9 @@ static int xferpak_gb_readMEMORY(xferpak *xpak, struct gbcart_info *inf, int typ
 				break;
 			case GB_FLAG_MBC3:
 				res = xferpak_gb_mbc3_readROM(xpak, memory_size, mem);
+				break;
+			case GB_FLAG_MBC2:
+				res = xferpak_gb_mbc2_readROM(xpak, memory_size, mem);
 				break;
 			case GB_FLAG_MBC1:
 				res = xferpak_gb_mbc1_readROM(xpak, memory_size, mem);
