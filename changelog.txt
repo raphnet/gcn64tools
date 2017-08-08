@@ -1,5 +1,7 @@
 === Version 1.6.1 ===
-Date: 2017-?
+Date: 2017-04-??
+ - Add support for MBC2 gameboy cartridges.
+ - Add a command to detect N64 controller pak
 
 === Version 1.6 ===
 Date: 2017-04-06

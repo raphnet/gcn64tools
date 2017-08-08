@@ -150,6 +150,7 @@ static void printUsage(void)
 #define OPT_XFERPAK_DUMP_ROM			333
 #define OPT_XFERPAK_DUMP_RAM			334
 #define OPT_XFERPAK_WRITE_RAM			335
+#define OPT_N64_MEMPAK_DETECT			336
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -196,6 +197,7 @@ struct option longopts[] = {
 	{ "xfer_dump_rom", required_argument, NULL, OPT_XFERPAK_DUMP_ROM },
 	{ "xfer_dump_ram", required_argument, NULL, OPT_XFERPAK_DUMP_RAM },
 	{ "xfer_write_ram", required_argument, NULL, OPT_XFERPAK_WRITE_RAM },
+	{ "n64_mempak_detect", 0, NULL, OPT_N64_MEMPAK_DETECT },
 	{ },
 };
 
@@ -494,6 +496,18 @@ int main(int argc, char **argv)
 				if (n >= 0) {
 					printf("N64 Get caps[%d]: ", n);
 					printHexBuf(cmd, n);
+				}
+				break;
+
+			case OPT_N64_MEMPAK_DETECT:
+				{
+					printf("Detecting mempak...\n");
+					res = gcn64lib_mempak_detect(hdl);
+					if (res == 0) {
+						printf("Mempak detected\n");
+					} else {
+						printf("No mempak detected\n");
+					}
 				}
 				break;
 
