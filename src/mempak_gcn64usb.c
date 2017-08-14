@@ -26,6 +26,8 @@
 #include "gcn64_protocol.h"
 #include "requests.h"
 
+#define MEMPAK_IO_RETRIES	5
+
 /* pak_address_crc is renamed from __calc_address_crc from from libdragon which is public domain. */
 
 /**
@@ -79,7 +81,7 @@ uint16_t pak_address_crc( uint16_t address )
  *
  * @return The calculated 8 bit CRC over the data
  */
-static uint8_t __calc_data_crc( uint8_t *data )
+static uint8_t __calc_data_crc( const uint8_t *data )
 {
     uint8_t ret = 0;
 	int i,j;
@@ -136,7 +138,7 @@ int gcn64lib_mempak_readBlock(gcn64_hdl_t hdl, unsigned short addr, unsigned cha
 
 	crc = __calc_data_crc(dst);
 	if (crc != cmd[32]) {
-		fprintf(stderr, "Bad CRC reading address 0x%04x\n", addr);
+//		fprintf(stderr, "Bad CRC reading address 0x%04x\n", addr);
 		return -1;
 	}
 
@@ -229,7 +231,22 @@ int gcn64lib_mempak_detect(gcn64_hdl_t hdl)
 
 int gcn64lib_mempak_writeBlock(gcn64_hdl_t hdl, unsigned short addr, const unsigned char data[32])
 {
-	return gcn64lib_n64_expansionWrite(hdl, pak_address_crc(addr), data, 32);
+	int res;
+	uint8_t data_crc;
+
+	res = gcn64lib_n64_expansionWrite(hdl, pak_address_crc(addr), data, 32);
+	if (res < 0) {
+		return res;
+	}
+
+	data_crc = __calc_data_crc(data);
+
+	if (res != data_crc) {
+		//fprintf(stderr, "CRC error\n");
+		return -1;
+	}
+
+	return 0;
 }
 
 /**
@@ -244,6 +261,7 @@ int gcn64lib_mempak_download(gcn64_hdl_t hdl, int channel, mempak_structure_t **
 {
 	mempak_structure_t *pak;
 	unsigned short addr;
+	int res, try;
 
 	if (!mempak) {
 		return -3;
@@ -261,11 +279,19 @@ int gcn64lib_mempak_download(gcn64_hdl_t hdl, int channel, mempak_structure_t **
 
 	for (addr = 0x0000; addr < MEMPAK_MEM_SIZE; addr+= 0x20)
 	{
-		if (gcn64lib_mempak_readBlock(hdl, addr, &pak->data[addr]) != 0x20) {
+		for (try = 0; try < MEMPAK_IO_RETRIES; try++) {
+			res = gcn64lib_mempak_readBlock(hdl, addr, &pak->data[addr]);
+			if (res == 0x20) {
+				break;
+			}
+		}
+
+		if (try >= MEMPAK_IO_RETRIES) {
 			fprintf(stderr, "Error: Short read\n");
 			free(pak);
 			return -2;
 		}
+
 		if (progressCb) {
 			if (progressCb(addr, ctx)) {
 				return -4;
@@ -281,7 +307,7 @@ int gcn64lib_mempak_upload(gcn64_hdl_t hdl, int channel, mempak_structure_t *pak
 {
 	unsigned short addr;
 	unsigned char readback[0x20];
-	int res;
+	int res, try;
 
 	if (!pak) {
 		return -3;
@@ -292,12 +318,19 @@ int gcn64lib_mempak_upload(gcn64_hdl_t hdl, int channel, mempak_structure_t *pak
 
 	for (addr = 0x0000; addr < MEMPAK_MEM_SIZE; addr+= 0x20)
 	{
-		res = gcn64lib_mempak_writeBlock(hdl, addr, &pak->data[addr]);
-		if (res < 0) {
+		for (try = 0; try < MEMPAK_IO_RETRIES; try++) {
+			res = gcn64lib_mempak_writeBlock(hdl, addr, &pak->data[addr]);
+			if (res == 0) {
+				break;
+			}
+		}
+
+		if (try >= MEMPAK_IO_RETRIES) {
 			fprintf(stderr, "Write error\n");
 			return -2;
 		}
 
+#if 0
 		if (0x20 != gcn64lib_mempak_readBlock(hdl, addr, readback)) {
 			// TODO : Why not retry?
 			fprintf(stderr, "readback failed\n");
@@ -308,7 +341,7 @@ int gcn64lib_mempak_upload(gcn64_hdl_t hdl, int channel, mempak_structure_t *pak
 			fprintf(stderr, "Readback compare failed\n");
 			return -2;
 		}
-
+#endif
 		if (progressCb) {
 			if (progressCb(addr, ctx)) {
 				return -4;
