@@ -78,9 +78,8 @@ static void printUsage(void)
 	printf("  --n64_getcaps                      Get N64 controller capabilities (or status such as pak present)\n");
 	printf("  --n64_mempak_dump                  Dump N64 mempak contents (Use with --outfile to write to file)\n");
 	printf("  --n64_mempak_write file            Write file to N64 mempak\n");
-	// Those do not currently work. Need to check why...
-	//printf("  --n64_init_rumble                  Send rumble pack init command\n");
-	//printf("  --n64_control_rumble value         Turn rumble on when value != 0\n");
+	printf("  --n64_init_rumble                  Send rumble pack init command\n");
+	printf("  --n64_control_rumble value         Turn rumble on when value != 0\n");
 	printf("  --biosensor                        Display heart beat using bio sensor\n");
 	printf("  --perftest                         Do a performance test (raw IO timing)\n");
 	printf("\n");
@@ -406,13 +405,12 @@ int main(int argc, char **argv)
 
 			case OPT_N64_INIT_RUMBLE:
 				{
-					unsigned char cmdbuf[35] = {
-						N64_EXPANSION_WRITE, 0x80, 0x01, [3 ... 34] = 0x80
+					unsigned char cmdbuf[32] = {
+						[0 ... 31] = 0x80
 					};
-					n = gcn64lib_rawSiCommand(hdl, channel, cmdbuf, sizeof(cmdbuf), cmd, sizeof(cmd));
-					printHexBuf(cmdbuf, sizeof(cmdbuf));
-					if (n >= 0) {
-						printf("Init rumble result [%d]: ", n);
+
+					n = gcn64lib_mempak_writeBlock(hdl, 0x8000, cmdbuf);
+					if (n < 0) {
 						printHexBuf(cmd, n);
 					} else {
 						printf("Error %d\n", n);
@@ -424,18 +422,14 @@ int main(int argc, char **argv)
 			case OPT_N64_CONTROL_RUMBLE:
 				{
 					int on = atoi(optarg);
-					unsigned char cmdbuf[35] = {
-						N64_EXPANSION_WRITE, 0xc0, 0x00, [3 ... 34] = on ? 0x01 : 0x00,
+					unsigned char cmdbuf[32] = {
+						[0 ... 31] = on ? 0x01 : 0x00,
 					};
-					printHexBuf(cmdbuf, 35);
-					n = gcn64lib_rawSiCommand(hdl, channel, cmdbuf, sizeof(cmdbuf), cmd, sizeof(cmd));
-					if (n >= 0) {
-						printf("Control rumble [%d]: ", n);
-						printHexBuf(cmd, n);
-					} else {
+
+					n = gcn64lib_mempak_writeBlock(hdl, 0xC000, cmdbuf);
+					if (n < 0) {
 						printf("Error %d\n", n);
 					}
-
 				}
 				break;
 
