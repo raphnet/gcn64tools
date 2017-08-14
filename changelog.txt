@@ -1,7 +1,11 @@
 === Version 1.6.1 ===
 Date: 2017-04-??
- - Add support for MBC2 gameboy cartridges.
- - Add a command to detect N64 controller pak
+ - Transfer pak: Add support for MBC2 gameboy cartridges.
+ - More robust controller pak IO (Add CRC checks and retries)
+ - Support for "Gamcube sliders as buttons" configuration option (for
+   adapters with firmware 3.4.1 and newer)
+ - Add a command to detect a N64 controller pak
+ - N64 rumble pak control from the command-line
 
 === Version 1.6 ===
 Date: 2017-04-06
