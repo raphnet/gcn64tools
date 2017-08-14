@@ -132,12 +132,14 @@ void syncGuiToCurrentAdapter(struct application *app)
 	struct {
 		unsigned char cfg_param;
 		GtkToggleButton *chkbtn;
+		int *available; // If NULL, always visible and available. Otherwise, availability boolean.
 	} configurable_bits[] = {
 //		{ CFG_PARAM_N64_SQUARE, GET_ELEMENT(GtkCheckButton, chkbtn_n64_square) },
 //		{ CFG_PARAM_GC_MAIN_SQUARE, GET_ELEMENT(GtkCheckButton, chkbtn_gc_main_square) },
 //		{ CFG_PARAM_GC_CSTICK_SQUARE, GET_ELEMENT(GtkCheckButton, chkbtn_gc_cstick_square) },
 		{ CFG_PARAM_FULL_SLIDERS, GET_ELEMENT(GtkToggleButton, chkbtn_gc_full_sliders) },
 		{ CFG_PARAM_INVERT_TRIG, GET_ELEMENT(GtkToggleButton, chkbtn_gc_invert_trig) },
+		{ CFG_PARAM_TRIGGERS_AS_BUTTONS, GET_ELEMENT(GtkToggleButton, chkbtn_sliders_as_buttons), &app->current_adapter_info.caps.triggers_as_buttons },
 		{ },
 	};
 	GET_UI_ELEMENT(GtkLabel, label_product_name);
@@ -168,6 +170,16 @@ void syncGuiToCurrentAdapter(struct application *app)
 	}
 
 	for (i=0; configurable_bits[i].chkbtn; i++) {
+		if (configurable_bits[i].available) {
+			if (*(configurable_bits[i].available)) {
+				gtk_widget_show(GTK_WIDGET(configurable_bits[i].chkbtn));
+			} else {
+				gtk_widget_hide(GTK_WIDGET(configurable_bits[i].chkbtn));
+			}
+		}
+		else {
+			gtk_widget_show(GTK_WIDGET(configurable_bits[i].chkbtn));
+		}
 		gcn64lib_getConfig(app->current_adapter_handle, configurable_bits[i].cfg_param, buf, sizeof(buf));
 		printf("config param %02x is %d\n",  configurable_bits[i].cfg_param, buf[0]);
 		gtk_toggle_button_set_active(configurable_bits[i].chkbtn, buf[0]);
@@ -229,6 +241,7 @@ G_MODULE_EXPORT void config_checkbox_changed(GtkWidget *win, gpointer data)
 //		{ CFG_PARAM_GC_CSTICK_SQUARE, GET_ELEMENT(GtkCheckButton, chkbtn_gc_cstick_square) },
 		{ CFG_PARAM_FULL_SLIDERS, GET_ELEMENT(GtkToggleButton, chkbtn_gc_full_sliders) },
 		{ CFG_PARAM_INVERT_TRIG, GET_ELEMENT(GtkToggleButton, chkbtn_gc_invert_trig) },
+		{ CFG_PARAM_TRIGGERS_AS_BUTTONS, GET_ELEMENT(GtkToggleButton, chkbtn_sliders_as_buttons) },
 		{ },
 	};
 	int i, n;

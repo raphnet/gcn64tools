@@ -186,6 +186,7 @@ gcn64_hdl_t gcn64_openDevice(struct gcn64_info *dev)
 {
 	hid_device *hdev;
 	gcn64_hdl_t hdl;
+	char version[64];
 
 	if (!dev)
 		return NULL;
@@ -207,12 +208,23 @@ gcn64_hdl_t gcn64_openDevice(struct gcn64_info *dev)
 	}
 	hdl->hdev = hdev;
 	hdl->report_size = 63;
-	memcpy(&hdl->caps, &dev->caps, sizeof(hdl->caps));
 
 	if (!dev->caps.bio_support) {
 		printf("Pre-3.4 version detected. Setting report size to 40 bytes\n");
 		hdl->report_size = 40;
 	}
+
+	if (0 == gcn64lib_getVersion(hdl, version, sizeof(version))) {
+		int a,b,c;
+
+		if (3 == sscanf(version, "%d.%d.%d", &a, &b, &c)) {
+			if ((a >= 3) && (b >= 4) && (c > 0)) {
+				dev->caps.triggers_as_buttons = 1;
+			}
+		}
+	}
+
+	memcpy(&hdl->caps, &dev->caps, sizeof(hdl->caps));
 
 	return hdl;
 }

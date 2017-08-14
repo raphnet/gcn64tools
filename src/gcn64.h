@@ -11,6 +11,10 @@
 struct gcn64_adapter_caps {
 	int n_raw_channels;
 	int bio_support;
+
+	// Configuration parameters whose availability depends
+	// on the firmware version.
+	int triggers_as_buttons;
 };
 
 struct gcn64_info {
