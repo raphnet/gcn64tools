@@ -1,7 +1,7 @@
 #ifndef _gcn64_requests_h__
 #define _gcn64_requests_h__
 
-/* Commands */
+/* Generic commands */
 #define RQ_GCN64_SET_CONFIG_PARAM		0x01
 #define RQ_GCN64_GET_CONFIG_PARAM		0x02
 #define RQ_GCN64_SUSPEND_POLLING		0x03
@@ -9,9 +9,28 @@
 #define RQ_GCN64_GET_SIGNATURE			0x05
 #define RQ_GCN64_GET_CONTROLLER_TYPE	0x06
 #define RQ_GCN64_SET_VIBRATION			0x07
+#define RQ_GCN64_JUMP_TO_BOOTLOADER		0xFF
+
+/* N64/GC specific */
 #define RQ_GCN64_RAW_SI_COMMAND			0x80
 #define RQ_GCN64_BLOCK_IO				0x81
-#define RQ_GCN64_JUMP_TO_BOOTLOADER		0xFF
+
+/* Get controller type values */
+// Legacy values (GC/N64 specific)
+#define CTL_TYPE_NONE	0
+#define CTL_TYPE_N64	1
+#define CTL_TYPE_GC		2
+#define CTL_TYPE_GCKB	3
+// New values (follows PAD_TYPE_* + 100)
+#define CTL_TYPE_CLASSIC	101
+#define	CTL_TYPE_SNES		102
+#define CTL_TYPE_NES		103
+#define CTL_TYPE_N64_NEW		104
+#define CTL_TYPE_GAMECUBE_NEW	105
+#define CTL_TYPE_MD			106
+#define CTL_TYPE_SMS		107
+#define CTL_TYPE_PCE		110
+#define CTL_TYPE_PCE6		111
 
 /* Configuration parameters and constants */
 #define CFG_PARAM_MODE			0x00
