@@ -60,5 +60,16 @@ int rnt_send_cmd(rnt_hdl_t hdl, const unsigned char *cmd, int len);
 int rnt_poll_result(rnt_hdl_t hdl, unsigned char *cmd, int cmdlen);
 int rnt_exchange(rnt_hdl_t hdl, unsigned char *outcmd, int outlen, unsigned char *result, int result_max);
 
+int gcn64lib_suspendPolling(rnt_hdl_t hdl, unsigned char suspend);
+int gcn64lib_setConfig(rnt_hdl_t hdl, unsigned char param, unsigned char *data, unsigned char len);
+int gcn64lib_getConfig(rnt_hdl_t hdl, unsigned char param, unsigned char *rx, unsigned char rx_max);
+int gcn64lib_getVersion(rnt_hdl_t hdl, char *dst, int dstmax);
+int gcn64lib_getSignature(rnt_hdl_t hdl, char *dst, int dstmax);
+int gcn64lib_forceVibration(rnt_hdl_t hdl, unsigned char channel, unsigned char vibrate);
+int gcn64lib_getControllerType(rnt_hdl_t hdl, int chn);
+const char *gcn64lib_controllerName(int type);
+int gcn64lib_bootloader(rnt_hdl_t hdl);
+
+
 #endif // _raphnetadapter_h__
 
