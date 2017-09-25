@@ -9,6 +9,7 @@
 #define PATH_MAXCHARS		256
 
 struct rnt_adap_caps {
+	int rpsize; // report size for adapter IO. (Set to non-zero to override default
 	int n_raw_channels;
 	int bio_support;
 
@@ -17,6 +18,7 @@ struct rnt_adap_caps {
 	int gc_full_sliders;
 	int gc_invert_trig;
 	int triggers_as_buttons;
+	int dpad_as_buttons;
 };
 
 struct rnt_adap_info {
