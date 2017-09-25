@@ -137,8 +137,8 @@ void syncGuiToCurrentAdapter(struct application *app)
 //		{ CFG_PARAM_N64_SQUARE, GET_ELEMENT(GtkCheckButton, chkbtn_n64_square) },
 //		{ CFG_PARAM_GC_MAIN_SQUARE, GET_ELEMENT(GtkCheckButton, chkbtn_gc_main_square) },
 //		{ CFG_PARAM_GC_CSTICK_SQUARE, GET_ELEMENT(GtkCheckButton, chkbtn_gc_cstick_square) },
-		{ CFG_PARAM_FULL_SLIDERS, GET_ELEMENT(GtkToggleButton, chkbtn_gc_full_sliders) },
-		{ CFG_PARAM_INVERT_TRIG, GET_ELEMENT(GtkToggleButton, chkbtn_gc_invert_trig) },
+		{ CFG_PARAM_FULL_SLIDERS, GET_ELEMENT(GtkToggleButton, chkbtn_gc_full_sliders), &app->current_adapter_info.caps.gc_full_sliders },
+		{ CFG_PARAM_INVERT_TRIG, GET_ELEMENT(GtkToggleButton, chkbtn_gc_invert_trig), &app->current_adapter_info.caps.gc_invert_trig },
 		{ CFG_PARAM_TRIGGERS_AS_BUTTONS, GET_ELEMENT(GtkToggleButton, chkbtn_sliders_as_buttons), &app->current_adapter_info.caps.triggers_as_buttons },
 		{ },
 	};

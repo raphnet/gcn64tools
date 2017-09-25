@@ -14,6 +14,8 @@ struct rnt_adap_caps {
 
 	// Configuration parameters whose availability depends
 	// on the firmware version.
+	int gc_full_sliders;
+	int gc_invert_trig;
 	int triggers_as_buttons;
 };
 

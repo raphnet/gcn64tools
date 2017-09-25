@@ -36,22 +36,22 @@ struct supported_adapter {
 };
 
 static struct supported_adapter supported_adapters[] = {
-	/* vid, pid, if_no, { n_raw, bio_support } */
+	/* vid, pid, if_no, { n_raw, bio_support, gc_full_sliders, gc_invert_trig, triggers_as_buttons } */
 
-	{ OUR_VENDOR_ID, 0x0017, 1, { 1, 0 } },	// GC/N64 USB v3.0, 3.1.0, 3.1.1
-	{ OUR_VENDOR_ID, 0x001D, 1, { 1, 0 } }, // GC/N64 USB v3.2.0 ... v3.3.x
-	{ OUR_VENDOR_ID, 0x0020, 1, { 1, 0 } }, // GCN64->USB v3.2.1 (N64 mode)
-	{ OUR_VENDOR_ID, 0x0021, 1, { 1, 0 } }, // GCN64->USB v3.2.1 (GC mode)
-	{ OUR_VENDOR_ID, 0x0022, 1, { 2, 0 } }, // GCN64->USB v3.3.x (2x GC/N64 mode)
-	{ OUR_VENDOR_ID, 0x0030, 1, { 2, 0 } }, // GCN64->USB v3.3.0 (2x N64-only mode)
-	{ OUR_VENDOR_ID, 0x0031, 1, { 2, 0 } }, // GCN64->USB v3.3.0 (2x GC-only mode)
+	{ OUR_VENDOR_ID, 0x0017, 1, { 1, 0, 1, 1 } },	// GC/N64 USB v3.0, 3.1.0, 3.1.1
+	{ OUR_VENDOR_ID, 0x001D, 1, { 1, 0, 1, 1 } }, // GC/N64 USB v3.2.0 ... v3.3.x
+	{ OUR_VENDOR_ID, 0x0020, 1, { 1, 0, 1, 1 } }, // GCN64->USB v3.2.1 (N64 mode)
+	{ OUR_VENDOR_ID, 0x0021, 1, { 1, 0, 1, 1 } }, // GCN64->USB v3.2.1 (GC mode)
+	{ OUR_VENDOR_ID, 0x0022, 1, { 2, 0, 1, 1 } }, // GCN64->USB v3.3.x (2x GC/N64 mode)
+	{ OUR_VENDOR_ID, 0x0030, 1, { 2, 0, 1, 1 } }, // GCN64->USB v3.3.0 (2x N64-only mode)
+	{ OUR_VENDOR_ID, 0x0031, 1, { 2, 0, 1, 1 } }, // GCN64->USB v3.3.0 (2x GC-only mode)
 
-	{ OUR_VENDOR_ID, 0x0032, 1, { 1, 1 } }, // GC/N64 USB v3.4.x (GC/N64 mode)
-	{ OUR_VENDOR_ID, 0x0033, 1, { 1, 1 } }, // GC/N64 USB v3.4.x (N64 mode)
-	{ OUR_VENDOR_ID, 0x0034, 1, { 1, 1 } }, // GC/N64 USB v3.4.x (GC mode)
-	{ OUR_VENDOR_ID, 0x0035, 1, { 2, 1 } }, // GC/N64 USB v3.4.x (2x GC/N64 mode)
-	{ OUR_VENDOR_ID, 0x0036, 1, { 2, 1 } }, // GC/N64 USB v3.4.x (2x N64-only mode)
-	{ OUR_VENDOR_ID, 0x0037, 1, { 2, 1 } }, // GC/N64 USB v3.4.x (2x GC-only mode)
+	{ OUR_VENDOR_ID, 0x0032, 1, { 1, 1, 1, 1 } }, // GC/N64 USB v3.4.x (GC/N64 mode)
+	{ OUR_VENDOR_ID, 0x0033, 1, { 1, 1, 1, 1 } }, // GC/N64 USB v3.4.x (N64 mode)
+	{ OUR_VENDOR_ID, 0x0034, 1, { 1, 1, 1, 1 } }, // GC/N64 USB v3.4.x (GC mode)
+	{ OUR_VENDOR_ID, 0x0035, 1, { 2, 1, 1, 1 } }, // GC/N64 USB v3.4.x (2x GC/N64 mode)
+	{ OUR_VENDOR_ID, 0x0036, 1, { 2, 1, 1, 1 } }, // GC/N64 USB v3.4.x (2x N64-only mode)
+	{ OUR_VENDOR_ID, 0x0037, 1, { 2, 1, 1, 1 } }, // GC/N64 USB v3.4.x (2x GC-only mode)
 
 	// For future use...
 	{ OUR_VENDOR_ID, 0x0038, 1, { 2, 1 } },
