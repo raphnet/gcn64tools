@@ -3,11 +3,6 @@
 
 #include "raphnetadapter.h"
 
-#define CTL_TYPE_NONE	0
-#define CTL_TYPE_N64	1
-#define CTL_TYPE_GC		2
-#define CTL_TYPE_GCKB	3
-
 int gcn64lib_rawSiCommand(rnt_hdl_t hdl, unsigned char channel, unsigned char *tx, unsigned char tx_len, unsigned char *rx, unsigned char max_rx);
 int gcn64lib_n64_expansionWrite(rnt_hdl_t hdl, unsigned short addr, const unsigned char *data, int len);
 int gcn64lib_n64_expansionRead(rnt_hdl_t hdl, unsigned short addr, unsigned char *dst, int max_len);

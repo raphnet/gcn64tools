@@ -538,11 +538,21 @@ int rnt_getControllerType(rnt_hdl_t hdl, int chn)
 
 const char *rnt_controllerName(int type)
 {
+	/* Defines from requests.h */
 	switch(type) {
 		case CTL_TYPE_NONE: return "No controller";
+		case CTL_TYPE_N64_NEW:
 		case CTL_TYPE_N64: return "N64 Controller";
+		case CTL_TYPE_GAMECUBE_NEW:
 		case CTL_TYPE_GC: return "GC Controller";
 		case CTL_TYPE_GCKB: return "GC Keyboard";
+		case CTL_TYPE_CLASSIC: return "Classic controller";
+		case CTL_TYPE_SNES: return "SNES controller";
+		case CTL_TYPE_NES: return "NES controller";
+		case CTL_TYPE_MD: return "Megadrive controller";
+		case CTL_TYPE_SMS: return "SMS controller";
+		case CTL_TYPE_PCE: return "PC engine controller";
+		case CTL_TYPE_PCE6: return "PC engine 6 button controller";
 		default:
 			return "Unknown";
 	}
