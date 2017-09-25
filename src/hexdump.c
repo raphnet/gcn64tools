@@ -16,7 +16,7 @@
 */
 #include <stdio.h>
 
-void printHexBuf(unsigned char *buf, int n)
+void printHexBuf(const unsigned char *buf, int n)
 {
 	int i;
 
