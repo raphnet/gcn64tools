@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include "gcn64.h"
+#include "raphnetadapter.h"
 #include "gcn64_priv.h"
 #include "gcn64lib.h"
 #include "requests.h"
@@ -32,7 +32,7 @@ static int dusbr_verbose = 0;
 struct supported_adapter {
 	uint16_t vid, pid;
 	int if_number;
-	struct gcn64_adapter_caps caps;
+	struct rnt_adap_caps caps;
 };
 
 static struct supported_adapter supported_adapters[] = {
@@ -66,19 +66,19 @@ static struct supported_adapter supported_adapters[] = {
 	{ }, // terminator
 };
 
-int gcn64_init(int verbose)
+int rnt_init(int verbose)
 {
 	dusbr_verbose = verbose;
 	hid_init();
 	return 0;
 }
 
-void gcn64_shutdown(void)
+void rnt_shutdown(void)
 {
 	hid_exit();
 }
 
-static char isProductIdHandled(unsigned short pid, int interface_number, struct gcn64_adapter_caps *caps)
+static char isProductIdHandled(unsigned short pid, int interface_number, struct rnt_adap_caps *caps)
 {
 	int i;
 
@@ -86,7 +86,7 @@ static char isProductIdHandled(unsigned short pid, int interface_number, struct 
 		if (pid == supported_adapters[i].pid) {
 			if (interface_number == supported_adapters[i].if_number) {
 				if (caps) {
-					memcpy(caps, &supported_adapters[i].caps, sizeof (struct gcn64_adapter_caps));
+					memcpy(caps, &supported_adapters[i].caps, sizeof (struct rnt_adap_caps));
 				}
 				return 1;
 			}
@@ -96,14 +96,14 @@ static char isProductIdHandled(unsigned short pid, int interface_number, struct 
 	return 0;
 }
 
-struct gcn64_list_ctx *gcn64_allocListCtx(void)
+struct rnt_adap_list_ctx *rnt_allocListCtx(void)
 {
-	struct gcn64_list_ctx *ctx;
-	ctx = calloc(1, sizeof(struct gcn64_list_ctx));
+	struct rnt_adap_list_ctx *ctx;
+	ctx = calloc(1, sizeof(struct rnt_adap_list_ctx));
 	return ctx;
 }
 
-void gcn64_freeListCtx(struct gcn64_list_ctx *ctx)
+void rnt_freeListCtx(struct rnt_adap_list_ctx *ctx)
 {
 	if (ctx) {
 		if (ctx->devs) {
@@ -113,32 +113,32 @@ void gcn64_freeListCtx(struct gcn64_list_ctx *ctx)
 	}
 }
 
-int gcn64_countDevices(void)
+int rnt_countDevices(void)
 {
-	struct gcn64_list_ctx *ctx;
-	struct gcn64_info inf;
+	struct rnt_adap_list_ctx *ctx;
+	struct rnt_adap_info inf;
 	int count = 0;
 
-	ctx = gcn64_allocListCtx();
+	ctx = rnt_allocListCtx();
 	while (gcn64_listDevices(&inf, ctx)) {
 		count++;
 	}
-	gcn64_freeListCtx(ctx);
+	rnt_freeListCtx(ctx);
 
 	return count;
 }
 
 /**
  * \brief List instances of our rgbleds device on the USB busses.
- * \param info Pointer to gcn64_info structure to store data
+ * \param info Pointer to rnt_adap_info structure to store data
  * \param dst Destination buffer for device serial number/id.
  * \param dstbuf_size Destination buffer size.
  */
-struct gcn64_info *gcn64_listDevices(struct gcn64_info *info, struct gcn64_list_ctx *ctx)
+struct rnt_adap_info *gcn64_listDevices(struct rnt_adap_info *info, struct rnt_adap_list_ctx *ctx)
 {
-	struct gcn64_adapter_caps caps;
+	struct rnt_adap_caps caps;
 
-	memset(info, 0, sizeof(struct gcn64_info));
+	memset(info, 0, sizeof(struct rnt_adap_info));
 
 	if (!ctx) {
 		fprintf(stderr, "gcn64_listDevices: Passed null context\n");
@@ -182,10 +182,10 @@ struct gcn64_info *gcn64_listDevices(struct gcn64_info *info, struct gcn64_list_
 	return NULL;
 }
 
-gcn64_hdl_t gcn64_openDevice(struct gcn64_info *dev)
+rnt_hdl_t rnt_openDevice(struct rnt_adap_info *dev)
 {
 	hid_device *hdev;
-	gcn64_hdl_t hdl;
+	rnt_hdl_t hdl;
 	char version[64];
 
 	if (!dev)
@@ -200,7 +200,7 @@ gcn64_hdl_t gcn64_openDevice(struct gcn64_info *dev)
 		return NULL;
 	}
 
-	hdl = malloc(sizeof(struct _gcn64_hdl_t));
+	hdl = malloc(sizeof(struct _rnt_hdl_t));
 	if (!hdl) {
 		perror("malloc");
 		hid_close(hdev);
@@ -229,16 +229,16 @@ gcn64_hdl_t gcn64_openDevice(struct gcn64_info *dev)
 	return hdl;
 }
 
-gcn64_hdl_t gcn64_openBy(struct gcn64_info *dev, unsigned char flags)
+rnt_hdl_t rnt_openBy(struct rnt_adap_info *dev, unsigned char flags)
 {
-	struct gcn64_list_ctx *ctx;
-	struct gcn64_info inf;
-	gcn64_hdl_t h;
+	struct rnt_adap_list_ctx *ctx;
+	struct rnt_adap_info inf;
+	rnt_hdl_t h;
 
 	if (IS_VERBOSE())
-		printf("gcn64_openBy, flags=0x%02x\n", flags);
+		printf("rnt_openBy, flags=0x%02x\n", flags);
 
-	ctx = gcn64_allocListCtx();
+	ctx = rnt_allocListCtx();
 	if (!ctx)
 		return NULL;
 
@@ -269,16 +269,16 @@ gcn64_hdl_t gcn64_openBy(struct gcn64_info *dev, unsigned char flags)
 		if (IS_VERBOSE())
 			printf("Found device. opening...\n");
 
-		h = gcn64_openDevice(&inf);
-		gcn64_freeListCtx(ctx);
+		h = rnt_openDevice(&inf);
+		rnt_freeListCtx(ctx);
 		return h;
 	}
 
-	gcn64_freeListCtx(ctx);
+	rnt_freeListCtx(ctx);
 	return NULL;
 }
 
-void gcn64_closeDevice(gcn64_hdl_t hdl)
+void rnt_closeDevice(rnt_hdl_t hdl)
 {
 	hid_device *hdev = hdl->hdev;
 
@@ -289,7 +289,7 @@ void gcn64_closeDevice(gcn64_hdl_t hdl)
 	free(hdl);
 }
 
-int gcn64_send_cmd(gcn64_hdl_t hdl, const unsigned char *cmd, int cmdlen)
+int rnt_send_cmd(rnt_hdl_t hdl, const unsigned char *cmd, int cmdlen)
 {
 	hid_device *hdev = hdl->hdev;
 	unsigned char buffer[hdl->report_size+1];
@@ -314,7 +314,7 @@ int gcn64_send_cmd(gcn64_hdl_t hdl, const unsigned char *cmd, int cmdlen)
 	return 0;
 }
 
-int gcn64_poll_result(gcn64_hdl_t hdl, unsigned char *cmd, int cmd_maxlen)
+int rnt_poll_result(rnt_hdl_t hdl, unsigned char *cmd, int cmd_maxlen)
 {
 	hid_device *hdev = hdl->hdev;
 	unsigned char buffer[hdl->report_size+1];
@@ -349,11 +349,11 @@ int gcn64_poll_result(gcn64_hdl_t hdl, unsigned char *cmd, int cmd_maxlen)
 	return res_len;
 }
 
-int gcn64_exchange(gcn64_hdl_t hdl, unsigned char *outcmd, int outlen, unsigned char *result, int result_max)
+int rnt_exchange(rnt_hdl_t hdl, unsigned char *outcmd, int outlen, unsigned char *result, int result_max)
 {
 	int n;
 
-	n = gcn64_send_cmd(hdl, outcmd, outlen);
+	n = rnt_send_cmd(hdl, outcmd, outlen);
 	if (n<0) {
 		fprintf(stderr, "Error sending command\n");
 		return -1;
@@ -362,7 +362,7 @@ int gcn64_exchange(gcn64_hdl_t hdl, unsigned char *outcmd, int outlen, unsigned 
 	/* Answer to the command comes later. For now, this is polled, but in
 	 * the future an interrupt-in transfer could be used. */
 	do {
-		n = gcn64_poll_result(hdl, result, result_max);
+		n = rnt_poll_result(hdl, result, result_max);
 		if (n < 0) {
 			fprintf(stderr, "Error\r\n");
 			break;

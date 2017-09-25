@@ -22,7 +22,7 @@
 #include "gcn64_protocol.h"
 #include "hexdump.h"
 
-int gcn64lib_getConfig(gcn64_hdl_t hdl, unsigned char param, unsigned char *rx, unsigned char rx_max)
+int gcn64lib_getConfig(rnt_hdl_t hdl, unsigned char param, unsigned char *rx, unsigned char rx_max)
 {
 	unsigned char cmd[2];
 	int n;
@@ -34,7 +34,7 @@ int gcn64lib_getConfig(gcn64_hdl_t hdl, unsigned char param, unsigned char *rx, 
 	cmd[0] = RQ_GCN64_GET_CONFIG_PARAM;
 	cmd[1] = param;
 
-	n = gcn64_exchange(hdl, cmd, 2, rx, rx_max);
+	n = rnt_exchange(hdl, cmd, 2, rx, rx_max);
 	if (n<2)
 		return n;
 
@@ -47,7 +47,7 @@ int gcn64lib_getConfig(gcn64_hdl_t hdl, unsigned char param, unsigned char *rx, 
 
 	return n;
 }
-int gcn64lib_setConfig(gcn64_hdl_t hdl, unsigned char param, unsigned char *data, unsigned char len)
+int gcn64lib_setConfig(rnt_hdl_t hdl, unsigned char param, unsigned char *data, unsigned char len)
 {
 	unsigned char cmd[2 + len];
 	int n;
@@ -60,14 +60,14 @@ int gcn64lib_setConfig(gcn64_hdl_t hdl, unsigned char param, unsigned char *data
 	cmd[1] = param;
 	memcpy(cmd + 2, data, len);
 
-	n = gcn64_exchange(hdl, cmd, 2 + len, cmd, sizeof(cmd));
+	n = rnt_exchange(hdl, cmd, 2 + len, cmd, sizeof(cmd));
 	if (n<0)
 		return n;
 
 	return 0;
 }
 
-int gcn64lib_suspendPolling(gcn64_hdl_t hdl, unsigned char suspend)
+int gcn64lib_suspendPolling(rnt_hdl_t hdl, unsigned char suspend)
 {
 	unsigned char cmd[2];
 	int n;
@@ -79,14 +79,14 @@ int gcn64lib_suspendPolling(gcn64_hdl_t hdl, unsigned char suspend)
 	cmd[0] = RQ_GCN64_SUSPEND_POLLING;
 	cmd[1] = suspend;
 
-	n = gcn64_exchange(hdl, cmd, 2, cmd, sizeof(cmd));
+	n = rnt_exchange(hdl, cmd, 2, cmd, sizeof(cmd));
 	if (n<0)
 		return n;
 
 	return 0;
 }
 
-int gcn64lib_getVersion(gcn64_hdl_t hdl, char *dst, int dstmax)
+int gcn64lib_getVersion(rnt_hdl_t hdl, char *dst, int dstmax)
 {
 	unsigned char cmd[32];
 	int n;
@@ -100,7 +100,7 @@ int gcn64lib_getVersion(gcn64_hdl_t hdl, char *dst, int dstmax)
 
 	cmd[0] = RQ_GCN64_GET_VERSION;
 
-	n = gcn64_exchange(hdl, cmd, 1, cmd, sizeof(cmd));
+	n = rnt_exchange(hdl, cmd, 1, cmd, sizeof(cmd));
 	if (n<0)
 		return n;
 
@@ -113,7 +113,7 @@ int gcn64lib_getVersion(gcn64_hdl_t hdl, char *dst, int dstmax)
 	return 0;
 }
 
-int gcn64lib_getControllerType(gcn64_hdl_t hdl, int chn)
+int gcn64lib_getControllerType(rnt_hdl_t hdl, int chn)
 {
 	unsigned char cmd[32];
 	int n;
@@ -125,7 +125,7 @@ int gcn64lib_getControllerType(gcn64_hdl_t hdl, int chn)
 	cmd[0] = RQ_GCN64_GET_CONTROLLER_TYPE;
 	cmd[1] = chn;
 
-	n = gcn64_exchange(hdl, cmd, 2, cmd, sizeof(cmd));
+	n = rnt_exchange(hdl, cmd, 2, cmd, sizeof(cmd));
 	if (n<0)
 		return n;
 	if (n<3)
@@ -146,7 +146,7 @@ const char *gcn64lib_controllerName(int type)
 	}
 }
 
-int gcn64lib_getSignature(gcn64_hdl_t hdl, char *dst, int dstmax)
+int gcn64lib_getSignature(rnt_hdl_t hdl, char *dst, int dstmax)
 {
 	unsigned char cmd[40];
 	int n;
@@ -160,7 +160,7 @@ int gcn64lib_getSignature(gcn64_hdl_t hdl, char *dst, int dstmax)
 
 	cmd[0] = RQ_GCN64_GET_SIGNATURE;
 
-	n = gcn64_exchange(hdl, cmd, 1, cmd, sizeof(cmd));
+	n = rnt_exchange(hdl, cmd, 1, cmd, sizeof(cmd));
 	if (n<0)
 		return n;
 
@@ -173,7 +173,7 @@ int gcn64lib_getSignature(gcn64_hdl_t hdl, char *dst, int dstmax)
 	return 0;
 }
 
-int gcn64lib_forceVibration(gcn64_hdl_t hdl, unsigned char channel, unsigned char vibrate)
+int gcn64lib_forceVibration(rnt_hdl_t hdl, unsigned char channel, unsigned char vibrate)
 {
 	unsigned char cmd[3];
 	int n;
@@ -186,14 +186,14 @@ int gcn64lib_forceVibration(gcn64_hdl_t hdl, unsigned char channel, unsigned cha
 	cmd[1] = channel;
 	cmd[2] = vibrate;
 
-	n = gcn64_exchange(hdl, cmd, 3, cmd, sizeof(cmd));
+	n = rnt_exchange(hdl, cmd, 3, cmd, sizeof(cmd));
 	if (n<0)
 		return n;
 
 	return 0;
 }
 
-int gcn64lib_rawSiCommand(gcn64_hdl_t hdl, unsigned char channel, unsigned char *tx, unsigned char tx_len, unsigned char *rx, unsigned char max_rx)
+int gcn64lib_rawSiCommand(rnt_hdl_t hdl, unsigned char channel, unsigned char *tx, unsigned char tx_len, unsigned char *rx, unsigned char max_rx)
 {
 	unsigned char cmd[3 + tx_len];
 	unsigned char rep[3 + 64];
@@ -213,7 +213,7 @@ int gcn64lib_rawSiCommand(gcn64_hdl_t hdl, unsigned char channel, unsigned char 
 	memcpy(cmd+3, tx, tx_len);
 	cmdlen = 3 + tx_len;
 
-	n = gcn64_exchange(hdl, cmd, cmdlen, rep, sizeof(rep));
+	n = rnt_exchange(hdl, cmd, cmdlen, rep, sizeof(rep));
 	if (n<0)
 		return n;
 
@@ -225,7 +225,7 @@ int gcn64lib_rawSiCommand(gcn64_hdl_t hdl, unsigned char channel, unsigned char 
 	return rx_len;
 }
 
-int gcn64lib_16bit_scan(gcn64_hdl_t hdl, unsigned short min, unsigned short max)
+int gcn64lib_16bit_scan(rnt_hdl_t hdl, unsigned short min, unsigned short max)
 {
 	int id, n;
 	unsigned char buf[64];
@@ -247,7 +247,7 @@ int gcn64lib_16bit_scan(gcn64_hdl_t hdl, unsigned short min, unsigned short max)
 	return 0;
 }
 
-int gcn64lib_8bit_scan(gcn64_hdl_t hdl, unsigned char min, unsigned char max)
+int gcn64lib_8bit_scan(rnt_hdl_t hdl, unsigned char min, unsigned char max)
 {
 	int id, n;
 	unsigned char buf[64];
@@ -268,7 +268,7 @@ int gcn64lib_8bit_scan(gcn64_hdl_t hdl, unsigned char min, unsigned char max)
 	return 0;
 }
 
-int gcn64lib_bootloader(gcn64_hdl_t hdl)
+int gcn64lib_bootloader(rnt_hdl_t hdl)
 {
 	unsigned char cmd[4];
 	int cmdlen;
@@ -280,12 +280,12 @@ int gcn64lib_bootloader(gcn64_hdl_t hdl)
 	cmd[0] = RQ_GCN64_JUMP_TO_BOOTLOADER;
 	cmdlen = 1;
 
-	gcn64_exchange(hdl, cmd, cmdlen, cmd, sizeof(cmd));
+	rnt_exchange(hdl, cmd, cmdlen, cmd, sizeof(cmd));
 
 	return 0;
 }
 
-int gcn64lib_n64_expansionWrite(gcn64_hdl_t hdl, unsigned short addr, const unsigned char *data, int len)
+int gcn64lib_n64_expansionWrite(rnt_hdl_t hdl, unsigned short addr, const unsigned char *data, int len)
 {
 	unsigned char cmd[3 + len];
 	int cmdlen;
@@ -310,7 +310,7 @@ int gcn64lib_n64_expansionWrite(gcn64_hdl_t hdl, unsigned short addr, const unsi
 	return cmd[0];
 }
 
-int gcn64lib_n64_expansionRead(gcn64_hdl_t hdl, unsigned short addr, unsigned char *dst, int max_len)
+int gcn64lib_n64_expansionRead(rnt_hdl_t hdl, unsigned short addr, unsigned char *dst, int max_len)
 {
 	unsigned char cmd[3];
 	int n;
@@ -330,7 +330,7 @@ int gcn64lib_n64_expansionRead(gcn64_hdl_t hdl, unsigned short addr, unsigned ch
 	return n;
 }
 
-static int gcn64lib_blockIO_compat(gcn64_hdl_t hdl, struct blockio_op *iops, int n_iops)
+static int gcn64lib_blockIO_compat(rnt_hdl_t hdl, struct blockio_op *iops, int n_iops)
 {
 	int i;
 	int res;
@@ -353,7 +353,7 @@ static int gcn64lib_blockIO_compat(gcn64_hdl_t hdl, struct blockio_op *iops, int
 	return 0;
 }
 
-int gcn64lib_blockIO(gcn64_hdl_t hdl, struct blockio_op *iops, int n_iops)
+int gcn64lib_blockIO(rnt_hdl_t hdl, struct blockio_op *iops, int n_iops)
 {
 	unsigned char iobuf[63];
 	int p, i, n;
@@ -395,7 +395,7 @@ int gcn64lib_blockIO(gcn64_hdl_t hdl, struct blockio_op *iops, int n_iops)
 		printHexBuf(iobuf, sizeof(iobuf));
 #endif
 
-		n = gcn64_exchange(hdl, iobuf, sizeof(iobuf), iobuf, sizeof(iobuf));
+		n = rnt_exchange(hdl, iobuf, sizeof(iobuf), iobuf, sizeof(iobuf));
 		if (n < 0) {
 			return n;
 		}

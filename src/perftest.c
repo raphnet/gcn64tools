@@ -21,7 +21,7 @@ static void printTestResult(long total_us, int cycles)
 	printf("Average: %ld us\n", total_us / cycles);
 }
 
-int perftest1(gcn64_hdl_t hdl, int channel)
+int perftest1(rnt_hdl_t hdl, int channel)
 {
 	int n, i, res, j;
 	unsigned char cmd[64];

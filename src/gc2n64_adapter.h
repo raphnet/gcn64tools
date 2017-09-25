@@ -1,7 +1,7 @@
 #ifndef _gc2n64_adapter_h__
 #define _gc2n64_adapter_h__
 
-#include "gcn64.h"
+#include "raphnetadapter.h"
 
 #define GC2N64_MAX_MAPPING_PAIRS	32
 #define GC2N64_NUM_MAPPINGS			5
@@ -44,8 +44,8 @@ struct gc2n64_adapter_info {
 	};
 };
 
-int gc2n64_adapter_echotest(gcn64_hdl_t hdl, int channel, int verbosee);
-int gc2n64_adapter_getInfo(gcn64_hdl_t hdl,  int channel, struct gc2n64_adapter_info *inf);
+int gc2n64_adapter_echotest(rnt_hdl_t hdl, int channel, int verbosee);
+int gc2n64_adapter_getInfo(rnt_hdl_t hdl,  int channel, struct gc2n64_adapter_info *inf);
 void gc2n64_adapter_printInfo(struct gc2n64_adapter_info *inf);
 void gc2n64_adapter_printMapping(struct gc2n64_adapter_mapping *map);
 const char *gc2n64_adapter_getConversionModeName(struct gc2n64_adapter_info *inf);
@@ -57,25 +57,25 @@ const char *gc2n64_adapter_getConversionModeName(struct gc2n64_adapter_info *inf
 #define MAPPING_SLOT_DPAD_RIGHT			4
 const char *gc2n64_adapter_getMappingSlotName(unsigned char id, int default_context);
 
-int gc2n64_adapter_getMapping(gcn64_hdl_t hdl, int channel, int mapping_id, struct gc2n64_adapter_mapping *dst_mapping);
-int gc2n64_adapter_setMapping(gcn64_hdl_t hdl, int channel, struct gc2n64_adapter_mapping *mapping);
-int gc2n64_adapter_storeCurrentMapping(gcn64_hdl_t hdl, int channel, int dst_slot);
+int gc2n64_adapter_getMapping(rnt_hdl_t hdl, int channel, int mapping_id, struct gc2n64_adapter_mapping *dst_mapping);
+int gc2n64_adapter_setMapping(rnt_hdl_t hdl, int channel, struct gc2n64_adapter_mapping *mapping);
+int gc2n64_adapter_storeCurrentMapping(rnt_hdl_t hdl, int channel, int dst_slot);
 
 int gc2n64_adapter_saveMapping(struct gc2n64_adapter_mapping *map, const char *dstfile);
 struct gc2n64_adapter_mapping *gc2n64_adapter_loadMapping(const char *srcfile);
 
-int gc2n64_adapter_waitNotBusy(gcn64_hdl_t hdl, int channel, int verbose);
-int gc2n64_adapter_boot_isBusy(gcn64_hdl_t hdl, int channel);
+int gc2n64_adapter_waitNotBusy(rnt_hdl_t hdl, int channel, int verbose);
+int gc2n64_adapter_boot_isBusy(rnt_hdl_t hdl, int channel);
 
-int gc2n64_adapter_boot_eraseAll(gcn64_hdl_t hdl, int channel);
-int gc2n64_adapter_boot_readBlock(gcn64_hdl_t hdl, int channel, unsigned int block_id, unsigned char dst[32]);
-int gc2n64_adapter_dumpFlash(gcn64_hdl_t hdl, int channel);
-int gc2n64_adapter_updateFirmware(gcn64_hdl_t hdl, int channel, const char *hexfile);
-int gc2n64_adapter_enterBootloader(gcn64_hdl_t hdl, int channel);
-int gc2n64_adapter_bootApplication(gcn64_hdl_t hdl, int channel);
-int gc2n64_adapter_sendFirmwareBlocks(gcn64_hdl_t hdl, int channel, unsigned char *firmware, int len);
-int gc2n64_adapter_verifyFirmware(gcn64_hdl_t hdl, int channel, unsigned char *firmware, int len);
-int gc2n64_adapter_waitForBootloader(gcn64_hdl_t hdl, int channel, int timeout_s);
+int gc2n64_adapter_boot_eraseAll(rnt_hdl_t hdl, int channel);
+int gc2n64_adapter_boot_readBlock(rnt_hdl_t hdl, int channel, unsigned int block_id, unsigned char dst[32]);
+int gc2n64_adapter_dumpFlash(rnt_hdl_t hdl, int channel);
+int gc2n64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfile);
+int gc2n64_adapter_enterBootloader(rnt_hdl_t hdl, int channel);
+int gc2n64_adapter_bootApplication(rnt_hdl_t hdl, int channel);
+int gc2n64_adapter_sendFirmwareBlocks(rnt_hdl_t hdl, int channel, unsigned char *firmware, int len);
+int gc2n64_adapter_verifyFirmware(rnt_hdl_t hdl, int channel, unsigned char *firmware, int len);
+int gc2n64_adapter_waitForBootloader(rnt_hdl_t hdl, int channel, int timeout_s);
 
 
 #endif // _gc2n64_adapter_h__

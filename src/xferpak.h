@@ -2,7 +2,7 @@
 #define _xferpak_h__
 
 #include <stdint.h>
-#include "gcn64.h"
+#include "raphnetadapter.h"
 #include "gbcart.h"
 #include "uiio.h"
 
@@ -23,7 +23,7 @@ typedef struct _xferpak xferpak;
  * \param channel Adapter channel (port)
  * \return The xferpak object, or NULL if not detected or initialization failed.
  */
-xferpak *gcn64lib_xferpak_init(gcn64_hdl_t hdl, int channel, uiio *uiio);
+xferpak *gcn64lib_xferpak_init(rnt_hdl_t hdl, int channel, uiio *uiio);
 void xferpak_free(xferpak *xpak);
 void xferpak_setUIIO(xferpak *pak, uiio *uiio);
 

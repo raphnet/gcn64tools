@@ -17,7 +17,7 @@ static int memcmp_lownibbles(const uint8_t *a, const uint8_t *b, int n_bytes)
 	return 0;
 }
 
-int gcn64lib_xferpak_writeRAM_from_file(gcn64_hdl_t hdl, int channel, const char *input_filename, int verify, uiio *u)
+int gcn64lib_xferpak_writeRAM_from_file(rnt_hdl_t hdl, int channel, const char *input_filename, int verify, uiio *u)
 {
 	xferpak *xpak;
 	unsigned char *mem;
@@ -146,7 +146,7 @@ int gcn64lib_xferpak_writeRAM_from_file(gcn64_hdl_t hdl, int channel, const char
 	return 0;
 }
 
-int gcn64lib_xferpak_readRAM_to_file(gcn64_hdl_t hdl, int channel, const char *output_filename, uiio *u)
+int gcn64lib_xferpak_readRAM_to_file(rnt_hdl_t hdl, int channel, const char *output_filename, uiio *u)
 {
 	xferpak *xpak;
 	unsigned char *mem;
@@ -182,7 +182,7 @@ int gcn64lib_xferpak_readRAM_to_file(gcn64_hdl_t hdl, int channel, const char *o
 	return 0;
 }
 
-int gcn64lib_xferpak_readROM_to_file(gcn64_hdl_t hdl, int channel, const char *output_filename, uiio *u)
+int gcn64lib_xferpak_readROM_to_file(rnt_hdl_t hdl, int channel, const char *output_filename, uiio *u)
 {
 	xferpak *xpak;
 	unsigned char *mem;
@@ -217,7 +217,7 @@ int gcn64lib_xferpak_readROM_to_file(gcn64_hdl_t hdl, int channel, const char *o
 	return 0;
 }
 
-int gcn64lib_xferpak_printInfo(gcn64_hdl_t hdl, int channel)
+int gcn64lib_xferpak_printInfo(rnt_hdl_t hdl, int channel)
 {
 	xferpak *xpak;
 	struct gbcart_info cartinfo;

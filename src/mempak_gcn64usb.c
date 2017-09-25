@@ -18,8 +18,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include "raphnetadapter.h"
 #include "gcn64lib.h"
-#include "gcn64.h"
 #include "mempak.h"
 #include "mempak_gcn64usb.h"
 #include "hexdump.h"
@@ -114,7 +114,7 @@ static uint8_t __calc_data_crc( const uint8_t *data )
     return ret;
 }
 
-int gcn64lib_mempak_readBlock(gcn64_hdl_t hdl, unsigned short addr, unsigned char dst[32])
+int gcn64lib_mempak_readBlock(rnt_hdl_t hdl, unsigned short addr, unsigned char dst[32])
 {
 	unsigned char cmd[64];
 	//int cmdlen;
@@ -138,14 +138,14 @@ int gcn64lib_mempak_readBlock(gcn64_hdl_t hdl, unsigned short addr, unsigned cha
 
 	crc = __calc_data_crc(dst);
 	if (crc != cmd[32]) {
-//		fprintf(stderr, "Bad CRC reading address 0x%04x\n", addr);
-		return -1;
+		fprintf(stderr, "Bad CRC reading address 0x%04x. Expected 0x%02x, got 0x%02x\n", addr, crc, cmd[32]);
+		return -2;
 	}
 
 	return 0x20;
 }
 
-int gcn64lib_mempak_detect(gcn64_hdl_t hdl)
+int gcn64lib_mempak_detect(rnt_hdl_t hdl)
 {
 	unsigned char buf[40];
 	int res;
@@ -229,7 +229,7 @@ int gcn64lib_mempak_detect(gcn64_hdl_t hdl)
 	}
 }
 
-int gcn64lib_mempak_writeBlock(gcn64_hdl_t hdl, unsigned short addr, const unsigned char data[32])
+int gcn64lib_mempak_writeBlock(rnt_hdl_t hdl, unsigned short addr, const unsigned char data[32])
 {
 	int res;
 	uint8_t data_crc;
@@ -246,6 +246,8 @@ int gcn64lib_mempak_writeBlock(gcn64_hdl_t hdl, unsigned short addr, const unsig
 		return -1;
 	}
 
+	printHexBuf(data, 32);
+
 	return 0;
 }
 
@@ -257,7 +259,7 @@ int gcn64lib_mempak_writeBlock(gcn64_hdl_t hdl, unsigned short addr, const unsig
  * \param progressCb Callback to notify read progress (called after each block). The callback can return non-zero to abort.
  * \return 0: Success, -1: No mempak, -2: IO/error, -3: Other errors, -4: Aborted
  */
-int gcn64lib_mempak_download(gcn64_hdl_t hdl, int channel, mempak_structure_t **mempak, int (*progressCb)(int cur_addr, void *ctx), void *ctx)
+int gcn64lib_mempak_download(rnt_hdl_t hdl, int channel, mempak_structure_t **mempak, int (*progressCb)(int cur_addr, void *ctx), void *ctx)
 {
 	mempak_structure_t *pak;
 	unsigned short addr;
@@ -303,7 +305,7 @@ int gcn64lib_mempak_download(gcn64_hdl_t hdl, int channel, mempak_structure_t **
 	return 0;
 }
 
-int gcn64lib_mempak_upload(gcn64_hdl_t hdl, int channel, mempak_structure_t *pak, int (*progressCb)(int cur_addr, void *ctx), void *ctx)
+int gcn64lib_mempak_upload(rnt_hdl_t hdl, int channel, mempak_structure_t *pak, int (*progressCb)(int cur_addr, void *ctx), void *ctx)
 {
 	unsigned short addr;
 	unsigned char readback[0x20];

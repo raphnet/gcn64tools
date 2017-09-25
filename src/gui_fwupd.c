@@ -61,7 +61,7 @@ gpointer gcn64usb_updateFunc(gpointer data)
 		gcn64lib_bootloader(app->current_adapter_handle);
 	} else {
 		/* In recovery mode, the adapter is already in the bootloader. */
-		n_adapters_before = gcn64_countDevices();
+		n_adapters_before = rnt_countDevices();
 		updatelog_append("%d adapters present before recovery\n", n_adapters_before);
 	}
 
@@ -164,10 +164,10 @@ gpointer gcn64usb_updateFunc(gpointer data)
 			/* In recovery mode, we cannot know which serial number to expect. Detect the
 			 * new adapter by counting and comparing to what we had before reprogramming
 			 * the firmware. */
-			if (n_adapters_before != gcn64_countDevices())
+			if (n_adapters_before != rnt_countDevices())
 				break;
 		} else {
-			app->current_adapter_handle = gcn64_openBy(&app->current_adapter_info, GCN64_FLG_OPEN_BY_SERIAL);
+			app->current_adapter_handle = rnt_openBy(&app->current_adapter_info, GCN64_FLG_OPEN_BY_SERIAL);
 			if (app->current_adapter_handle)
 				break;
 		}

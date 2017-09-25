@@ -28,7 +28,7 @@
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 #endif
 
-int gc2n64_adapter_echotest(gcn64_hdl_t hdl, int channel, int verbose)
+int gc2n64_adapter_echotest(rnt_hdl_t hdl, int channel, int verbose)
 {
 	unsigned char cmd[30];
 	unsigned char buf[30];
@@ -57,7 +57,7 @@ int gc2n64_adapter_echotest(gcn64_hdl_t hdl, int channel, int verbose)
 	return (n!= sizeof(buf)) || memcmp(cmd, buf, sizeof(buf));
 }
 
-int gc2n64_adapter_storeCurrentMapping(gcn64_hdl_t hdl, int channel, int dst_slot)
+int gc2n64_adapter_storeCurrentMapping(rnt_hdl_t hdl, int channel, int dst_slot)
 {
 	int n;
 	unsigned char cmd[3];
@@ -84,7 +84,7 @@ int gc2n64_adapter_storeCurrentMapping(gcn64_hdl_t hdl, int channel, int dst_slo
 	}
 }
 
-int gc2n64_adapter_setMapping(gcn64_hdl_t hdl, int channel, struct gc2n64_adapter_mapping *mapping)
+int gc2n64_adapter_setMapping(rnt_hdl_t hdl, int channel, struct gc2n64_adapter_mapping *mapping)
 {
 	unsigned char buf[64];
 	unsigned char mapdata[64];
@@ -144,7 +144,7 @@ int gc2n64_adapter_setMapping(gcn64_hdl_t hdl, int channel, struct gc2n64_adapte
 	return 0;
 }
 
-int gc2n64_adapter_getMapping(gcn64_hdl_t hdl, int channel, int mapping_id, struct gc2n64_adapter_mapping *dst_mapping)
+int gc2n64_adapter_getMapping(rnt_hdl_t hdl, int channel, int mapping_id, struct gc2n64_adapter_mapping *dst_mapping)
 {
 	unsigned char buf[64];
 	unsigned char cmd[4];
@@ -438,7 +438,7 @@ void gc2n64_adapter_printInfo(struct gc2n64_adapter_info *inf)
 	printf("}\n");
 }
 
-int gc2n64_adapter_getInfo(gcn64_hdl_t hdl, int channel, struct gc2n64_adapter_info *inf)
+int gc2n64_adapter_getInfo(rnt_hdl_t hdl, int channel, struct gc2n64_adapter_info *inf)
 {
 	unsigned char buf[32];
 	int n;
@@ -487,7 +487,7 @@ int gc2n64_adapter_getInfo(gcn64_hdl_t hdl, int channel, struct gc2n64_adapter_i
 	return 0;
 }
 
-int gc2n64_adapter_isBusy(gcn64_hdl_t hdl, int channel)
+int gc2n64_adapter_isBusy(rnt_hdl_t hdl, int channel)
 {
 	unsigned char buf[64];
 	int n;
@@ -510,7 +510,7 @@ int gc2n64_adapter_isBusy(gcn64_hdl_t hdl, int channel)
 	return 0; // Idle
 }
 
-int gc2n64_adapter_waitNotBusy(gcn64_hdl_t hdl, int channel, int verbose)
+int gc2n64_adapter_waitNotBusy(rnt_hdl_t hdl, int channel, int verbose)
 {
 	char spinner[4] = { '|','/','-','\\' };
 	int busy, no_reply_count=0;
@@ -536,7 +536,7 @@ int gc2n64_adapter_waitNotBusy(gcn64_hdl_t hdl, int channel, int verbose)
 	return 0;
 }
 
-int gc2n64_adapter_boot_eraseAll(gcn64_hdl_t hdl, int channel)
+int gc2n64_adapter_boot_eraseAll(rnt_hdl_t hdl, int channel)
 {
 	unsigned char buf[64];
 	int n;
@@ -561,7 +561,7 @@ int gc2n64_adapter_boot_eraseAll(gcn64_hdl_t hdl, int channel)
 	return 0;
 }
 
-int gc2n64_adapter_boot_readBlock(gcn64_hdl_t hdl, int channel, unsigned int block_id, unsigned char dst[32])
+int gc2n64_adapter_boot_readBlock(rnt_hdl_t hdl, int channel, unsigned int block_id, unsigned char dst[32])
 {
 	unsigned char buf[32];
 	int n;
@@ -585,7 +585,7 @@ int gc2n64_adapter_boot_readBlock(gcn64_hdl_t hdl, int channel, unsigned int blo
 	return 0;
 }
 
-int gc2n64_adapter_dumpFlash(gcn64_hdl_t hdl, int channel)
+int gc2n64_adapter_dumpFlash(rnt_hdl_t hdl, int channel)
 {
 	int i;
 	unsigned char buf[0x10000];
@@ -610,7 +610,7 @@ int gc2n64_adapter_dumpFlash(gcn64_hdl_t hdl, int channel)
 	return 0;
 }
 
-int gc2n64_adapter_enterBootloader(gcn64_hdl_t hdl, int channel)
+int gc2n64_adapter_enterBootloader(rnt_hdl_t hdl, int channel)
 {
 	unsigned char buf[4];
 	int n;
@@ -652,7 +652,7 @@ int gc2n64_adapter_enterBootloader(gcn64_hdl_t hdl, int channel)
 	return 0;
 }
 
-int gc2n64_adapter_bootApplication(gcn64_hdl_t hdl, int channel)
+int gc2n64_adapter_bootApplication(rnt_hdl_t hdl, int channel)
 {
 	unsigned char buf[2];
 	int n;
@@ -678,7 +678,7 @@ int gc2n64_adapter_bootApplication(gcn64_hdl_t hdl, int channel)
 }
 
 // Note: eraseAll needs to be performed first
-int gc2n64_adapter_sendFirmwareBlocks(gcn64_hdl_t hdl, int channel, unsigned char *firmware, int len)
+int gc2n64_adapter_sendFirmwareBlocks(rnt_hdl_t hdl, int channel, unsigned char *firmware, int len)
 {
 	unsigned char buf[64];
 	int i, block_id;
@@ -729,7 +729,7 @@ int gc2n64_adapter_sendFirmwareBlocks(gcn64_hdl_t hdl, int channel, unsigned cha
 	return 0;
 }
 
-int gc2n64_adapter_verifyFirmware(gcn64_hdl_t hdl, int channel, unsigned char *firmware, int len)
+int gc2n64_adapter_verifyFirmware(rnt_hdl_t hdl, int channel, unsigned char *firmware, int len)
 {
 	unsigned char buf[32];
 	int i;
@@ -749,7 +749,7 @@ int gc2n64_adapter_verifyFirmware(gcn64_hdl_t hdl, int channel, unsigned char *f
 	return 0;
 }
 
-int gc2n64_adapter_waitForBootloader(gcn64_hdl_t hdl, int channel, int timeout_s)
+int gc2n64_adapter_waitForBootloader(rnt_hdl_t hdl, int channel, int timeout_s)
 {
 	struct gc2n64_adapter_info inf;
 	int i;
@@ -770,7 +770,7 @@ int gc2n64_adapter_waitForBootloader(gcn64_hdl_t hdl, int channel, int timeout_s
 }
 
 #define FIRMWARE_BUF_SIZE	0x10000
-int gc2n64_adapter_updateFirmware(gcn64_hdl_t hdl, int channel, const char *hexfile)
+int gc2n64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfile)
 {
 	unsigned char *buf;
 	int max_addr;

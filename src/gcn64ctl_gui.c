@@ -32,7 +32,7 @@ void deselect_adapter(struct application *app)
 	printf("deselect adapter\n");
 
 	if (app->current_adapter_handle) {
-		gcn64_closeDevice(app->current_adapter_handle);
+		rnt_closeDevice(app->current_adapter_handle);
 		app->current_adapter_handle = NULL;
 		gtk_widget_set_sensitive(adapter_details, FALSE);
 	}
@@ -149,7 +149,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 	GET_UI_ELEMENT(GtkLabel, label_n_ports);
 	GET_UI_ELEMENT(GtkSpinButton, pollInterval0);
 	int i;
-	struct gcn64_info *info = &app->current_adapter_info;
+	struct rnt_adap_info *info = &app->current_adapter_info;
 	char adap_sig[64];
 	char ports_str[32];
 
@@ -263,8 +263,8 @@ G_MODULE_EXPORT void config_checkbox_changed(GtkWidget *win, gpointer data)
 gboolean rebuild_device_list_store(gpointer data)
 {
 	struct application *app = data;
-	struct gcn64_list_ctx *listctx;
-	struct gcn64_info info;
+	struct rnt_adap_list_ctx *listctx;
+	struct rnt_adap_info info;
 	GtkListStore *list_store;
 	GET_UI_ELEMENT(GtkComboBox, cb_adapter_list);
 
@@ -273,7 +273,7 @@ gboolean rebuild_device_list_store(gpointer data)
 	gtk_list_store_clear(list_store);
 
 	printf("Listing device...\n");
-	listctx = gcn64_allocListCtx();
+	listctx = rnt_allocListCtx();
 	if (!listctx)
 		return FALSE;
 
@@ -285,13 +285,13 @@ gboolean rebuild_device_list_store(gpointer data)
 			gtk_list_store_set(list_store, &iter,
 							0, g_ucs4_to_utf8((void*)info.str_serial, -1, NULL, NULL, NULL),
 							1, g_ucs4_to_utf8((void*)info.str_prodname, -1, NULL, NULL, NULL),
-							3, g_memdup(&info, sizeof(struct gcn64_info)),
+							3, g_memdup(&info, sizeof(struct rnt_adap_info)),
 								-1);
 		} else {
 			gtk_list_store_set(list_store, &iter,
 							0, g_utf16_to_utf8((void*)info.str_serial, -1, NULL, NULL, NULL),
 							1, g_utf16_to_utf8((void*)info.str_prodname, -1, NULL, NULL, NULL),
-							3, g_memdup(&info, sizeof(struct gcn64_info)),
+							3, g_memdup(&info, sizeof(struct rnt_adap_info)),
 								-1);
 		}
 		if (app->current_adapter_handle) {
@@ -301,7 +301,7 @@ gboolean rebuild_device_list_store(gpointer data)
 		}
 	}
 
-	gcn64_freeListCtx(listctx);
+	rnt_freeListCtx(listctx);
 	return FALSE;
 }
 
@@ -310,10 +310,10 @@ G_MODULE_EXPORT void onMainWindowShow(GtkWidget *win, gpointer data)
 	int res;
 	struct application *app = data;
 
-	res = gcn64_init(1);
+	res = rnt_init(1);
 	if (res) {
 		GtkWidget *d = GTK_WIDGET( gtk_builder_get_object(app->builder, "internalError") );
-		gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(d), "gcn64_init failed (returned %d)", res);
+		gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(d), "rnt_init failed (returned %d)", res);
 		gtk_widget_show(d);
 		return;
 	}
@@ -328,10 +328,10 @@ G_MODULE_EXPORT void adapterSelected(GtkComboBox *cb, gpointer data)
 	GtkListStore *list_store = GTK_LIST_STORE( gtk_builder_get_object(app->builder, "adaptersList") );
 	GtkWidget *adapter_details = GTK_WIDGET( gtk_builder_get_object(app->builder, "adapterDetails") );
 	GET_UI_ELEMENT(GtkMenuItem, menu_manage_gc2n64);
-	struct gcn64_info *info;
+	struct rnt_adap_info *info;
 
 	if (app->current_adapter_handle) {
-		gcn64_closeDevice(app->current_adapter_handle);
+		rnt_closeDevice(app->current_adapter_handle);
 		app->current_adapter_handle = NULL;
 		gtk_widget_set_sensitive(adapter_details, FALSE);
 		gtk_widget_set_sensitive((GtkWidget*)menu_manage_gc2n64, FALSE);
@@ -342,14 +342,14 @@ G_MODULE_EXPORT void adapterSelected(GtkComboBox *cb, gpointer data)
 		gtk_tree_model_get(GTK_TREE_MODEL(list_store), &iter, 3, &info, -1);
 		printf("%s\n", info->str_path);
 
-		app->current_adapter_handle = gcn64_openDevice(info);
+		app->current_adapter_handle = rnt_openDevice(info);
 		if (!app->current_adapter_handle) {
 			errorPopup(app, "Failed to open adapter");
 			deselect_adapter(app);
 			return;
 		}
 
-		memcpy(&app->current_adapter_info, info, sizeof(struct gcn64_info));
+		memcpy(&app->current_adapter_info, info, sizeof(struct rnt_adap_info));
 
 		syncGuiToCurrentAdapter(app);
 		gtk_widget_set_sensitive(adapter_details, TRUE);
@@ -359,7 +359,7 @@ G_MODULE_EXPORT void adapterSelected(GtkComboBox *cb, gpointer data)
 
 G_MODULE_EXPORT void onMainWindowHide(GtkWidget *win, gpointer data)
 {
-	gcn64_shutdown();
+	rnt_shutdown();
 }
 
 G_MODULE_EXPORT void suspend_polling(GtkButton *button, gpointer data)

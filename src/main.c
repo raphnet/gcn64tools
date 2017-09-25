@@ -22,7 +22,7 @@
 #include <wchar.h>
 
 #include "hexdump.h"
-#include "gcn64.h"
+#include "raphnetadapter.h"
 #include "gcn64lib.h"
 #include "gc2n64_adapter.h"
 #include "mempak.h"
@@ -209,10 +209,10 @@ static int mempak_progress_cb(int addr, void *ctx)
 static int listDevices(void)
 {
 	int n_found = 0;
-	struct gcn64_list_ctx *listctx;
-	struct gcn64_info inf;
+	struct rnt_adap_list_ctx *listctx;
+	struct rnt_adap_info inf;
 
-	listctx = gcn64_allocListCtx();
+	listctx = rnt_allocListCtx();
 	if (!listctx) {
 		fprintf(stderr, "List context could not be allocated\n");
 		return -1;
@@ -223,7 +223,7 @@ static int listDevices(void)
 		printf("Found device '%ls', serial '%ls'. Supports %d raw channel(s), Block io: %s\n", inf.str_prodname, inf.str_serial, inf.caps.n_raw_channels, inf.caps.bio_support ? "Yes":"No");
 
 	}
-	gcn64_freeListCtx(listctx);
+	rnt_freeListCtx(listctx);
 	printf("%d device(s) found\n", n_found);
 
 	return n_found;
@@ -231,11 +231,11 @@ static int listDevices(void)
 
 int main(int argc, char **argv)
 {
-	gcn64_hdl_t hdl;
-	struct gcn64_list_ctx *listctx;
+	rnt_hdl_t hdl;
+	struct rnt_adap_list_ctx *listctx;
 	int opt, retval = 0;
-	struct gcn64_info inf;
-	struct gcn64_info *selected_device = NULL;
+	struct rnt_adap_info inf;
+	struct rnt_adap_info *selected_device = NULL;
 	int verbose = 0, use_first = 0, serial_specified = 0;
 	int nonstop = 0;
 	int cmd_list = 0;
@@ -294,7 +294,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	gcn64_init(verbose);
+	rnt_init(verbose);
 
 	if (cmd_list) {
 		printf("Simply listing the devices...\n");
@@ -306,7 +306,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	listctx = gcn64_allocListCtx();
+	listctx = rnt_allocListCtx();
 	while ((selected_device = gcn64_listDevices(&inf, listctx)))
 	{
 		if (serial_specified) {
@@ -320,7 +320,7 @@ int main(int argc, char **argv)
 			break;
 		}
 	}
-	gcn64_freeListCtx(listctx);
+	rnt_freeListCtx(listctx);
 
 	if (!selected_device) {
 		if (serial_specified) {
@@ -331,7 +331,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	hdl = gcn64_openDevice(selected_device);
+	hdl = rnt_openDevice(selected_device);
 	if (!hdl) {
 		printf("Error opening device. (Do you have permissions?)\n");
 		return 1;
@@ -735,7 +735,7 @@ int main(int argc, char **argv)
 
 		if (do_exchange) {
 			int i;
-			n = gcn64_exchange(hdl, cmd, cmdlen, cmd, sizeof(cmd));
+			n = rnt_exchange(hdl, cmd, cmdlen, cmd, sizeof(cmd));
 			if (n<0)
 				break;
 
@@ -747,8 +747,8 @@ int main(int argc, char **argv)
 		}
 	}
 
-	gcn64_closeDevice(hdl);
-	gcn64_shutdown();
+	rnt_closeDevice(hdl);
+	rnt_shutdown();
 
 	return retval;
 }

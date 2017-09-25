@@ -4,7 +4,7 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
-#include "gcn64.h"
+#include "raphnetadapter.h"
 #include "gcn64lib.h"
 #include "gui_mpkedit.h"
 #include "gui_fwupd.h"
@@ -19,8 +19,8 @@ struct application {
 	GtkBuilder *builder;
 	GtkWindow *mainwindow;
 
-	gcn64_hdl_t current_adapter_handle;
-	struct gcn64_info current_adapter_info;
+	rnt_hdl_t current_adapter_handle;
+	struct rnt_adap_info current_adapter_info;
 
 	GThreadFunc updater_thread_func;
 	GThread *updater_thread;

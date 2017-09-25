@@ -12,7 +12,7 @@
  *
  * \return 0: Not in beat, 32: In beat, [1..31] maybe?
  */
-int gcn64lib_biosensorPoll(gcn64_hdl_t hdl)
+int gcn64lib_biosensorPoll(rnt_hdl_t hdl)
 {
 	unsigned char buf[32];
 	int res, i;
@@ -53,7 +53,7 @@ int gcn64lib_biosensorPoll(gcn64_hdl_t hdl)
 #define MIN_PULSE_LENGTH	5
 #define AVERAGES			3
 
-int gcn64lib_biosensorMonitor(gcn64_hdl_t hdl)
+int gcn64lib_biosensorMonitor(rnt_hdl_t hdl)
 {
 	int res;
 	int in_pulse = 0;

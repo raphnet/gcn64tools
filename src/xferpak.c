@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include "raphnetadapter.h"
 #include "gcn64lib.h"
-#include "gcn64.h"
 #include "mempak.h"
 #include "mempak_gcn64usb.h"
 #include "hexdump.h"
@@ -13,7 +13,7 @@
 #include "mempak_gcn64usb.h"
 
 struct _xferpak {
-	gcn64_hdl_t hdl;
+	rnt_hdl_t hdl;
 	int channel;
 	int cur_bank;
 	uiio *u;
@@ -28,7 +28,7 @@ void xferpak_setUIIO(xferpak *pak, uiio *u)
 	}
 }
 
-xferpak *gcn64lib_xferpak_init(gcn64_hdl_t hdl, int channel, uiio *u)
+xferpak *gcn64lib_xferpak_init(rnt_hdl_t hdl, int channel, uiio *u)
 {
 	unsigned char cmd[64] = { };
 	xferpak *pak;
