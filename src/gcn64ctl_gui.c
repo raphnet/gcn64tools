@@ -140,6 +140,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 		{ CFG_PARAM_FULL_SLIDERS, GET_ELEMENT(GtkToggleButton, chkbtn_gc_full_sliders), &app->current_adapter_info.caps.gc_full_sliders },
 		{ CFG_PARAM_INVERT_TRIG, GET_ELEMENT(GtkToggleButton, chkbtn_gc_invert_trig), &app->current_adapter_info.caps.gc_invert_trig },
 		{ CFG_PARAM_TRIGGERS_AS_BUTTONS, GET_ELEMENT(GtkToggleButton, chkbtn_sliders_as_buttons), &app->current_adapter_info.caps.triggers_as_buttons },
+		{ CFG_PARAM_DPAD_AS_BUTTONS, GET_ELEMENT(GtkToggleButton, chkbtn_dpad_as_buttons), &app->current_adapter_info.caps.dpad_as_buttons },
 		{ },
 	};
 	GET_UI_ELEMENT(GtkLabel, label_product_name);
@@ -170,19 +171,25 @@ void syncGuiToCurrentAdapter(struct application *app)
 	}
 
 	for (i=0; configurable_bits[i].chkbtn; i++) {
+		int avail = 0;
+
 		if (configurable_bits[i].available) {
 			if (*(configurable_bits[i].available)) {
 				gtk_widget_show(GTK_WIDGET(configurable_bits[i].chkbtn));
+				avail = 1;
 			} else {
 				gtk_widget_hide(GTK_WIDGET(configurable_bits[i].chkbtn));
 			}
 		}
 		else {
 			gtk_widget_show(GTK_WIDGET(configurable_bits[i].chkbtn));
+			avail = 1;
 		}
-		rnt_getConfig(app->current_adapter_handle, configurable_bits[i].cfg_param, buf, sizeof(buf));
-		printf("config param %02x is %d\n",  configurable_bits[i].cfg_param, buf[0]);
-		gtk_toggle_button_set_active(configurable_bits[i].chkbtn, buf[0]);
+		if (avail) {
+			rnt_getConfig(app->current_adapter_handle, configurable_bits[i].cfg_param, buf, sizeof(buf));
+			printf("config param 0x%02x is %d\n",  configurable_bits[i].cfg_param, buf[0]);
+			gtk_toggle_button_set_active(configurable_bits[i].chkbtn, buf[0]);
+		}
 	}
 
 	if (sizeof(wchar_t)==4) {
@@ -242,12 +249,16 @@ G_MODULE_EXPORT void config_checkbox_changed(GtkWidget *win, gpointer data)
 		{ CFG_PARAM_FULL_SLIDERS, GET_ELEMENT(GtkToggleButton, chkbtn_gc_full_sliders) },
 		{ CFG_PARAM_INVERT_TRIG, GET_ELEMENT(GtkToggleButton, chkbtn_gc_invert_trig) },
 		{ CFG_PARAM_TRIGGERS_AS_BUTTONS, GET_ELEMENT(GtkToggleButton, chkbtn_sliders_as_buttons) },
+		{ CFG_PARAM_DPAD_AS_BUTTONS, GET_ELEMENT(GtkToggleButton, chkbtn_dpad_as_buttons) },
 		{ },
 	};
 	int i, n;
 	unsigned char buf;
 
 	for (i=0; configurable_bits[i].chkbtn; i++) {
+		if (configurable_bits[i].chkbtn != GTK_TOGGLE_BUTTON(win))
+			continue;
+
 		buf = gtk_toggle_button_get_active(configurable_bits[i].chkbtn);
 		n = rnt_setConfig(app->current_adapter_handle, configurable_bits[i].cfg_param, &buf, 1);
 		if (n != 0) {
@@ -256,7 +267,7 @@ G_MODULE_EXPORT void config_checkbox_changed(GtkWidget *win, gpointer data)
 			rebuild_device_list_store(app);
 			break;
 		}
-		printf("cfg param %02x now set to %d\n", configurable_bits[i].cfg_param, buf);
+		printf("cfg param 0x%02x now set to %d\n", configurable_bits[i].cfg_param, buf);
 	}
 }
 
