@@ -350,11 +350,11 @@ int main(int argc, char **argv)
 			case OPT_SET_MODE:
 				cmd[0] = atoi(optarg);
 				printf("Setting mode to %d\n", cmd[0]);
-				gcn64lib_setConfig(hdl, CFG_PARAM_MODE, cmd, 1);
+				rnt_setConfig(hdl, CFG_PARAM_MODE, cmd, 1);
 				break;
 
 			case OPT_GET_MODE:
-				n = gcn64lib_getConfig(hdl, CFG_PARAM_MODE, cmd, sizeof(cmd));
+				n = rnt_getConfig(hdl, CFG_PARAM_MODE, cmd, sizeof(cmd));
 				if (n == 1) {
 					printf("Current mode: %d\n", cmd[0]);
 				}
@@ -363,11 +363,11 @@ int main(int argc, char **argv)
 			case OPT_SET_POLL_INTERVAL:
 				cmd[0] = atoi(optarg);
 				printf("Setting poll interval to %d ms\n", cmd[0]);
-				gcn64lib_setConfig(hdl, CFG_PARAM_POLL_INTERVAL0, cmd, 1);
+				rnt_setConfig(hdl, CFG_PARAM_POLL_INTERVAL0, cmd, 1);
 				break;
 
 			case OPT_GET_POLL_INTERVAL:
-				n = gcn64lib_getConfig(hdl, CFG_PARAM_POLL_INTERVAL0, cmd, sizeof(cmd));
+				n = rnt_getConfig(hdl, CFG_PARAM_POLL_INTERVAL0, cmd, sizeof(cmd));
 				if (n == 1) {
 					printf("Poll interval: %d ms\n", cmd[0]);
 				}
@@ -379,11 +379,11 @@ int main(int argc, char **argv)
 					fprintf(stderr, "Serial number must be 6 characters\n");
 					return -1;
 				}
-				gcn64lib_setConfig(hdl, CFG_PARAM_SERIAL, (void*)optarg, 6);
+				rnt_setConfig(hdl, CFG_PARAM_SERIAL, (void*)optarg, 6);
 				break;
 
 			case OPT_GET_SERIAL:
-				n = gcn64lib_getConfig(hdl, CFG_PARAM_SERIAL, cmd, sizeof(cmd));
+				n = rnt_getConfig(hdl, CFG_PARAM_SERIAL, cmd, sizeof(cmd));
 				if (n==6) {
 					cmd[6] = 0;
 					printf("Serial: %s\n", cmd);
@@ -392,15 +392,15 @@ int main(int argc, char **argv)
 
 			case OPT_BOOTLOADER:
 				printf("Sending 'jump to bootloader' command...");
-				gcn64lib_bootloader(hdl);
+				rnt_bootloader(hdl);
 				break;
 
 			case OPT_SUSPEND_POLLING:
-				gcn64lib_suspendPolling(hdl, 1);
+				rnt_suspendPolling(hdl, 1);
 				break;
 
 			case OPT_RESUME_POLLING:
-				gcn64lib_suspendPolling(hdl, 0);
+				rnt_suspendPolling(hdl, 0);
 				break;
 
 			case OPT_N64_INIT_RUMBLE:
@@ -704,7 +704,7 @@ int main(int argc, char **argv)
 				{
 					char version[64];
 
-					if (0 == gcn64lib_getVersion(hdl, version, sizeof(version))) {
+					if (0 == rnt_getVersion(hdl, version, sizeof(version))) {
 						printf("Firmware version: %s\n", version);
 					}
 				}
@@ -714,7 +714,7 @@ int main(int argc, char **argv)
 				{
 					char sig[64];
 
-					if (0 == gcn64lib_getSignature(hdl, sig, sizeof(sig))) {
+					if (0 == rnt_getSignature(hdl, sig, sizeof(sig))) {
 						printf("Signature: %s\n", sig);
 					}
 				}
@@ -723,8 +723,8 @@ int main(int argc, char **argv)
 			case OPT_GET_CTLTYPE:
 				{
 					int type;
-					type = gcn64lib_getControllerType(hdl, 0);
-					printf("Controller type 0x%02x: %s\n", type, gcn64lib_controllerName(type));
+					type = rnt_getControllerType(hdl, 0);
+					printf("Controller type 0x%02x: %s\n", type, rnt_controllerName(type));
 				}
 				break;
 

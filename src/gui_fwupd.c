@@ -58,7 +58,7 @@ gpointer gcn64usb_updateFunc(gpointer data)
 	if (!app->recovery_mode) {
 		setUpdateStatus(app, "Enter bootloader...", 10);
 
-		gcn64lib_bootloader(app->current_adapter_handle);
+		rnt_bootloader(app->current_adapter_handle);
 	} else {
 		/* In recovery mode, the adapter is already in the bootloader. */
 		n_adapters_before = rnt_countDevices();
@@ -329,7 +329,7 @@ G_MODULE_EXPORT void update_usbadapter_firmware(GtkWidget *w, gpointer data)
 
 	app->recovery_mode = 0;
 
-	if (gcn64lib_getSignature(app->current_adapter_handle, adap_sig, sizeof(adap_sig))) {
+	if (rnt_getSignature(app->current_adapter_handle, adap_sig, sizeof(adap_sig))) {
 		char *errmsg = "Could not read adapter signature - This file may not be meant for it (Bricking hazard!)";
 		errorPopup(app, errmsg);
 		updatelog_appendln(errmsg);

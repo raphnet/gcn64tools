@@ -82,8 +82,8 @@ static gboolean periodic_updater(gpointer data)
 	GET_UI_ELEMENT(GtkWidget, menuitem_write_cart_ram);
 
 	if (app->current_adapter_handle && !app->inhibit_periodic_updates) {
-		app->controller_type = gcn64lib_getControllerType(app->current_adapter_handle, 0);
-		gtk_label_set_text(label_controller_type, gcn64lib_controllerName(app->controller_type));
+		app->controller_type = rnt_getControllerType(app->current_adapter_handle, 0);
+		gtk_label_set_text(label_controller_type, rnt_controllerName(app->controller_type));
 
 		switch (app->controller_type)
 		{
@@ -158,12 +158,12 @@ void syncGuiToCurrentAdapter(struct application *app)
 		return;
 	}
 
-	if (gcn64lib_getSignature(app->current_adapter_handle, adap_sig, sizeof(adap_sig))) {
+	if (rnt_getSignature(app->current_adapter_handle, adap_sig, sizeof(adap_sig))) {
 	} else {
 		printf("Adapter signature: %s\n", adap_sig);
 	}
 
-	n = gcn64lib_getConfig(app->current_adapter_handle, CFG_PARAM_POLL_INTERVAL0, buf, sizeof(buf));
+	n = rnt_getConfig(app->current_adapter_handle, CFG_PARAM_POLL_INTERVAL0, buf, sizeof(buf));
 	if (n == 1) {
 		printf("poll interval: %d\n", buf[0]);
 		gtk_spin_button_set_value(pollInterval0, (gdouble)buf[0]);
@@ -180,7 +180,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 		else {
 			gtk_widget_show(GTK_WIDGET(configurable_bits[i].chkbtn));
 		}
-		gcn64lib_getConfig(app->current_adapter_handle, configurable_bits[i].cfg_param, buf, sizeof(buf));
+		rnt_getConfig(app->current_adapter_handle, configurable_bits[i].cfg_param, buf, sizeof(buf));
 		printf("config param %02x is %d\n",  configurable_bits[i].cfg_param, buf[0]);
 		gtk_toggle_button_set_active(configurable_bits[i].chkbtn, buf[0]);
 	}
@@ -191,7 +191,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 		gtk_label_set_text(label_product_name, g_utf16_to_utf8((void*)info->str_prodname, -1, NULL, NULL, NULL));
 	}
 
-	if (0 == gcn64lib_getVersion(app->current_adapter_handle, (char*)buf, sizeof(buf))) {
+	if (0 == rnt_getVersion(app->current_adapter_handle, (char*)buf, sizeof(buf))) {
 		sscanf((char*)buf, "%d.%d.%d", &app->firmware_maj, &app->firmware_min, &app->firmware_build);
 		gtk_label_set_text(label_firmware_version, (char*)buf);
 
@@ -220,7 +220,7 @@ G_MODULE_EXPORT void pollIntervalChanged(GtkWidget *win, gpointer data)
 	printf("Value: %d\n", (int)value);
 	buf = (int)value;
 
-	n = gcn64lib_setConfig(app->current_adapter_handle, CFG_PARAM_POLL_INTERVAL0, &buf, 1);
+	n = rnt_setConfig(app->current_adapter_handle, CFG_PARAM_POLL_INTERVAL0, &buf, 1);
 	if (n != 0) {
 		errorPopup(app, "Error setting configuration");
 		deselect_adapter(app);
@@ -249,7 +249,7 @@ G_MODULE_EXPORT void config_checkbox_changed(GtkWidget *win, gpointer data)
 
 	for (i=0; configurable_bits[i].chkbtn; i++) {
 		buf = gtk_toggle_button_get_active(configurable_bits[i].chkbtn);
-		n = gcn64lib_setConfig(app->current_adapter_handle, configurable_bits[i].cfg_param, &buf, 1);
+		n = rnt_setConfig(app->current_adapter_handle, configurable_bits[i].cfg_param, &buf, 1);
 		if (n != 0) {
 			errorPopup(app, "Error setting configuration");
 			deselect_adapter(app);
@@ -366,14 +366,14 @@ G_MODULE_EXPORT void suspend_polling(GtkButton *button, gpointer data)
 {
 	struct application *app = data;
 
-	gcn64lib_suspendPolling(app->current_adapter_handle, 1);
+	rnt_suspendPolling(app->current_adapter_handle, 1);
 }
 
 G_MODULE_EXPORT void resume_polling(GtkButton *button, gpointer data)
 {
 	struct application *app = data;
 
-	gcn64lib_suspendPolling(app->current_adapter_handle, 0);
+	rnt_suspendPolling(app->current_adapter_handle, 0);
 }
 
 G_MODULE_EXPORT void onFileRescan(GtkWidget *wid, gpointer data)
@@ -495,14 +495,14 @@ G_MODULE_EXPORT void testVibration(GtkWidget *wid, gpointer data)
 	if ((app->firmware_maj < 3) || (app->firmware_min < 1)) {
 		errorPopup(app, "Firmware 3.1 or later required");
 	} else {
-		if (0 > gcn64lib_forceVibration(app->current_adapter_handle, 0, 1)) {
+		if (0 > rnt_forceVibration(app->current_adapter_handle, 0, 1)) {
 			errorPopup(app, "Error setting vibration");
 		} else {
 			dialog = gtk_dialog_new_with_buttons("Vibration test", app->mainwindow, GTK_DIALOG_MODAL, "Stop vibration", GTK_RESPONSE_ACCEPT, NULL);
 			gtk_dialog_run(GTK_DIALOG(dialog));
 			gtk_widget_destroy(dialog);
 
-			gcn64lib_forceVibration(app->current_adapter_handle, 0, 0);
+			rnt_forceVibration(app->current_adapter_handle, 0, 0);
 		}
 	}
 }

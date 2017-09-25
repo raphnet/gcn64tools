@@ -45,7 +45,7 @@ int perftest1(rnt_hdl_t hdl, int channel)
 	for (i=0; i<N_CYCLES; i++) {
 
 		gettimeofday(&tv_before, NULL);
-		res = gcn64lib_getVersion(hdl, version, sizeof(version));
+		res = rnt_getVersion(hdl, version, sizeof(version));
 		gettimeofday(&tv_after, NULL);
 
 		total_us += getElaps_us(&tv_before, &tv_after);

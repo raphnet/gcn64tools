@@ -214,7 +214,7 @@ rnt_hdl_t rnt_openDevice(struct rnt_adap_info *dev)
 		hdl->report_size = 40;
 	}
 
-	if (0 == gcn64lib_getVersion(hdl, version, sizeof(version))) {
+	if (0 == rnt_getVersion(hdl, version, sizeof(version))) {
 		int a,b,c;
 
 		if (3 == sscanf(version, "%d.%d.%d", &a, &b, &c)) {
@@ -376,7 +376,7 @@ int rnt_exchange(rnt_hdl_t hdl, unsigned char *outcmd, int outlen, unsigned char
 	return n;
 }
 
-int gcn64lib_suspendPolling(rnt_hdl_t hdl, unsigned char suspend)
+int rnt_suspendPolling(rnt_hdl_t hdl, unsigned char suspend)
 {
 	unsigned char cmd[2];
 	int n;
@@ -395,7 +395,7 @@ int gcn64lib_suspendPolling(rnt_hdl_t hdl, unsigned char suspend)
 	return 0;
 }
 
-int gcn64lib_setConfig(rnt_hdl_t hdl, unsigned char param, unsigned char *data, unsigned char len)
+int rnt_setConfig(rnt_hdl_t hdl, unsigned char param, unsigned char *data, unsigned char len)
 {
 	unsigned char cmd[2 + len];
 	int n;
@@ -415,7 +415,7 @@ int gcn64lib_setConfig(rnt_hdl_t hdl, unsigned char param, unsigned char *data, 
 	return 0;
 }
 
-int gcn64lib_getConfig(rnt_hdl_t hdl, unsigned char param, unsigned char *rx, unsigned char rx_max)
+int rnt_getConfig(rnt_hdl_t hdl, unsigned char param, unsigned char *rx, unsigned char rx_max)
 {
 	unsigned char cmd[2];
 	int n;
@@ -441,7 +441,7 @@ int gcn64lib_getConfig(rnt_hdl_t hdl, unsigned char param, unsigned char *rx, un
 	return n;
 }
 
-int gcn64lib_getVersion(rnt_hdl_t hdl, char *dst, int dstmax)
+int rnt_getVersion(rnt_hdl_t hdl, char *dst, int dstmax)
 {
 	unsigned char cmd[32];
 	int n;
@@ -468,7 +468,7 @@ int gcn64lib_getVersion(rnt_hdl_t hdl, char *dst, int dstmax)
 	return 0;
 }
 
-int gcn64lib_getSignature(rnt_hdl_t hdl, char *dst, int dstmax)
+int rnt_getSignature(rnt_hdl_t hdl, char *dst, int dstmax)
 {
 	unsigned char cmd[40];
 	int n;
@@ -495,7 +495,7 @@ int gcn64lib_getSignature(rnt_hdl_t hdl, char *dst, int dstmax)
 	return 0;
 }
 
-int gcn64lib_forceVibration(rnt_hdl_t hdl, unsigned char channel, unsigned char vibrate)
+int rnt_forceVibration(rnt_hdl_t hdl, unsigned char channel, unsigned char vibrate)
 {
 	unsigned char cmd[3];
 	int n;
@@ -515,7 +515,7 @@ int gcn64lib_forceVibration(rnt_hdl_t hdl, unsigned char channel, unsigned char 
 	return 0;
 }
 
-int gcn64lib_getControllerType(rnt_hdl_t hdl, int chn)
+int rnt_getControllerType(rnt_hdl_t hdl, int chn)
 {
 	unsigned char cmd[32];
 	int n;
@@ -536,7 +536,7 @@ int gcn64lib_getControllerType(rnt_hdl_t hdl, int chn)
 	return cmd[2];
 }
 
-const char *gcn64lib_controllerName(int type)
+const char *rnt_controllerName(int type)
 {
 	switch(type) {
 		case CTL_TYPE_NONE: return "No controller";
@@ -548,7 +548,7 @@ const char *gcn64lib_controllerName(int type)
 	}
 }
 
-int gcn64lib_bootloader(rnt_hdl_t hdl)
+int rnt_bootloader(rnt_hdl_t hdl)
 {
 	unsigned char cmd[4];
 	int cmdlen;
