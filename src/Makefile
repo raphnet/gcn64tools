@@ -1,6 +1,6 @@
 CC=gcc
 LD=$(CC)
-VERSION=1.6.1
+include version.inc
 
 VERSION_STR=\"$(VERSION)\"
 
