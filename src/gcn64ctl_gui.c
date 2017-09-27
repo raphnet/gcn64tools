@@ -515,6 +515,11 @@ main( int    argc,
     GError     *error = NULL;
 	struct application app = { };
 
+#ifdef WINDOWS
+    /* Hack to disable non-standard title bar under windows */
+    putenv("GTK_CSD=0");
+#endif
+
     /* Init GTK+ */
     gtk_init( &argc, &argv );
 
