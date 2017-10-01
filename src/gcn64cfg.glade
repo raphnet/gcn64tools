@@ -3,34 +3,34 @@
 
 Copyright (C) Raphaël Assénat
 
-This file is part of gcn64 to USB.
+This file is part of raphnet-tech adapter manager.
 
-gcn64 to USB is free software: you can redistribute it and/or modify
+raphnet-tech adapter manager is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-gcn64 to USB is distributed in the hope that it will be useful,
+raphnet-tech adapter manager is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with gcn64 to USB.  If not, see <http://www.gnu.org/licenses/>.
+along with raphnet-tech adapter manager.  If not, see <http://www.gnu.org/licenses/>.
 
 Author: Raphaël Assénat
 
 -->
 <interface>
-  <requires lib="gtk+" version="3.12"/>
+  <requires lib="gtk+" version="3.6"/>
   <!-- interface-license-type gplv3 -->
-  <!-- interface-name gcn64 to USB -->
+  <!-- interface-name raphnet-tech adapter manager -->
   <!-- interface-copyright Rapha\303\253l Ass\303\251nat -->
   <!-- interface-authors Rapha\303\253l Ass\303\251nat -->
   <object class="GtkAboutDialog" id="aboutdialog1">
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
-    <property name="program_name">GC/N64 to USB adapter manager</property>
+    <property name="program_name">raphnet-tech adapter manager</property>
     <property name="copyright" translatable="yes">Copyright (C) 2015-2017 Raphaël Assénat &lt;raph@raphnet.net&gt;</property>
     <property name="website">http://www.raphnet.net</property>
     <property name="website_label" translatable="yes">http://www.raphnet.net</property>
@@ -267,7 +267,7 @@ Author: Raphaël Assénat
   </object>
   <object class="GtkWindow" id="mainWindow">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">GC/N64 to USB adapter manager</property>
+    <property name="title" translatable="yes">raphnet-tech adapter manager</property>
     <signal name="destroy" handler="gtk_main_quit" swapped="no"/>
     <signal name="show" handler="onMainWindowShow" swapped="no"/>
     <child>
@@ -628,7 +628,7 @@ Author: Raphaël Assénat
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label11">
+                          <object class="GtkLabel" id="lbl_controller_type">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">end</property>
@@ -759,7 +759,6 @@ Author: Raphaël Assénat
                               <object class="GtkCheckButton" id="chkbtn_gc_full_sliders">
                                 <property name="label" translatable="yes">GC Full range sliders
 (non-centered)</property>
-                                <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="xalign">0</property>
@@ -775,7 +774,6 @@ Author: Raphaël Assénat
                             <child>
                               <object class="GtkCheckButton" id="chkbtn_gc_invert_trig">
                                 <property name="label" translatable="yes">GC Inverted triggers</property>
-                                <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
                                 <property name="tooltip_text" translatable="yes">If set, trigger value decreases when pushed</property>
@@ -808,8 +806,23 @@ Author: Raphaël Assénat
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkBox" id="box5">
-                                <property name="visible">True</property>
+                              <object class="GtkCheckButton" id="chkbtn_dpad_as_buttons">
+                                <property name="label" translatable="yes">D-pad as buttons</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">When checked, the D-Pad directions are reported as buttons instead of an X/Y axis.</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="toggled" handler="config_checkbox_changed" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">6</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkBox" id="box_poll_interval">
                                 <property name="can_focus">False</property>
                                 <child>
                                   <object class="GtkLabel" id="label4">
@@ -849,7 +862,32 @@ Author: Raphaël Assénat
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">6</property>
+                                <property name="position">7</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="lbl_no_configurable_params">
+                                <property name="visible">True</property>
+                                <property name="sensitive">False</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">center</property>
+                                <property name="valign">center</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <property name="xpad">15</property>
+                                <property name="ypad">15</property>
+                                <property name="label" translatable="yes">This adapter has no 
+configurable parameters.</property>
+                                <property name="justify">center</property>
+                                <property name="ellipsize">middle</property>
+                                <attributes>
+                                  <attribute name="weight" value="bold"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">8</property>
                               </packing>
                             </child>
                           </object>
@@ -867,7 +905,6 @@ Author: Raphaël Assénat
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
-                    <property name="padding">4</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
@@ -875,13 +912,16 @@ Author: Raphaël Assénat
                   <object class="GtkFrame" id="frame2">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
+                    <property name="margin_left">8</property>
                     <property name="label_xalign">0</property>
                     <property name="shadow_type">in</property>
                     <child>
                       <object class="GtkAlignment" id="alignment2">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="left_padding">12</property>
+                        <property name="margin_bottom">2</property>
+                        <property name="left_padding">10</property>
+                        <property name="right_padding">10</property>
                         <child>
                           <object class="GtkButtonBox" id="buttonbox1">
                             <property name="visible">True</property>
@@ -889,38 +929,7 @@ Author: Raphaël Assénat
                             <property name="orientation">vertical</property>
                             <property name="layout_style">start</property>
                             <child>
-                              <object class="GtkButton" id="button1">
-                                <property name="label" translatable="yes">Suspend polling</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Suspends the GC/N64 controller polling. (i.e. The controller stops responding)</property>
-                                <property name="xalign">0.46000000834465027</property>
-                                <signal name="clicked" handler="suspend_polling" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="button2">
-                                <property name="label" translatable="yes">Resume polling</property>
-                                <property name="visible">True</property>
-                                <property name="can_focus">True</property>
-                                <property name="receives_default">True</property>
-                                <property name="tooltip_text" translatable="yes">Resumes the GC/N64 controller polling. (i.e. The controller starts responding again)</property>
-                                <signal name="clicked" handler="resume_polling" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="button3">
+                              <object class="GtkButton" id="btn_update_firmware">
                                 <property name="label" translatable="yes">Update firmware...</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
@@ -930,7 +939,7 @@ Author: Raphaël Assénat
                               <packing>
                                 <property name="expand">True</property>
                                 <property name="fill">True</property>
-                                <property name="position">2</property>
+                                <property name="position">0</property>
                               </packing>
                             </child>
                             <child>
@@ -944,7 +953,7 @@ Author: Raphaël Assénat
                               <packing>
                                 <property name="expand">True</property>
                                 <property name="fill">True</property>
-                                <property name="position">3</property>
+                                <property name="position">1</property>
                               </packing>
                             </child>
                             <child>
@@ -958,7 +967,7 @@ Author: Raphaël Assénat
                               <packing>
                                 <property name="expand">True</property>
                                 <property name="fill">True</property>
-                                <property name="position">4</property>
+                                <property name="position">2</property>
                               </packing>
                             </child>
                             <child>
@@ -972,7 +981,38 @@ Author: Raphaël Assénat
                               <packing>
                                 <property name="expand">True</property>
                                 <property name="fill">True</property>
-                                <property name="position">5</property>
+                                <property name="position">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_suspend_polling">
+                                <property name="label" translatable="yes">Suspend polling</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Suspends the GC/N64 controller polling. (i.e. The controller stops responding)</property>
+                                <property name="xalign">0.46000000834465027</property>
+                                <signal name="clicked" handler="suspend_polling" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_resume_polling">
+                                <property name="label" translatable="yes">Resume polling</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Resumes the GC/N64 controller polling. (i.e. The controller starts responding again)</property>
+                                <signal name="clicked" handler="resume_polling" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">6</property>
                               </packing>
                             </child>
                           </object>
@@ -990,7 +1030,6 @@ Author: Raphaël Assénat
                   <packing>
                     <property name="expand">True</property>
                     <property name="fill">True</property>
-                    <property name="padding">3</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
@@ -1006,6 +1045,90 @@ Author: Raphaël Assénat
             <property name="expand">True</property>
             <property name="fill">True</property>
             <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator" id="separator1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_top">11</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="box5">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="margin_top">5</property>
+            <child>
+              <object class="GtkImage" id="image3">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="pixbuf">raphnet_logo.png</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkBox" id="box14">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="valign">end</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkLabel" id="label11">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="valign">end</property>
+                    <property name="margin_left">5</property>
+                    <property name="label" translatable="yes">raphnet technologies</property>
+                    <attributes>
+                      <attribute name="weight" value="bold"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLinkButton" id="link_raphnet_website">
+                    <property name="label" translatable="yes">button</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="halign">start</property>
+                    <property name="valign">end</property>
+                    <property name="relief">none</property>
+                    <property name="uri">http://www.raphnet-tech.com</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">4</property>
           </packing>
         </child>
       </object>
@@ -1160,6 +1283,7 @@ Author: Raphaël Assénat
   </object>
   <object class="GtkWindow" id="win_gc2n64">
     <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Gamecube to N64 adapter</property>
     <property name="modal">True</property>
     <property name="transient_for">mainWindow</property>
     <signal name="show" handler="gc2n64_manager_on_show" swapped="no"/>
@@ -1696,6 +1820,7 @@ Author: Raphaël Assénat
   </object>
   <object class="GtkDialog" id="mempak_io_dialog">
     <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Mempak IO status</property>
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">win_mempak_edit</property>
