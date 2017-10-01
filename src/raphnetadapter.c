@@ -99,6 +99,25 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0024, -1, }, // Intellivision to USB adapter (v1.3)
 	{ OUR_VENDOR_ID, 0x0025, -1, }, // CD32 controller to USB adapter
 
+	// Legacy device (even older than above) from before we had our own
+	// USB Vendor ID.
+	{ 0x1781, 0x0a96, -1, }, // Old USB_game12, SNES controller adapter
+	{ 0x1781, 0x0a97, -1, }, // Snes mouse
+	{ 0x1781, 0x0a99, -1, }, // NES controller adapter
+	{ 0x1781, 0x0a9a, -1, }, // Old GC/N64 to USB
+	{ 0x1781, 0x0a9b, -1, }, // Old Atari/Genesis/DB9 to USB
+	{ 0x1781, 0x0a9c, -1, }, // Old Intellivision to USB adapter
+	{ 0x1781, 0x0a9d, -1, }, // Old 4nes4snes
+	{ 0x1781, 0x0a9e, -1, }, // Genesis multitap
+	{ 0x1781, 0x0a9f, -1, }, // Multidb9
+	{ 0x1740, 0x0579, -1, }, // wusbmote
+	{ 0x1740, 0x057a, -1, }, // tg16 to usb
+	{ 0x1781, 0x057b, -1, }, // Jaguar to USB
+	{ 0x1781, 0x057d, -1, }, // virtualboy to USB
+	{ 0x1781, 0x057e, -1, }, // Saturn to USB
+	{ 0x1740, 0x057f, -1, }, // GC/N64 usb v2.0
+	{ 0x1740, 0x0580, -1, }, // USB Game16 board
+
 	{ }, // terminator
 };
 
