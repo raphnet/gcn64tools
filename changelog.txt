@@ -1,13 +1,19 @@
-=== Version 1.6.1 ===
+=== Version 2.0 ===
 Date: 2017-04-??
+ - Renamed project to raphnet-tech adapter manager
+ - Add support for a PC-Engine to USB adapter currently in development
+ - Add basic support (name and version) for legacy raphnet
+   adapters (not-updateable, not-configurable)
  - Transfer pak: Add support for MBC2 gameboy cartridges.
  - More robust controller pak IO (Add CRC checks and retries)
  - Support for "Gamcube sliders as buttons" configuration option (for
    adapters with firmware 3.4.1 and newer)
  - Add a command to detect a N64 controller pak
  - N64 rumble pak control from the command-line
+ - Add scripts/Makefile to cross-compile the Windows version from
+   an MXE environment.
 
-=== Version 1.6 ===
+ === Version 1.6 ===
 Date: 2017-04-06
  - Add support for the N64 Transfer Pak:
    - Read ROM from ROM-Only, MBC1, MBC3 and MBC5 cartridges.
