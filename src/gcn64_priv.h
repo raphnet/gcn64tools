@@ -12,6 +12,8 @@ typedef struct _rnt_hdl_t {
 	hid_device *hdev;
 	int report_size;
 	struct rnt_adap_caps caps;
+	// Version info for legacy devices
+	uint8_t version_major, version_minor;
 } *rnt_hdl_t;
 
 #endif

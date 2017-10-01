@@ -131,16 +131,21 @@ void syncGuiToCurrentAdapter(struct application *app)
 	int n;
 	struct {
 		unsigned char cfg_param;
-		GtkToggleButton *chkbtn;
-		int *available; // If NULL, always visible and available. Otherwise, availability boolean.
+		GtkWidget *widget;
+		uint32_t feature_bit; // If zero, always visible and available.
+		gboolean hide_when_unavailable;
 	} configurable_bits[] = {
-//		{ CFG_PARAM_N64_SQUARE, GET_ELEMENT(GtkCheckButton, chkbtn_n64_square) },
-//		{ CFG_PARAM_GC_MAIN_SQUARE, GET_ELEMENT(GtkCheckButton, chkbtn_gc_main_square) },
-//		{ CFG_PARAM_GC_CSTICK_SQUARE, GET_ELEMENT(GtkCheckButton, chkbtn_gc_cstick_square) },
-		{ CFG_PARAM_FULL_SLIDERS, GET_ELEMENT(GtkToggleButton, chkbtn_gc_full_sliders), &app->current_adapter_info.caps.gc_full_sliders },
-		{ CFG_PARAM_INVERT_TRIG, GET_ELEMENT(GtkToggleButton, chkbtn_gc_invert_trig), &app->current_adapter_info.caps.gc_invert_trig },
-		{ CFG_PARAM_TRIGGERS_AS_BUTTONS, GET_ELEMENT(GtkToggleButton, chkbtn_sliders_as_buttons), &app->current_adapter_info.caps.triggers_as_buttons },
-		{ CFG_PARAM_DPAD_AS_BUTTONS, GET_ELEMENT(GtkToggleButton, chkbtn_dpad_as_buttons), &app->current_adapter_info.caps.dpad_as_buttons },
+		{ 0, GET_ELEMENT(GtkWidget, btn_suspend_polling), RNTF_SUSPEND_POLLING, FALSE },
+		{ 0, GET_ELEMENT(GtkWidget, btn_resume_polling), RNTF_SUSPEND_POLLING, FALSE },
+		{ 0, GET_ELEMENT(GtkWidget, btn_update_firmware), RNTF_FW_UPDATE, FALSE },
+		{ 0, GET_ELEMENT(GtkWidget, box_poll_interval), RNTF_POLL_RATE, TRUE },
+		{ 0, GET_ELEMENT(GtkWidget, lbl_controller_type), RNTF_CONTROLLER_TYPE, TRUE },
+		{ 0, GET_ELEMENT(GtkWidget, label_controller_type), RNTF_CONTROLLER_TYPE, TRUE },
+
+		{ CFG_PARAM_FULL_SLIDERS, GET_ELEMENT(GtkWidget, chkbtn_gc_full_sliders), RNTF_GC_FULL_SLIDERS, TRUE },
+		{ CFG_PARAM_INVERT_TRIG, GET_ELEMENT(GtkWidget, chkbtn_gc_invert_trig), RNTF_GC_INVERT_TRIG, TRUE },
+		{ CFG_PARAM_TRIGGERS_AS_BUTTONS, GET_ELEMENT(GtkWidget, chkbtn_sliders_as_buttons), RNTF_TRIGGER_AS_BUTTONS, TRUE },
+		{ CFG_PARAM_DPAD_AS_BUTTONS, GET_ELEMENT(GtkWidget, chkbtn_dpad_as_buttons), RNTF_DPAD_AS_BUTTONS, TRUE },
 		{ },
 	};
 	GET_UI_ELEMENT(GtkLabel, label_product_name);
@@ -159,6 +164,12 @@ void syncGuiToCurrentAdapter(struct application *app)
 		return;
 	}
 
+	if (app->current_adapter_info.caps.features == 0) {
+		gtk_widget_show(GET_ELEMENT(GtkWidget, lbl_no_configurable_params));
+	} else {
+		gtk_widget_hide(GET_ELEMENT(GtkWidget, lbl_no_configurable_params));
+	}
+
 	if (rnt_getSignature(app->current_adapter_handle, adap_sig, sizeof(adap_sig))) {
 	} else {
 		printf("Adapter signature: %s\n", adap_sig);
@@ -170,25 +181,36 @@ void syncGuiToCurrentAdapter(struct application *app)
 		gtk_spin_button_set_value(pollInterval0, (gdouble)buf[0]);
 	}
 
-	for (i=0; configurable_bits[i].chkbtn; i++) {
+	for (i=0; configurable_bits[i].widget; i++) {
 		int avail = 0;
 
-		if (configurable_bits[i].available) {
-			if (*(configurable_bits[i].available)) {
-				gtk_widget_show(GTK_WIDGET(configurable_bits[i].chkbtn));
+		// Decide if the widget (button or toggle button) is "available" given the adapter
+		// features.
+		if (configurable_bits[i].feature_bit) {
+			if (app->current_adapter_info.caps.features & configurable_bits[i].feature_bit) {
 				avail = 1;
-			} else {
-				gtk_widget_hide(GTK_WIDGET(configurable_bits[i].chkbtn));
 			}
 		}
 		else {
-			gtk_widget_show(GTK_WIDGET(configurable_bits[i].chkbtn));
 			avail = 1;
 		}
+
 		if (avail) {
-			rnt_getConfig(app->current_adapter_handle, configurable_bits[i].cfg_param, buf, sizeof(buf));
-			printf("config param 0x%02x is %d\n",  configurable_bits[i].cfg_param, buf[0]);
-			gtk_toggle_button_set_active(configurable_bits[i].chkbtn, buf[0]);
+			gtk_widget_show(configurable_bits[i].widget);
+			gtk_widget_set_sensitive(configurable_bits[i].widget, TRUE);
+
+			if (GTK_IS_TOGGLE_BUTTON(configurable_bits[i].widget)) {
+				rnt_getConfig(app->current_adapter_handle, configurable_bits[i].cfg_param, buf, sizeof(buf));
+				printf("config param 0x%02x is %d\n",  configurable_bits[i].cfg_param, buf[0]);
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(configurable_bits[i].widget), buf[0]);
+			}
+		} else {
+			// if non available, widget cannot be used
+			gtk_widget_set_sensitive(configurable_bits[i].widget, FALSE);
+			// non-availability may mean we must also hide the widget
+			if (configurable_bits[i].hide_when_unavailable) {
+				gtk_widget_hide(configurable_bits[i].widget);
+			}
 		}
 	}
 
@@ -209,7 +231,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 
 	gtk_label_set_text(label_device_path, info->str_path);
 
-	sprintf(ports_str, "%d", info->caps.n_raw_channels);
+	sprintf(ports_str, "%d", info->caps.n_channels);
 	gtk_label_set_text(label_n_ports, ports_str);
 
 	periodic_updater(app);
@@ -243,9 +265,6 @@ G_MODULE_EXPORT void config_checkbox_changed(GtkWidget *win, gpointer data)
 		unsigned char cfg_param;
 		GtkToggleButton *chkbtn;
 	} configurable_bits[] = {
-//		{ CFG_PARAM_N64_SQUARE, GET_ELEMENT(GtkCheckButton, chkbtn_n64_square) },
-//		{ CFG_PARAM_GC_MAIN_SQUARE, GET_ELEMENT(GtkCheckButton, chkbtn_gc_main_square) },
-//		{ CFG_PARAM_GC_CSTICK_SQUARE, GET_ELEMENT(GtkCheckButton, chkbtn_gc_cstick_square) },
 		{ CFG_PARAM_FULL_SLIDERS, GET_ELEMENT(GtkToggleButton, chkbtn_gc_full_sliders) },
 		{ CFG_PARAM_INVERT_TRIG, GET_ELEMENT(GtkToggleButton, chkbtn_gc_invert_trig) },
 		{ CFG_PARAM_TRIGGERS_AS_BUTTONS, GET_ELEMENT(GtkToggleButton, chkbtn_sliders_as_buttons) },

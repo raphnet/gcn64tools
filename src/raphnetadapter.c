@@ -31,39 +31,73 @@ static int dusbr_verbose = 0;
 
 struct supported_adapter {
 	uint16_t vid, pid;
-	int if_number;
+	int if_number; // Set to -1 for "display only" (no command interface)
 	struct rnt_adap_caps caps;
 };
 
+#define RNT_V3_STD	(RNTF_FW_UPDATE | RNTF_POLL_RATE | RNTF_SUSPEND_POLLING | RNTF_CONTROLLER_TYPE)
+
 static struct supported_adapter supported_adapters[] = {
-	/* vid, pid, if_no, { rpsize, n_raw, bio_support, gc_full_sliders, gc_invert_trig, triggers_as_buttons, dpad_as_buttons } */
+	/* vid, pid, if_no, { rpsize, n_channels, n_raw_channels, features } */
 
-	{ OUR_VENDOR_ID, 0x0017, 1, { 0, 1, 0, 1, 1 } }, // GC/N64 USB v3.0, 3.1.0, 3.1.1
-	{ OUR_VENDOR_ID, 0x001D, 1, { 0, 1, 0, 1, 1 } }, // GC/N64 USB v3.2.0 ... v3.3.x
-	{ OUR_VENDOR_ID, 0x0020, 1, { 0, 1, 0, 1, 1 } }, // GCN64->USB v3.2.1 (N64 mode)
-	{ OUR_VENDOR_ID, 0x0021, 1, { 0, 1, 0, 1, 1 } }, // GCN64->USB v3.2.1 (GC mode)
-	{ OUR_VENDOR_ID, 0x0022, 1, { 0, 2, 0, 1, 1 } }, // GCN64->USB v3.3.x (2x GC/N64 mode)
-	{ OUR_VENDOR_ID, 0x0030, 1, { 0, 2, 0, 1, 1 } }, // GCN64->USB v3.3.0 (2x N64-only mode)
-	{ OUR_VENDOR_ID, 0x0031, 1, { 0, 2, 0, 1, 1 } }, // GCN64->USB v3.3.0 (2x GC-only mode)
+	{ OUR_VENDOR_ID, 0x0017, 1, { 0, 1, 1, RNT_V3_STD | RNTF_GC_FULL_SLIDERS | RNTF_GC_INVERT_TRIG } }, // GC/N64 USB v3.0, 3.1.0, 3.1.1
+	{ OUR_VENDOR_ID, 0x001D, 1, { 0, 1, 1, RNT_V3_STD | RNTF_GC_FULL_SLIDERS | RNTF_GC_INVERT_TRIG } }, // GC/N64 USB v3.2.0 ... v3.3.x
+	{ OUR_VENDOR_ID, 0x0020, 1, { 0, 1, 1, RNT_V3_STD | RNTF_GC_FULL_SLIDERS | RNTF_GC_INVERT_TRIG } }, // GCN64->USB v3.2.1 (N64 mode)
+	{ OUR_VENDOR_ID, 0x0021, 1, { 0, 1, 1, RNT_V3_STD | RNTF_GC_FULL_SLIDERS | RNTF_GC_INVERT_TRIG } }, // GCN64->USB v3.2.1 (GC mode)
+	{ OUR_VENDOR_ID, 0x0022, 1, { 0, 2, 2, RNT_V3_STD | RNTF_GC_FULL_SLIDERS | RNTF_GC_INVERT_TRIG } }, // GCN64->USB v3.3.x (2x GC/N64 mode)
+	{ OUR_VENDOR_ID, 0x0030, 1, { 0, 2, 2, RNT_V3_STD | RNTF_GC_FULL_SLIDERS | RNTF_GC_INVERT_TRIG } }, // GCN64->USB v3.3.0 (2x N64-only mode)
+	{ OUR_VENDOR_ID, 0x0031, 1, { 0, 2, 2, RNT_V3_STD | RNTF_GC_FULL_SLIDERS | RNTF_GC_INVERT_TRIG } }, // GCN64->USB v3.3.0 (2x GC-only mode)
 
-	{ OUR_VENDOR_ID, 0x0032, 1, { 0, 1, 1, 1, 1 } }, // GC/N64 USB v3.4.x (GC/N64 mode)
-	{ OUR_VENDOR_ID, 0x0033, 1, { 0, 1, 1, 1, 1 } }, // GC/N64 USB v3.4.x (N64 mode)
-	{ OUR_VENDOR_ID, 0x0034, 1, { 0, 1, 1, 1, 1 } }, // GC/N64 USB v3.4.x (GC mode)
-	{ OUR_VENDOR_ID, 0x0035, 1, { 0, 2, 1, 1, 1 } }, // GC/N64 USB v3.4.x (2x GC/N64 mode)
-	{ OUR_VENDOR_ID, 0x0036, 1, { 0, 2, 1, 1, 1 } }, // GC/N64 USB v3.4.x (2x N64-only mode)
-	{ OUR_VENDOR_ID, 0x0037, 1, { 0, 2, 1, 1, 1 } }, // GC/N64 USB v3.4.x (2x GC-only mode)
+	{ OUR_VENDOR_ID, 0x0032, 1, { 0, 1, 1, RNT_V3_STD | RNTF_BLOCK_IO | RNTF_GC_FULL_SLIDERS | RNTF_GC_INVERT_TRIG } }, // GC/N64 USB v3.4.x (GC/N64 mode)
+	{ OUR_VENDOR_ID, 0x0033, 1, { 0, 1, 1, RNT_V3_STD | RNTF_BLOCK_IO | RNTF_GC_FULL_SLIDERS | RNTF_GC_INVERT_TRIG } }, // GC/N64 USB v3.4.x (N64 mode)
+	{ OUR_VENDOR_ID, 0x0034, 1, { 0, 1, 1, RNT_V3_STD | RNTF_BLOCK_IO | RNTF_GC_FULL_SLIDERS | RNTF_GC_INVERT_TRIG } }, // GC/N64 USB v3.4.x (GC mode)
+	{ OUR_VENDOR_ID, 0x0035, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO | RNTF_GC_FULL_SLIDERS | RNTF_GC_INVERT_TRIG } }, // GC/N64 USB v3.4.x (2x GC/N64 mode)
+	{ OUR_VENDOR_ID, 0x0036, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO | RNTF_GC_FULL_SLIDERS | RNTF_GC_INVERT_TRIG } }, // GC/N64 USB v3.4.x (2x N64-only mode)
+	{ OUR_VENDOR_ID, 0x0037, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO | RNTF_GC_FULL_SLIDERS | RNTF_GC_INVERT_TRIG } }, // GC/N64 USB v3.4.x (2x GC-only mode)
 
 	// For future use...
-	{ OUR_VENDOR_ID, 0x0038, 1, { 0, 2, 1 } },
-	{ OUR_VENDOR_ID, 0x0039, 1, { 0, 2, 1 } },
-	{ OUR_VENDOR_ID, 0x003A, 1, { 0, 2, 1 } },
-	{ OUR_VENDOR_ID, 0x003B, 1, { 0, 2, 1 } },
-	{ OUR_VENDOR_ID, 0x003C, 1, { 0, 2, 1 } },
-	{ OUR_VENDOR_ID, 0x003D, 1, { 0, 2, 1 } },
-	{ OUR_VENDOR_ID, 0x003E, 1, { 0, 2, 1 } },
-	{ OUR_VENDOR_ID, 0x003F, 1, { 0, 2, 1 } },
+	{ OUR_VENDOR_ID, 0x0038, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO } },
+	{ OUR_VENDOR_ID, 0x0039, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO } },
+	{ OUR_VENDOR_ID, 0x003A, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO } },
+	{ OUR_VENDOR_ID, 0x003B, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO } },
+	{ OUR_VENDOR_ID, 0x003C, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO } },
+	{ OUR_VENDOR_ID, 0x003D, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO } },
+	{ OUR_VENDOR_ID, 0x003E, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO } },
+	{ OUR_VENDOR_ID, 0x003F, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO } },
 
-	{ OUR_VENDOR_ID, 0x0050, 1, { 63, 0, 0, 0, 0, 0, 1 } }, // PC Engine to USB v1.0.0
+	{ OUR_VENDOR_ID, 0x0050, 1, { 63, 1, 0, RNT_V3_STD | RNTF_DPAD_AS_BUTTONS } }, // PC Engine to USB v1.0.0
+	{ OUR_VENDOR_ID, 0x0051, 1, { 63, 5, 0, RNT_V3_STD | RNTF_DPAD_AS_BUTTONS } }, // PC Engine to USB v1.0.0 (5 player mode)
+
+	// Legacy devices (vusb, non-upgradeable and typically without configurable features)
+	{ OUR_VENDOR_ID, 0x0003, -1, { 0, 4 } }, // 4nes4snes 1.4.2, 1.5
+	{ 0x288B, 0x0003, -1 }, // 4nes4snes 1.4.1 (wrong vendor id)
+	{ OUR_VENDOR_ID, 0x0004, -1, }, // GCN64->USB v2.3
+	{ OUR_VENDOR_ID, 0x0005, -1, }, // Saturn to USB adapter (joystick mode)
+	{ OUR_VENDOR_ID, 0x0006, -1, }, // Saturn to USB adapter (mouse mode)
+	{ OUR_VENDOR_ID, 0x0007, -1, }, // Famicom controller to USB adapter
+	{ OUR_VENDOR_ID, 0x0008, -1, }, // Dreamcast to USB adapter (joystick mode)
+	{ OUR_VENDOR_ID, 0x0009, -1, }, // Dreamcast to USB adapter (mouse mode)
+	{ OUR_VENDOR_ID, 0x000A, -1, }, // Dreamcast to USB adapter (keyboard mode)
+	{ OUR_VENDOR_ID, 0x000B, -1, }, // GCN64->USB v2.9 (gamecube keyboard mode)
+	{ OUR_VENDOR_ID, 0x000C, -1, }, // GCN64->USB v2.9 (joystick mode)
+	{ OUR_VENDOR_ID, 0x000D, -1, }, // GCN64->USB v2.9 (keyboard mode)
+	{ OUR_VENDOR_ID, 0x000E, -1, }, // Virtual boy to USB v1.1
+	{ OUR_VENDOR_ID, 0x000F, -1, }, // GCN64->USB v2.9 (N64 to USB--Special custom version)
+	{ OUR_VENDOR_ID, 0x0010, -1, }, // WUSBMote v1.2 (Joystick mode)
+	{ OUR_VENDOR_ID, 0x0011, -1, }, // WUSBMote v1.2 (Mouse mode)
+	{ OUR_VENDOR_ID, 0x0012, -1, }, // WUSBMote v1.2.1 (Joystick mode)
+	{ OUR_VENDOR_ID, 0x0013, -1, }, // WUSBMote v1.2.1 (Mouse mode)
+	{ OUR_VENDOR_ID, 0x0014, -1, }, // WUSBMote v1.3 (Joystick mode)
+	{ OUR_VENDOR_ID, 0x0015, -1, }, // WUSBMote v1.3 (Mouse mode)
+	{ OUR_VENDOR_ID, 0x0016, -1, }, // WUSBMote v1.3 (I2C interface mode)
+	{ OUR_VENDOR_ID, 0x0018, -1, }, // Atari Jaguar controller to USB v1.1
+	{ OUR_VENDOR_ID, 0x0019, -1, }, // MultiDB9 Adapter
+	{ OUR_VENDOR_ID, 0x001A, -1, }, // MultiDB9 ADapter (multitap mode)
+	{ OUR_VENDOR_ID, 0x001B, -1, }, // USB Game12 v1.1
+	{ OUR_VENDOR_ID, 0x001E, -1, }, // Vectrex to USB adapter
+	{ OUR_VENDOR_ID, 0x0023, -1, }, // 3DO controller to USB adapter
+	{ OUR_VENDOR_ID, 0x0024, -1, }, // Intellivision to USB adapter (v1.3)
+	{ OUR_VENDOR_ID, 0x0025, -1, }, // CD32 controller to USB adapter
 
 	{ }, // terminator
 };
@@ -80,22 +114,25 @@ void rnt_shutdown(void)
 	hid_exit();
 }
 
+#define PID_NOT_HANDLED		0
+#define PID_HANDLED			1
+#define PID_HANDLED_LEGACY	2
 static char isProductIdHandled(unsigned short pid, int interface_number, struct rnt_adap_caps *caps)
 {
 	int i;
 
 	for (i=0; supported_adapters[i].vid; i++) {
 		if (pid == supported_adapters[i].pid) {
-			if (interface_number == supported_adapters[i].if_number) {
+			if (interface_number == supported_adapters[i].if_number || supported_adapters[i].if_number == -1) {
 				if (caps) {
 					memcpy(caps, &supported_adapters[i].caps, sizeof (struct rnt_adap_caps));
 				}
-				return 1;
+				return supported_adapters[i].if_number == -1 ? PID_HANDLED_LEGACY : PID_HANDLED;
 			}
 		}
 	}
 
-	return 0;
+	return PID_NOT_HANDLED;
 }
 
 struct rnt_adap_list_ctx *rnt_allocListCtx(void)
@@ -139,6 +176,7 @@ int rnt_countDevices(void)
 struct rnt_adap_info *gcn64_listDevices(struct rnt_adap_info *info, struct rnt_adap_list_ctx *ctx)
 {
 	struct rnt_adap_caps caps;
+	int handled;
 
 	memset(info, 0, sizeof(struct rnt_adap_info));
 
@@ -165,14 +203,20 @@ struct rnt_adap_info *gcn64_listDevices(struct rnt_adap_info *info, struct rnt_a
 		if (IS_VERBOSE()) {
 			printf("Considering 0x%04x:0x%04x\n", ctx->cur_dev->vendor_id, ctx->cur_dev->product_id);
 		}
-		if (isProductIdHandled(ctx->cur_dev->product_id, ctx->cur_dev->interface_number, &caps))
+		handled = isProductIdHandled(ctx->cur_dev->product_id, ctx->cur_dev->interface_number, &caps);
+		if (handled != PID_NOT_HANDLED)
 		{
 				info->usb_vid = ctx->cur_dev->vendor_id;
 				info->usb_pid = ctx->cur_dev->product_id;
+				info->version_major = ctx->cur_dev->release_number >> 8;
+				info->version_minor = ctx->cur_dev->release_number & 0xff;
 				wcsncpy(info->str_prodname, ctx->cur_dev->product_string, PRODNAME_MAXCHARS-1);
 				wcsncpy(info->str_serial, ctx->cur_dev->serial_number, SERIAL_MAXCHARS-1);
 				strncpy(info->str_path, ctx->cur_dev->path, PATH_MAXCHARS-1);
 				memcpy(&info->caps, &caps, sizeof(info->caps));
+				if (handled == PID_HANDLED_LEGACY) {
+					info->legacy_adapter = 1;
+				}
 				return info;
 		}
 
@@ -193,25 +237,36 @@ rnt_hdl_t rnt_openDevice(struct rnt_adap_info *dev)
 	if (!dev)
 		return NULL;
 
-	if (IS_VERBOSE()) {
-		printf("Opening device path: '%s'\n", dev->str_path);
-	}
-
-	hdev = hid_open_path(dev->str_path);
-	if (!hdev) {
-		return NULL;
-	}
-
-	hdl = malloc(sizeof(struct _rnt_hdl_t));
+	hdl = calloc(1, sizeof(struct _rnt_hdl_t));
 	if (!hdl) {
 		perror("malloc");
-		hid_close(hdev);
 		return NULL;
 	}
-	hdl->hdev = hdev;
+
+	// Legacy devices (raphnet products based on V-USB) do not have
+	// an hid data interface. Those adapters cannot be managed/configures.
+	//
+	// But we can still "open" them, but only to display their USB VID/PID
+	// and name.
+	if (!dev->legacy_adapter) {
+		if (IS_VERBOSE()) {
+			printf("Opening device path: '%s'\n", dev->str_path);
+		}
+
+		hdev = hid_open_path(dev->str_path);
+		if (!hdev) {
+			free(hdl);
+			return NULL;
+		}
+
+		hdl->hdev = hdev;
+	}
+
+	hdl->version_major = dev->version_major;
+	hdl->version_minor = dev->version_minor;
 	hdl->report_size = dev->caps.rpsize ? dev->caps.rpsize : 63;
 
-	if (!dev->caps.bio_support && !dev->caps.rpsize) {
+	if (!(dev->caps.features & RNTF_BLOCK_IO) && !dev->caps.rpsize) {
 		printf("Pre-3.4 version detected. Setting report size to 40 bytes\n");
 		hdl->report_size = 40;
 	}
@@ -221,7 +276,7 @@ rnt_hdl_t rnt_openDevice(struct rnt_adap_info *dev)
 
 		if (3 == sscanf(version, "%d.%d.%d", &a, &b, &c)) {
 			if ((a >= 3) && (b >= 4) && (c > 0)) {
-				dev->caps.triggers_as_buttons = 1;
+				dev->caps.features |= RNTF_TRIGGER_AS_BUTTONS;
 			}
 		}
 	}
@@ -297,6 +352,10 @@ int rnt_send_cmd(rnt_hdl_t hdl, const unsigned char *cmd, int cmdlen)
 	unsigned char buffer[hdl->report_size+1];
 	int n;
 
+	if (!hdev) {
+		return -1;
+	}
+
 	if (cmdlen > (sizeof(buffer)-1)) {
 		fprintf(stderr, "Error: Command too long\n");
 		return -1;
@@ -322,6 +381,10 @@ int rnt_poll_result(rnt_hdl_t hdl, unsigned char *cmd, int cmd_maxlen)
 	unsigned char buffer[hdl->report_size+1];
 	int res_len;
 	int n;
+
+	if (!hdev) {
+		return -1;
+	}
 
 	memset(buffer, 0, sizeof(buffer));
 	buffer[0] = 0x00; // report ID set to 0 (device has only one)
@@ -357,7 +420,9 @@ int rnt_exchange(rnt_hdl_t hdl, unsigned char *outcmd, int outlen, unsigned char
 
 	n = rnt_send_cmd(hdl, outcmd, outlen);
 	if (n<0) {
-		fprintf(stderr, "Error sending command\n");
+		// only complain when this fails on non-legacy devices
+		if (hdl->hdev)
+			fprintf(stderr, "Error sending command\n");
 		return -1;
 	}
 
@@ -454,6 +519,12 @@ int rnt_getVersion(rnt_hdl_t hdl, char *dst, int dstmax)
 
 	if (dstmax <= 0)
 		return -1;
+
+	/* legacy device. Version must be built from */
+	if (!hdl->hdev) {
+		snprintf(dst, dstmax, "%d.%d(.x)", hdl->version_major, hdl->version_minor);
+		return 0;
+	}
 
 	cmd[0] = RQ_GCN64_GET_VERSION;
 

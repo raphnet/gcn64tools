@@ -220,7 +220,10 @@ static int listDevices(void)
 	while (gcn64_listDevices(&inf, listctx))
 	{
 		n_found++;
-		printf("Found device '%ls', serial '%ls'. Supports %d raw channel(s), Block io: %s\n", inf.str_prodname, inf.str_serial, inf.caps.n_raw_channels, inf.caps.bio_support ? "Yes":"No");
+		printf("Found device '%ls', serial '%ls'. Supports %d channel(s), %d raw channel(s), Block io: %s\n",
+			inf.str_prodname, inf.str_serial, inf.caps.n_channels,
+				inf.caps.n_raw_channels,
+				inf.caps.features & RNTF_BLOCK_IO ? "Yes":"No");
 
 	}
 	rnt_freeListCtx(listctx);

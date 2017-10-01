@@ -2,23 +2,33 @@
 #define _raphnetadapter_h__
 
 #include <wchar.h>
+#include <stdint.h>
 
 #define OUR_VENDOR_ID 	0x289b
 #define PRODNAME_MAXCHARS	256
 #define SERIAL_MAXCHARS		256
 #define PATH_MAXCHARS		256
 
+// RNTF : RaphNeT adapter Feature
+#define RNTF_FW_UPDATE				0x000001
+#define RNTF_BLOCK_IO				0x000002
+#define RNTF_SUSPEND_POLLING		0x000004
+#define RNTF_POLL_RATE				0x000008
+#define RNTF_CONTROLLER_TYPE		0x000010
+
+#define RNTF_GC_FULL_SLIDERS		0x001000
+#define RNTF_GC_INVERT_TRIG			0x002000
+#define RNTF_TRIGGER_AS_BUTTONS		0x004000
+#define RNTF_DPAD_AS_BUTTONS		0x008000
+
 struct rnt_adap_caps {
 	int rpsize; // report size for adapter IO. (Set to non-zero to override default
+	int n_channels;
 	int n_raw_channels;
-	int bio_support;
 
 	// Configuration parameters whose availability depends
 	// on the firmware version.
-	int gc_full_sliders;
-	int gc_invert_trig;
-	int triggers_as_buttons;
-	int dpad_as_buttons;
+	uint32_t features;
 };
 
 struct rnt_adap_info {
@@ -28,11 +38,16 @@ struct rnt_adap_info {
 	int usb_vid, usb_pid;
 	int access; // True unless direct access to read serial/prodname failed due to permissions.
 	struct rnt_adap_caps caps;
+	int legacy_adapter; // non-openable (hid)
+	// Version from USB device descriptor. Most release are in the x.y.z format,
+	// so you should use rnt_getVersion() for a complete version.
+	uint8_t version_major;
+	uint8_t version_minor;
 };
 
 struct rnt_adap_list_ctx;
 
-typedef struct _rnt_hdl_t *rnt_hdl_t; // Cast from hid_device
+typedef struct _rnt_hdl_t *rnt_hdl_t;
 
 int rnt_init(int verbose);
 void rnt_shutdown(void);
