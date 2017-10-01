@@ -3,5 +3,6 @@
 	<gresource prefix="/com/raphnet/gcn64ctl_gui">
 		<file preprocess="xml-stripblanks">gui.xml</file>
 		<file>project_image.png</file>
+		<file>raphnet_logo.png</file>
 	</gresource>
 </gresources>

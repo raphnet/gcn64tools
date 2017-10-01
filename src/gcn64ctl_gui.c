@@ -580,6 +580,8 @@ main( int    argc,
 
 	gtk_about_dialog_set_version((GtkAboutDialog*)gtk_builder_get_object(app.builder, "aboutdialog1"), VERSION_STR);
 
+	gtk_button_set_label(GTK_BUTTON(gtk_builder_get_object(app.builder, "link_raphnet_website")), "www.raphnet-tech.com");
+
     /* Start main loop */
     gtk_main();
 
