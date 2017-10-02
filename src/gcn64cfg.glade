@@ -32,8 +32,8 @@ Author: Raphaël Assénat
     <property name="type_hint">dialog</property>
     <property name="program_name">raphnet-tech adapter manager</property>
     <property name="copyright" translatable="yes">Copyright (C) 2015-2017 Raphaël Assénat &lt;raph@raphnet.net&gt;</property>
-    <property name="website">http://www.raphnet.net</property>
-    <property name="website_label" translatable="yes">http://www.raphnet.net</property>
+    <property name="website">http://www.raphnet-tech.com</property>
+    <property name="website_label" translatable="yes">www.raphnet-tech.com</property>
     <property name="authors">Raphaël Assénat</property>
     <property name="logo">project_image.png</property>
     <property name="license_type">gpl-3-0</property>
