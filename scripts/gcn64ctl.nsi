@@ -8,17 +8,17 @@
 ;--------------------------------
 
 ; The name of the installer
-Name "gcn64ctl"
+Name "adapter_manager"
 
 ; The file to write
-OutFile "../gcn64ctl-install-${VERSION}.exe"
+OutFile "../raphnet-tech_adapter_manager-install-${VERSION}.exe"
 
 ; The default installation directory
-InstallDir $PROGRAMFILES\gcn64ctl
+InstallDir $PROGRAMFILES\raphnet_tech_adapter_manager
 
 ; Registry key to check for directory (so if you install again, it will 
 ; overwrite the old one automatically)
-InstallDirRegKey HKLM "Software\gcn64ctl" "Install_Dir"
+InstallDirRegKey HKLM "Software\raphnet_tech_adapter_manager" "Install_Dir"
 
 LicenseData ../LICENSE
 
@@ -44,7 +44,7 @@ UninstPage instfiles
 ;--------------------------------
 
 ; The stuff to install
-Section "gcn64ctl (required)"
+Section "Adapter manager (required)"
 
   SectionIn RO
   
@@ -56,13 +56,13 @@ Section "gcn64ctl (required)"
   File /r "..\tmp\*.*"
   
   ; Write the installation path into the registry
-  WriteRegStr HKLM SOFTWARE\gcn64ctl "Install_Dir" "$INSTDIR"
+  WriteRegStr HKLM SOFTWARE\raphnet_tech_adapter_manager "Install_Dir" "$INSTDIR"
   
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\gcn64ctl" "DisplayName" "gcn64ctl"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\gcn64ctl" "UninstallString" '"$INSTDIR\uninstall.exe"'
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\gcn64ctl" "NoModify" 1
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\gcn64ctl" "NoRepair" 1
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\raphnet_tech_adapter_manager" "DisplayName" "raphnet_tech_adapter_manager"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\raphnet_tech_adapter_manager" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\raphnet_tech_adapter_manager" "NoModify" 1
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\raphnet_tech_adapter_manager" "NoRepair" 1
   WriteUninstaller "uninstall.exe"
   
 SectionEnd
@@ -78,10 +78,10 @@ SectionEnd
 ; Optional section (can be disabled by the user)
 Section "Start Menu Shortcuts"
 
-  CreateDirectory "$SMPROGRAMS\raphnet-tech GC-N64 adapter manager"
-  CreateShortCut "$SMPROGRAMS\raphnet-tech GC-N64 adapter manager\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-  CreateShortCut "$SMPROGRAMS\raphnet-tech GC-N64 adapter manager\Command-line tools.lnk" "$SYSDIR\cmd.exe" '/K "cd /d $INSTDIR"' "$SYSDIR\cmd.exe" 0
-  CreateShortCut "$SMPROGRAMS\raphnet-tech GC-N64 adapter manager\GC/N64 adapter manager.lnk" "$INSTDIR\gcn64ctl_gui.exe" "" "$INSTDIR\gcn64ctl_gui.exe" 0
+  CreateDirectory "$SMPROGRAMS\raphnet-tech adapter manager"
+  CreateShortCut "$SMPROGRAMS\raphnet-tech adapter manager\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
+  CreateShortCut "$SMPROGRAMS\raphnet-tech adapter manager\Command-line tools.lnk" "$SYSDIR\cmd.exe" '/K "cd /d $INSTDIR"' "$SYSDIR\cmd.exe" 0
+  CreateShortCut "$SMPROGRAMS\raphnet-tech adapter manager\GC/N64 adapter manager.lnk" "$INSTDIR\gcn64ctl_gui.exe" "" "$INSTDIR\gcn64ctl_gui.exe" 0
   
 SectionEnd
 
@@ -92,17 +92,17 @@ SectionEnd
 Section "Uninstall"
   
   ; Remove registry keys
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\gcn64ctl"
-  DeleteRegKey HKLM SOFTWARE\gcn64ctl
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\raphnet_tech_adapter_manager"
+  DeleteRegKey HKLM SOFTWARE\raphnet_tech_adapter_manager
 
   ; Remove files and uninstaller
   Delete "$INSTDIR\*.*"
 
   ; Remove shortcuts, if any
-  Delete "$SMPROGRAMS\raphnet-tech GC-N64 adapter manager\*.lnk"
+  Delete "$SMPROGRAMS\raphnet-tech adapter manager\*.lnk"
 
   ; Remove directories used
-  RMDir "$SMPROGRAMS\raphnet-tech GC-N64 adapter manager"
+  RMDir "$SMPROGRAMS\raphnet-tech adapter manager"
   RMDir "$INSTDIR"
 
 SectionEnd
