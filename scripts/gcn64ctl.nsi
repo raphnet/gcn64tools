@@ -81,7 +81,7 @@ Section "Start Menu Shortcuts"
   CreateDirectory "$SMPROGRAMS\raphnet-tech adapter manager"
   CreateShortCut "$SMPROGRAMS\raphnet-tech adapter manager\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
   CreateShortCut "$SMPROGRAMS\raphnet-tech adapter manager\Command-line tools.lnk" "$SYSDIR\cmd.exe" '/K "cd /d $INSTDIR"' "$SYSDIR\cmd.exe" 0
-  CreateShortCut "$SMPROGRAMS\raphnet-tech adapter manager\GC/N64 adapter manager.lnk" "$INSTDIR\gcn64ctl_gui.exe" "" "$INSTDIR\gcn64ctl_gui.exe" 0
+  CreateShortCut "$SMPROGRAMS\raphnet-tech adapter manager\Raphnet adapter manager.lnk" "$INSTDIR\gcn64ctl_gui.exe" "" "$INSTDIR\gcn64ctl_gui.exe" 0
   
 SectionEnd
 
@@ -103,6 +103,8 @@ Section "Uninstall"
 
   ; Remove directories used
   RMDir "$SMPROGRAMS\raphnet-tech adapter manager"
+  RMDir /r "$INSTDIR\dfu-prog-usb-1.2.2"
+  RMDir /r "$INSTDIR\share"
   RMDir "$INSTDIR"
 
 SectionEnd
