@@ -37,7 +37,7 @@
 static void printUsage(void)
 {
 	printf("./gcn64_ctl [OPTION]... [COMMAND]....\n");
-	printf("Control tool for GC/N64 to USB adapter. Version %s\n", VERSION_STR);
+	printf("Command-line management tool for raphnet USB adapters. Version %s\n", VERSION_STR);
 	printf("\n");
 	printf("Options:\n");
 	printf("  -h, --help            Print help\n");
