@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PREFIX=gcn64tools
+PREFIX=raphnet-tech_adapter_manager
 HEXFILE=$PREFIX.hex
 
 echo "Release script for $PREFIX"
@@ -36,14 +36,3 @@ fi
 
 git tag $TAG -f
 git archive --format=tar --prefix=$DIRNAME/ HEAD | gzip > $RELEASEDIR/$FILENAME
-
-#cd $RELEASEDIR
-#tar zxf $FILENAME
-#cd $DIRNAME
-#make
-#cp $HEXFILE ../$PREFIX-$VERSION.hex
-#cd ..
-#echo
-#echo
-#echo
-#ls -l $PREFIX-$VERSION.*
