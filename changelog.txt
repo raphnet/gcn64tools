@@ -1,5 +1,9 @@
+=== Version 2.1 ===
+Date:
+ - Add a N64 memory card stress test
+
 === Version 2.0 ===
-Date: 2017-04-??
+Date: 2017-10-03
  - Renamed project to raphnet-tech adapter manager
  - Add support for a PC-Engine to USB adapter currently in development
  - Add basic support (name and version) for legacy raphnet
@@ -13,7 +17,7 @@ Date: 2017-04-??
  - Add scripts/Makefile to cross-compile the Windows version from
    an MXE environment.
 
- === Version 1.6 ===
+=== Version 1.6 ===
 Date: 2017-04-06
  - Add support for the N64 Transfer Pak:
    - Read ROM from ROM-Only, MBC1, MBC3 and MBC5 cartridges.
