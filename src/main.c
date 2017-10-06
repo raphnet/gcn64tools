@@ -33,6 +33,7 @@
 #include "biosensor.h"
 #include "xferpak.h"
 #include "xferpak_tools.h"
+#include "mempak_stresstest.h"
 
 static void printUsage(void)
 {
@@ -105,6 +106,7 @@ static void printUsage(void)
 	printf("Development/Experimental/Research commands: (use at your own risk)\n");
 	printf("  --si_8bit_scan                     Try all possible 1-byte commands, to see which one a controller responds to.\n");
 	printf("  --si_16bit_scan                    Try all possible 2-byte commands, to see which one a controller responds to.\n");
+	printf("  --n64_mempak_stresstest            Perform a set of controller pak tests (WARNING: Erases the pack with random data)\n");
 }
 
 
@@ -150,6 +152,7 @@ static void printUsage(void)
 #define OPT_XFERPAK_DUMP_RAM			334
 #define OPT_XFERPAK_WRITE_RAM			335
 #define OPT_N64_MEMPAK_DETECT			336
+#define OPT_N64_MEMPAK_STRESSTEST		337
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -197,6 +200,7 @@ struct option longopts[] = {
 	{ "xfer_dump_ram", required_argument, NULL, OPT_XFERPAK_DUMP_RAM },
 	{ "xfer_write_ram", required_argument, NULL, OPT_XFERPAK_WRITE_RAM },
 	{ "n64_mempak_detect", 0, NULL, OPT_N64_MEMPAK_DETECT },
+	{ "n64_mempak_stresstest", 0, NULL, OPT_N64_MEMPAK_STRESSTEST },
 	{ },
 };
 
@@ -505,6 +509,13 @@ int main(int argc, char **argv)
 					} else {
 						printf("No mempak detected\n");
 					}
+				}
+				break;
+
+			case OPT_N64_MEMPAK_STRESSTEST:
+				{
+					res = mempak_stresstest(hdl, channel);
+					printf("Test returned %d\n", res);
 				}
 				break;
 
