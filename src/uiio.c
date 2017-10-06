@@ -8,32 +8,43 @@ static int uiio_std_ask(int type, const char *fmt, ...)
 {
 	va_list ap;
 	int c, def;
+	char buf[8];
 
 	printf("\033[33;1mWARNING:\033[0m ");
 	va_start(ap, fmt);
 	vprintf(fmt, ap);
 	va_end(ap);
 
-	fflush(stdin);
+	switch(type)
+	{
+		case UIIO_YESNO:
+			def = UIIO_YES;
+			printf(" [Y/n]");
+			break;
 
-	if (type == UIIO_YESNO) {
-		def = UIIO_YES;
-		printf(" [Y/n]");
-		c = getchar();
+		case UIIO_NOYES:
+			def = UIIO_NO;
+			printf(" [y/N]");
+			break;
 
-
-	} else {
-		def = UIIO_NO;
-		printf(" [y/N]");
-		c = getchar();
-
-
+		case UIIO_CONTINUE_ABORT:
+			def = UIIO_CONTINUE;
+			printf(" [(C)ontinue/(a)bort]");
+			break;
 	}
+
+	fflush(stdin);
+	fgets(buf, sizeof(buf), stdin);
+	c = buf[0];
 
 	if (c == 'y' || c == 'Y')
 		return UIIO_YES;
 	if (c == 'n' || c == 'N')
 		return UIIO_NO;
+	if (c == 'c' || c == 'C')
+		return UIIO_CONTINUE;
+	if (c == 'a' || c == 'A')
+		return UIIO_ABORT;
 
 	return def;
 }

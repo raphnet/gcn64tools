@@ -6,10 +6,13 @@
 /* Type definitions for ask() */
 #define UIIO_YESNO		1
 #define UIIO_NOYES		2
+#define UIIO_CONTINUE_ABORT	3
 
 /* Return defines for ask() */
 #define UIIO_NO			0
+#define UIIO_ABORT		0
 #define UIIO_YES		1
+#define UIIO_CONTINUE	1
 
 #define PROGRESS_TYPE_ADDRESS	0
 #define PROGRESS_TYPE_PERCENT	1
