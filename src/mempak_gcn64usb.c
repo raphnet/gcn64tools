@@ -246,7 +246,7 @@ int gcn64lib_mempak_writeBlock(rnt_hdl_t hdl, unsigned short addr, const unsigne
 		return -1;
 	}
 
-	printHexBuf(data, 32);
+//	printHexBuf(data, 32);
 
 	return 0;
 }
