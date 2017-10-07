@@ -3,6 +3,7 @@ SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="001D", MODE="06
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="0020", MODE="0664", GROUP="plugdev"
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="0021", MODE="0664", GROUP="plugdev"
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="0022", MODE="0664", GROUP="plugdev"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="0026", MODE="0664", GROUP="plugdev"
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="0030", MODE="0664", GROUP="plugdev"
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="0031", MODE="0664", GROUP="plugdev"
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="0032", MODE="0664", GROUP="plugdev"
@@ -19,3 +20,5 @@ SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="003C", MODE="06
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="003D", MODE="0664", GROUP="plugdev"
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="003E", MODE="0664", GROUP="plugdev"
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="003F", MODE="0664", GROUP="plugdev"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="0050", MODE="0664", GROUP="plugdev"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="0051", MODE="0664", GROUP="plugdev"

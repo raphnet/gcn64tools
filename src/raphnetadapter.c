@@ -68,6 +68,8 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0050, 1, { 63, 1, 0, RNT_V3_STD | RNTF_DPAD_AS_BUTTONS } }, // PC Engine to USB v1.0.0
 	{ OUR_VENDOR_ID, 0x0051, 1, { 63, 5, 0, RNT_V3_STD | RNTF_DPAD_AS_BUTTONS } }, // PC Engine to USB v1.0.0 (5 player mode)
 
+	{ OUR_VENDOR_ID, 0x0026, 1, { 63, 1, 0, RNT_V3_STD | RNTF_DPAD_AS_BUTTONS } }, // SNES to USB adapter v2.0 (gen3arch)
+
 	// Legacy devices (vusb, non-upgradeable and typically without configurable features)
 	{ OUR_VENDOR_ID, 0x0003, -1, { 0, 4 } }, // 4nes4snes 1.4.2, 1.5
 	{ 0x288B, 0x0003, -1 }, // 4nes4snes 1.4.1 (wrong vendor id)
@@ -645,6 +647,8 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_SMS: return "SMS controller";
 		case CTL_TYPE_PCE: return "PC engine controller";
 		case CTL_TYPE_PCE6: return "PC engine 6 button controller";
+		case CTL_TYPE_SNES_NDK10: return "NTT Data controller";
+		case CTL_TYPE_SNES_MOUSE: return "SNES mouse";
 		default:
 			return "Unknown";
 	}
