@@ -68,7 +68,8 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0050, 1, { 63, 1, 0, RNT_V3_STD | RNTF_DPAD_AS_BUTTONS } }, // PC Engine to USB v1.0.0
 	{ OUR_VENDOR_ID, 0x0051, 1, { 63, 5, 0, RNT_V3_STD | RNTF_DPAD_AS_BUTTONS } }, // PC Engine to USB v1.0.0 (5 player mode)
 
-	{ OUR_VENDOR_ID, 0x0026, 1, { 63, 1, 0, RNT_V3_STD | RNTF_DPAD_AS_BUTTONS } }, // SNES to USB adapter v2.0 (gen3arch)
+	{ OUR_VENDOR_ID, 0x0026, 1, { 63, 1, 0, RNT_V3_STD | RNTF_DPAD_AS_BUTTONS } }, // SNES to USB adapter v2.0 (w/advXarch)
+	{ OUR_VENDOR_ID, 0x0027, 1, { 63, 2, 0, RNT_V3_STD | RNTF_DPAD_AS_BUTTONS } }, // Dual SNES to USB adapter v2.0 (w/advXarch)
 
 	// Legacy devices (vusb, non-upgradeable and typically without configurable features)
 	{ OUR_VENDOR_ID, 0x0003, -1, { 0, 4 } }, // 4nes4snes 1.4.2, 1.5
