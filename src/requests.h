@@ -25,7 +25,7 @@
 #define CTL_TYPE_CLASSIC	101
 #define	CTL_TYPE_SNES		102
 #define CTL_TYPE_NES		103
-#define CTL_TYPE_N64_NEW		104
+#define CTL_TYPE_N64_NEW	104
 #define CTL_TYPE_GAMECUBE_NEW	105
 #define CTL_TYPE_MD			106
 #define CTL_TYPE_SMS		107
@@ -33,6 +33,7 @@
 #define CTL_TYPE_SNES_MOUSE	109
 #define CTL_TYPE_PCE		110
 #define CTL_TYPE_PCE6		111
+#define CTL_TYPE_NUNCHUK	112
 
 /* Configuration parameters and constants */
 #define CFG_PARAM_MODE			0x00
