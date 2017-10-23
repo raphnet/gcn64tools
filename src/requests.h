@@ -22,6 +22,7 @@
 #define CTL_TYPE_GC		2
 #define CTL_TYPE_GCKB	3
 // New values (follows PAD_TYPE_* + 100)
+#define CTL_TYPE_NONE_NEW	100
 #define CTL_TYPE_CLASSIC	101
 #define	CTL_TYPE_SNES		102
 #define CTL_TYPE_NES		103
