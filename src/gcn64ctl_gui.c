@@ -150,6 +150,9 @@ void syncGuiToCurrentAdapter(struct application *app)
 		{ CFG_PARAM_DPAD_AS_AXES, GET_ELEMENT(GtkWidget, chkbtn_dpad_as_axes), RNTF_DPAD_AS_AXES, TRUE },
 		{ CFG_PARAM_MOUSE_INVERT_SCROLL, GET_ELEMENT(GtkWidget, chkbtn_mouse_invert_scroll), RNTF_MOUSE_INVERT_SCROLL, TRUE },
 		{ CFG_PARAM_SWAP_STICKS, GET_ELEMENT(GtkWidget, chkbtn_swap_rl_sticks), RNTF_SWAP_RL_STICKS, TRUE },
+		{ CFG_PARAM_ENABLE_NUNCHUK_X_ACCEL, GET_ELEMENT(GtkWidget, chkbtn_enable_nunchuk_x_accel), RNTF_NUNCHUK_ACC_ENABLE, TRUE },
+		{ CFG_PARAM_ENABLE_NUNCHUK_Y_ACCEL, GET_ELEMENT(GtkWidget, chkbtn_enable_nunchuk_y_accel), RNTF_NUNCHUK_ACC_ENABLE, TRUE },
+		{ CFG_PARAM_ENABLE_NUNCHUK_Z_ACCEL, GET_ELEMENT(GtkWidget, chkbtn_enable_nunchuk_z_accel), RNTF_NUNCHUK_ACC_ENABLE, TRUE },
 		{ },
 	};
 
@@ -342,6 +345,9 @@ G_MODULE_EXPORT void config_checkbox_changed(GtkWidget *win, gpointer data)
 		{ CFG_PARAM_DPAD_AS_AXES, GET_ELEMENT(GtkToggleButton, chkbtn_dpad_as_axes) },
 		{ CFG_PARAM_MOUSE_INVERT_SCROLL, GET_ELEMENT(GtkToggleButton, chkbtn_mouse_invert_scroll) },
 		{ CFG_PARAM_SWAP_STICKS, GET_ELEMENT(GtkToggleButton, chkbtn_swap_rl_sticks) },
+		{ CFG_PARAM_ENABLE_NUNCHUK_X_ACCEL, GET_ELEMENT(GtkToggleButton, chkbtn_enable_nunchuk_x_accel) },
+		{ CFG_PARAM_ENABLE_NUNCHUK_Y_ACCEL, GET_ELEMENT(GtkToggleButton, chkbtn_enable_nunchuk_y_accel) },
+		{ CFG_PARAM_ENABLE_NUNCHUK_Z_ACCEL, GET_ELEMENT(GtkToggleButton, chkbtn_enable_nunchuk_z_accel) },
 		{ },
 	};
 	int i, n;

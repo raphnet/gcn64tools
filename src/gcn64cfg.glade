@@ -882,6 +882,51 @@ Author: Raphaël Assénat
                               </packing>
                             </child>
                             <child>
+                              <object class="GtkCheckButton" id="chkbtn_enable_nunchuk_x_accel">
+                                <property name="label" translatable="yes">Enable Nunchuk X accelerometer</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="toggled" handler="config_checkbox_changed" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">10</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="chkbtn_enable_nunchuk_y_accel">
+                                <property name="label" translatable="yes">Enable Nunchuk Y accelerometer</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="toggled" handler="config_checkbox_changed" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">11</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="chkbtn_enable_nunchuk_z_accel">
+                                <property name="label" translatable="yes">Enable Nunchuk Z accelerometer</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="toggled" handler="config_checkbox_changed" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">12</property>
+                              </packing>
+                            </child>
+                            <child>
                               <object class="GtkBox" id="box_poll_interval">
                                 <property name="can_focus">False</property>
                                 <child>
@@ -922,7 +967,7 @@ Author: Raphaël Assénat
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">10</property>
+                                <property name="position">13</property>
                               </packing>
                             </child>
                             <child>
@@ -1020,7 +1065,7 @@ Author: Raphaël Assénat
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
                                 <property name="padding">2</property>
-                                <property name="position">11</property>
+                                <property name="position">14</property>
                               </packing>
                             </child>
                             <child>
@@ -1045,7 +1090,7 @@ configurable parameters.</property>
                               <packing>
                                 <property name="expand">True</property>
                                 <property name="fill">True</property>
-                                <property name="position">12</property>
+                                <property name="position">15</property>
                               </packing>
                             </child>
                           </object>

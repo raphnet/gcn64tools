@@ -72,8 +72,8 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0026, 1, { 63, 1, 0, RNT_V3_STD | RNTF_DPAD_AS_BUTTONS } }, // SNES to USB adapter v2.0 (w/advXarch)
 	{ OUR_VENDOR_ID, 0x0027, 1, { 63, 2, 0, RNT_V3_STD | RNTF_DPAD_AS_BUTTONS } }, // Dual SNES to USB adapter v2.0 (w/advXarch)
 
-	{ OUR_VENDOR_ID, 0x0028, 1, { 63, 1, 0, RNT_V3_STD | RNTF_DPAD_AS_AXES | RNTF_SWAP_RL_STICKS | RNTF_ADAPTER_MODE } }, // 1-player WUSBMote v2.0 (w/advXarch)
-	{ OUR_VENDOR_ID, 0x0029, 1, { 63, 2, 0, RNT_V3_STD | RNTF_DPAD_AS_AXES | RNTF_SWAP_RL_STICKS | RNTF_ADAPTER_MODE } }, // 2-player WUSBMote v2.0 (w/advXarch)
+	{ OUR_VENDOR_ID, 0x0028, 1, { 63, 1, 0, RNT_V3_STD | RNTF_DPAD_AS_AXES | RNTF_SWAP_RL_STICKS | RNTF_NUNCHUK_ACC_ENABLE | RNTF_ADAPTER_MODE } }, // 1-player WUSBMote v2.0 (w/advXarch)
+	{ OUR_VENDOR_ID, 0x0029, 1, { 63, 2, 0, RNT_V3_STD | RNTF_DPAD_AS_AXES | RNTF_SWAP_RL_STICKS | RNTF_NUNCHUK_ACC_ENABLE | RNTF_ADAPTER_MODE } }, // 2-player WUSBMote v2.0 (w/advXarch)
 	{ OUR_VENDOR_ID, 0x002A, 1, { 63, 2, 0, RNT_V3_NOPOLLRATE | RNTF_SWAP_RL_STICKS | RNTF_MOUSE_INVERT_SCROLL | RNTF_ADAPTER_MODE } }, // 1-player WUSBMote v2.0 (w/advXarch) Mouse mode
 
 	// Legacy devices (vusb, non-upgradeable and typically without configurable features)
