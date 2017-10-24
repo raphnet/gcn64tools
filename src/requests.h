@@ -51,6 +51,7 @@
 
 #define CFG_MODE_MOUSE			0x20
 
+#define CFG_PARAM_RESERVED		0x00
 #define CFG_PARAM_SERIAL		0x01
 
 #define CFG_PARAM_POLL_INTERVAL0	0x10
@@ -64,6 +65,9 @@
 #define CFG_PARAM_FULL_SLIDERS		0x23
 #define CFG_PARAM_INVERT_TRIG		0x24
 #define CFG_PARAM_TRIGGERS_AS_BUTTONS	0x25
+#define CFG_PARAM_MOUSE_INVERT_SCROLL	0x26
+// eg: Swap left and right sticks on classic controller
+#define CFG_PARAM_SWAP_STICKS		0x27
 
 #define CFG_PARAM_DPAD_AS_BUTTONS		0x30
 #define CFG_PARAM_DPAD_AS_AXES			0x31
