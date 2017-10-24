@@ -86,6 +86,7 @@ int rnt_forceVibration(rnt_hdl_t hdl, unsigned char channel, unsigned char vibra
 int rnt_getControllerType(rnt_hdl_t hdl, int chn);
 const char *rnt_controllerName(int type);
 int rnt_bootloader(rnt_hdl_t hdl);
+int rnt_reset(rnt_hdl_t hdl);
 
 
 #endif // _raphnetadapter_h__

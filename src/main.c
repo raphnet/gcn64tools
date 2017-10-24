@@ -68,6 +68,7 @@ static void printUsage(void)
 	printf("\n");
 	printf("Advanced commands:\n");
 	printf("  --bootloader                       Re-enumerate in bootloader mode\n");
+	printf("  --reset                            Cause a firmware reset and USB reconnect\n");
 	printf("  --suspend_polling                  Stop polling the controller\n");
 	printf("  --resume_polling                   Re-start polling the controller\n");
 	printf("  --get_signature                    Get the firmware signature\n");
@@ -153,6 +154,7 @@ static void printUsage(void)
 #define OPT_XFERPAK_WRITE_RAM			335
 #define OPT_N64_MEMPAK_DETECT			336
 #define OPT_N64_MEMPAK_STRESSTEST		337
+#define OPT_RESET						338
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -164,6 +166,7 @@ struct option longopts[] = {
 	{ "set_mode", 1, NULL, OPT_SET_MODE },
 	{ "get_mode", 0, NULL, OPT_GET_MODE },
 	{ "bootloader", 0, NULL, OPT_BOOTLOADER },
+	{ "reset", 0, NULL, OPT_RESET },
 	{ "n64_getstatus", 0, NULL, OPT_N64_GETSTATUS },
 	{ "gc_getstatus", 0, NULL, OPT_GC_GETSTATUS },
 	{ "gc_getstatus_rumble", 0, NULL, OPT_GC_GETSTATUS_RUMBLE },
@@ -400,6 +403,11 @@ int main(int argc, char **argv)
 			case OPT_BOOTLOADER:
 				printf("Sending 'jump to bootloader' command...");
 				rnt_bootloader(hdl);
+				break;
+
+			case OPT_RESET:
+				printf("Sending 'reset firmware' command...");
+				rnt_reset(hdl);
 				break;
 
 			case OPT_SUSPEND_POLLING:

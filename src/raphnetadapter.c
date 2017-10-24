@@ -678,4 +678,21 @@ int rnt_bootloader(rnt_hdl_t hdl)
 	return 0;
 }
 
+int rnt_reset(rnt_hdl_t hdl)
+{
+	unsigned char cmd[4];
+	int cmdlen;
+
+	if (!hdl) {
+		return -1;
+	}
+
+	cmd[0] = RQ_GCN64_RESET_FIRMWARE;
+	cmdlen = 1;
+
+	rnt_exchange(hdl, cmd, cmdlen, cmd, sizeof(cmd));
+
+	return 0;
+}
+
 
