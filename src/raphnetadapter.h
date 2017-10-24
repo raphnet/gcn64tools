@@ -20,6 +20,10 @@
 #define RNTF_GC_INVERT_TRIG			0x002000
 #define RNTF_TRIGGER_AS_BUTTONS		0x004000
 #define RNTF_DPAD_AS_BUTTONS		0x008000
+#define RNTF_DPAD_AS_AXES			0x010000
+#define RNTF_ADAPTER_MODE			0x020000 // Select between mouse and joystick mode
+#define RNTF_MOUSE_INVERT_SCROLL	0x040000
+#define RNTF_SWAP_RL_STICKS			0x080000
 
 struct rnt_adap_caps {
 	int rpsize; // report size for adapter IO. (Set to non-zero to override default
