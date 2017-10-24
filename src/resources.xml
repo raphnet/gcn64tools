@@ -4,5 +4,8 @@
 		<file preprocess="xml-stripblanks">gui.xml</file>
 		<file>project_image.png</file>
 		<file>raphnet_logo.png</file>
+		<file>1player.png</file>
+		<file>2players.png</file>
+		<file>mouse.png</file>
 	</gresource>
 </gresources>
