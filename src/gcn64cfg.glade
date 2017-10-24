@@ -233,6 +233,21 @@ Author: Raphaël Assénat
     <property name="can_focus">False</property>
     <property name="stock">gtk-missing-image</property>
   </object>
+  <object class="GtkImage" id="image4">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">1player.png</property>
+  </object>
+  <object class="GtkImage" id="image5">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">2players.png</property>
+  </object>
+  <object class="GtkImage" id="image6">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">mouse.png</property>
+  </object>
   <object class="GtkFileFilter" id="n64_mempak_filter">
     <patterns>
       <pattern>*.mpk</pattern>
@@ -822,6 +837,51 @@ Author: Raphaël Assénat
                               </packing>
                             </child>
                             <child>
+                              <object class="GtkCheckButton" id="chkbtn_dpad_as_axes">
+                                <property name="label" translatable="yes">D-pad as axes</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="toggled" handler="config_checkbox_changed" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">7</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="chkbtn_swap_rl_sticks">
+                                <property name="label" translatable="yes">Swap R and L sticks</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="toggled" handler="config_checkbox_changed" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">8</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="chkbtn_mouse_invert_scroll">
+                                <property name="label" translatable="yes">Reverse scroll direction</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="toggled" handler="config_checkbox_changed" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">9</property>
+                              </packing>
+                            </child>
+                            <child>
                               <object class="GtkBox" id="box_poll_interval">
                                 <property name="can_focus">False</property>
                                 <child>
@@ -862,7 +922,105 @@ Author: Raphaël Assénat
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">7</property>
+                                <property name="position">10</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkFrame" id="frame_adapter_mode">
+                                <property name="name">frame_adapter_mode</property>
+                                <property name="can_focus">False</property>
+                                <property name="margin_right">12</property>
+                                <property name="label_xalign">0</property>
+                                <property name="shadow_type">in</property>
+                                <child>
+                                  <object class="GtkAlignment" id="alignment7">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="left_padding">12</property>
+                                    <child>
+                                      <object class="GtkBox" id="box15">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="orientation">vertical</property>
+                                        <child>
+                                          <object class="GtkRadioButton" id="rbtn_1p_joystick_mode">
+                                            <property name="label" translatable="yes">Joystick mode (1-player)</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="image">image4</property>
+                                            <property name="xalign">2.2351741291171123e-10</property>
+                                            <property name="image_position">right</property>
+                                            <property name="always_show_image">True</property>
+                                            <property name="active">True</property>
+                                            <property name="draw_indicator">True</property>
+                                            <signal name="toggled" handler="cfg_adapter_mode_changed" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkRadioButton" id="rbtn_2p_joystick_mode">
+                                            <property name="label" translatable="yes">Joystick mode (2-player)</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="image">image5</property>
+                                            <property name="xalign">0</property>
+                                            <property name="image_position">right</property>
+                                            <property name="always_show_image">True</property>
+                                            <property name="active">True</property>
+                                            <property name="draw_indicator">True</property>
+                                            <property name="group">rbtn_1p_joystick_mode</property>
+                                            <signal name="toggled" handler="cfg_adapter_mode_changed" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkRadioButton" id="rbtn_mouse_mode">
+                                            <property name="label" translatable="yes">Mouse mode</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="image">image6</property>
+                                            <property name="xalign">0</property>
+                                            <property name="image_position">right</property>
+                                            <property name="always_show_image">True</property>
+                                            <property name="active">True</property>
+                                            <property name="draw_indicator">True</property>
+                                            <property name="group">rbtn_1p_joystick_mode</property>
+                                            <signal name="toggled" handler="cfg_adapter_mode_changed" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">2</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child type="label">
+                                  <object class="GtkLabel" id="lbl_adapter_mode">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Adapter mode:</property>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="padding">2</property>
+                                <property name="position">11</property>
                               </packing>
                             </child>
                             <child>
@@ -887,7 +1045,7 @@ configurable parameters.</property>
                               <packing>
                                 <property name="expand">True</property>
                                 <property name="fill">True</property>
-                                <property name="position">8</property>
+                                <property name="position">12</property>
                               </packing>
                             </child>
                           </object>
@@ -1008,6 +1166,21 @@ configurable parameters.</property>
                                 <property name="receives_default">True</property>
                                 <property name="tooltip_text" translatable="yes">Resumes the GC/N64 controller polling. (i.e. The controller starts responding again)</property>
                                 <signal name="clicked" handler="resume_polling" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">5</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_reset_adapter">
+                                <property name="label" translatable="yes">Reset adapter</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">This button tells the adapter firmware to restart, causing an USB disconnect-reconnect. Communication with the adapter will be lost until reselected from the list.</property>
+                                <signal name="clicked" handler="reset_adapter" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="expand">True</property>

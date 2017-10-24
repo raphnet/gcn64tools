@@ -141,27 +141,53 @@ void syncGuiToCurrentAdapter(struct application *app)
 		{ 0, GET_ELEMENT(GtkWidget, box_poll_interval), RNTF_POLL_RATE, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, lbl_controller_type), RNTF_CONTROLLER_TYPE, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, label_controller_type), RNTF_CONTROLLER_TYPE, TRUE },
+		{ 0, GET_ELEMENT(GtkWidget, frame_adapter_mode), RNTF_ADAPTER_MODE, TRUE },
 
 		{ CFG_PARAM_FULL_SLIDERS, GET_ELEMENT(GtkWidget, chkbtn_gc_full_sliders), RNTF_GC_FULL_SLIDERS, TRUE },
 		{ CFG_PARAM_INVERT_TRIG, GET_ELEMENT(GtkWidget, chkbtn_gc_invert_trig), RNTF_GC_INVERT_TRIG, TRUE },
 		{ CFG_PARAM_TRIGGERS_AS_BUTTONS, GET_ELEMENT(GtkWidget, chkbtn_sliders_as_buttons), RNTF_TRIGGER_AS_BUTTONS, TRUE },
 		{ CFG_PARAM_DPAD_AS_BUTTONS, GET_ELEMENT(GtkWidget, chkbtn_dpad_as_buttons), RNTF_DPAD_AS_BUTTONS, TRUE },
+		{ CFG_PARAM_DPAD_AS_AXES, GET_ELEMENT(GtkWidget, chkbtn_dpad_as_axes), RNTF_DPAD_AS_AXES, TRUE },
+		{ CFG_PARAM_MOUSE_INVERT_SCROLL, GET_ELEMENT(GtkWidget, chkbtn_mouse_invert_scroll), RNTF_MOUSE_INVERT_SCROLL, TRUE },
+		{ CFG_PARAM_SWAP_STICKS, GET_ELEMENT(GtkWidget, chkbtn_swap_rl_sticks), RNTF_SWAP_RL_STICKS, TRUE },
 		{ },
 	};
+
 	GET_UI_ELEMENT(GtkLabel, label_product_name);
 	GET_UI_ELEMENT(GtkLabel, label_firmware_version);
 	GET_UI_ELEMENT(GtkLabel, label_usb_id);
 	GET_UI_ELEMENT(GtkLabel, label_device_path);
 	GET_UI_ELEMENT(GtkLabel, label_n_ports);
 	GET_UI_ELEMENT(GtkSpinButton, pollInterval0);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_1p_joystick_mode);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_2p_joystick_mode);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_mouse_mode);
 	int i;
 	struct rnt_adap_info *info = &app->current_adapter_info;
 	char adap_sig[64];
 	char ports_str[32];
+	int cur_mode = -1;
 
 	if (!app->current_adapter_handle) {
 		deselect_adapter(app);
 		return;
+	}
+
+	if (1 == rnt_getConfig(app->current_adapter_handle, CFG_PARAM_MODE, buf, sizeof(buf))) {
+		cur_mode = buf[0];
+
+		switch(cur_mode)
+		{
+			case CFG_MODE_STANDARD:
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_1p_joystick_mode), buf[0]);
+				break;
+			case CFG_MODE_2P_STANDARD:
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_2p_joystick_mode), buf[0]);
+				break;
+			case CFG_MODE_MOUSE:
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_mouse_mode), buf[0]);
+				break;
+		}
 	}
 
 	if (app->current_adapter_info.caps.features == 0) {
@@ -257,6 +283,50 @@ G_MODULE_EXPORT void pollIntervalChanged(GtkWidget *win, gpointer data)
 	}
 }
 
+G_MODULE_EXPORT void cfg_adapter_mode_changed(GtkWidget *win, gpointer data)
+{
+	struct application *app = data;
+	struct {
+		uint8_t config_value;
+		GtkRadioButton *button;
+	} modeButtons[] = {
+		{ CFG_MODE_STANDARD, GET_ELEMENT(GtkRadioButton, rbtn_1p_joystick_mode) },
+		{ CFG_MODE_2P_STANDARD, GET_ELEMENT(GtkRadioButton, rbtn_2p_joystick_mode) },
+		{ CFG_MODE_MOUSE, GET_ELEMENT(GtkRadioButton, rbtn_mouse_mode) },
+		{ },
+	};
+	int i;
+	unsigned char buf[32];
+	int current_config, next_config = -1;
+
+//	printf("Adapter mode changed\n");
+
+	if (1 != rnt_getConfig(app->current_adapter_handle, CFG_PARAM_MODE, buf, sizeof(buf))) {
+		printf("Could not read current mode\n");
+		return;
+	}
+	current_config = buf[0];
+//	printf("Current config: %d\n", current_config);
+
+	for (i=0; modeButtons[i].button; i++) {
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(modeButtons[i].button))) {
+			next_config = modeButtons[i].config_value;
+			break;
+		}
+	}
+
+	if (next_config == -1) {
+		return;
+	}
+
+	if (next_config == current_config) {
+		return;
+	}
+
+	printf("Changing adapter mode to: %d\n", next_config);
+	buf[0] = next_config;
+	rnt_setConfig(app->current_adapter_handle, CFG_PARAM_MODE, buf, 1);
+}
 
 G_MODULE_EXPORT void config_checkbox_changed(GtkWidget *win, gpointer data)
 {
@@ -269,6 +339,9 @@ G_MODULE_EXPORT void config_checkbox_changed(GtkWidget *win, gpointer data)
 		{ CFG_PARAM_INVERT_TRIG, GET_ELEMENT(GtkToggleButton, chkbtn_gc_invert_trig) },
 		{ CFG_PARAM_TRIGGERS_AS_BUTTONS, GET_ELEMENT(GtkToggleButton, chkbtn_sliders_as_buttons) },
 		{ CFG_PARAM_DPAD_AS_BUTTONS, GET_ELEMENT(GtkToggleButton, chkbtn_dpad_as_buttons) },
+		{ CFG_PARAM_DPAD_AS_AXES, GET_ELEMENT(GtkToggleButton, chkbtn_dpad_as_axes) },
+		{ CFG_PARAM_MOUSE_INVERT_SCROLL, GET_ELEMENT(GtkToggleButton, chkbtn_mouse_invert_scroll) },
+		{ CFG_PARAM_SWAP_STICKS, GET_ELEMENT(GtkToggleButton, chkbtn_swap_rl_sticks) },
 		{ },
 	};
 	int i, n;
@@ -405,6 +478,15 @@ G_MODULE_EXPORT void resume_polling(GtkButton *button, gpointer data)
 
 	rnt_suspendPolling(app->current_adapter_handle, 0);
 }
+
+G_MODULE_EXPORT void reset_adapter(GtkButton *button, gpointer data)
+{
+	struct application *app = data;
+
+	rnt_reset(app->current_adapter_handle);
+	deselect_adapter(app);
+}
+
 
 G_MODULE_EXPORT void onFileRescan(GtkWidget *wid, gpointer data)
 {
