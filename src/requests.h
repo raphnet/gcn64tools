@@ -16,6 +16,9 @@
 #define RQ_GCN64_RAW_SI_COMMAND			0x80
 #define RQ_GCN64_BLOCK_IO				0x81
 
+/* WUSBMote specific */
+#define RQ_WUSBMOTE_I2C_TRANSACTIONS	0x82
+
 /* Get controller type values */
 // Legacy values (GC/N64 specific)
 #define CTL_TYPE_NONE	0

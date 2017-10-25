@@ -34,6 +34,7 @@
 #include "xferpak.h"
 #include "xferpak_tools.h"
 #include "mempak_stresstest.h"
+#include "wusbmotelib.h"
 
 static void printUsage(void)
 {
@@ -75,7 +76,7 @@ static void printUsage(void)
 	printf("  --resume_polling                   Re-start polling the controller\n");
 	printf("  --get_signature                    Get the firmware signature\n");
 	printf("\n");
-	printf("Raw controller commands:\n");
+	printf("Raw N64/Gamecube controller commands:\n");
 	printf("  --n64_getstatus                    Read N64 controller status now\n");
 	printf("  --gc_getstatus                     Read GC controller status now (turns rumble OFF)\n");
 	printf("  --gc_getstatus_rumble              Read GC controller status now (turns rumble ON)\n");
@@ -86,6 +87,10 @@ static void printUsage(void)
 	printf("  --n64_control_rumble value         Turn rumble on when value != 0\n");
 	printf("  --biosensor                        Display heart beat using bio sensor\n");
 	printf("  --perftest                         Do a performance test (raw IO timing)\n");
+	printf("\n");
+	printf("Raw Wiimote extension commands (for WUSBMote v2 adapters):\n");
+	printf("  --disable_encryption               Perform the steps to disable encryption on a controller\n");
+	printf("  --dump_wiimote_extmem              Display the current value of the 256 wiimote extension registers\n");
 	printf("\n");
 	printf("Transfer PAK commands:\n");
 	printf("  --xfer_info                        Display information on the inserted gameboy cartridge\n");
@@ -110,6 +115,7 @@ static void printUsage(void)
 	printf("  --si_8bit_scan                     Try all possible 1-byte commands, to see which one a controller responds to.\n");
 	printf("  --si_16bit_scan                    Try all possible 2-byte commands, to see which one a controller responds to.\n");
 	printf("  --n64_mempak_stresstest            Perform a set of controller pak tests (WARNING: Erases the pack with random data)\n");
+	printf("  --i2c_detect                       Try reading one byte from each I2C address (For WUSBMote v2)\n");
 }
 
 
@@ -157,6 +163,9 @@ static void printUsage(void)
 #define OPT_N64_MEMPAK_DETECT			336
 #define OPT_N64_MEMPAK_STRESSTEST		337
 #define OPT_RESET						338
+#define OPT_I2C_DETECT					339
+#define OPT_DISABLE_ENCRYPTION			340
+#define OPT_DUMP_WIIMOTE_EXTENSION_MEMORY	341
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -206,6 +215,9 @@ struct option longopts[] = {
 	{ "xfer_write_ram", required_argument, NULL, OPT_XFERPAK_WRITE_RAM },
 	{ "n64_mempak_detect", 0, NULL, OPT_N64_MEMPAK_DETECT },
 	{ "n64_mempak_stresstest", 0, NULL, OPT_N64_MEMPAK_STRESSTEST },
+	{ "i2c_detect", 0, NULL, OPT_I2C_DETECT },
+	{ "disable_encryption", 0, NULL, OPT_DISABLE_ENCRYPTION },
+	{ "dump_wiimote_extmem", 0, NULL, OPT_DUMP_WIIMOTE_EXTENSION_MEMORY },
 	{ },
 };
 
@@ -616,6 +628,10 @@ int main(int argc, char **argv)
 				gcn64lib_16bit_scan(hdl, 0, 0xffff);
 				break;
 
+			case OPT_I2C_DETECT:
+				wusbmotelib_i2c_detect(hdl, channel, NULL, 1);
+				break;
+
 			case OPT_GC_TO_N64_INFO:
 				{
 					struct gc2n64_adapter_info inf;
@@ -754,6 +770,14 @@ int main(int argc, char **argv)
 
 			case OPT_PERFTEST:
 				perftest1(hdl, channel);
+				break;
+
+			case OPT_DISABLE_ENCRYPTION:
+				wusbmotelib_disableEncryption(hdl, channel);
+				break;
+
+			case OPT_DUMP_WIIMOTE_EXTENSION_MEMORY:
+				wusbmotelib_dumpMemory(hdl, channel, NULL, 1);
 				break;
 		}
 
