@@ -479,7 +479,7 @@ int rnt_suspendPolling(rnt_hdl_t hdl, unsigned char suspend)
 		return -1;
 	}
 
-	cmd[0] = RQ_GCN64_SUSPEND_POLLING;
+	cmd[0] = RQ_RNT_SUSPEND_POLLING;
 	cmd[1] = suspend;
 
 	n = rnt_exchange(hdl, cmd, 2, cmd, sizeof(cmd));
@@ -498,7 +498,7 @@ int rnt_setConfig(rnt_hdl_t hdl, unsigned char param, unsigned char *data, unsig
 		return -1;
 	}
 
-	cmd[0] = RQ_GCN64_SET_CONFIG_PARAM;
+	cmd[0] = RQ_RNT_SET_CONFIG_PARAM;
 	cmd[1] = param;
 	memcpy(cmd + 2, data, len);
 
@@ -518,7 +518,7 @@ int rnt_getConfig(rnt_hdl_t hdl, unsigned char param, unsigned char *rx, unsigne
 		return -1;
 	}
 
-	cmd[0] = RQ_GCN64_GET_CONFIG_PARAM;
+	cmd[0] = RQ_RNT_GET_CONFIG_PARAM;
 	cmd[1] = param;
 
 	n = rnt_exchange(hdl, cmd, 2, rx, rx_max);
@@ -553,7 +553,7 @@ int rnt_getVersion(rnt_hdl_t hdl, char *dst, int dstmax)
 		return 0;
 	}
 
-	cmd[0] = RQ_GCN64_GET_VERSION;
+	cmd[0] = RQ_RNT_GET_VERSION;
 
 	n = rnt_exchange(hdl, cmd, 1, cmd, sizeof(cmd));
 	if (n<0)
@@ -580,7 +580,7 @@ int rnt_getSignature(rnt_hdl_t hdl, char *dst, int dstmax)
 	if (dstmax <= 0)
 		return -1;
 
-	cmd[0] = RQ_GCN64_GET_SIGNATURE;
+	cmd[0] = RQ_RNT_GET_SIGNATURE;
 
 	n = rnt_exchange(hdl, cmd, 1, cmd, sizeof(cmd));
 	if (n<0)
@@ -604,7 +604,7 @@ int rnt_forceVibration(rnt_hdl_t hdl, unsigned char channel, unsigned char vibra
 		return -1;
 	}
 
-	cmd[0] = RQ_GCN64_SET_VIBRATION;
+	cmd[0] = RQ_RNT_SET_VIBRATION;
 	cmd[1] = channel;
 	cmd[2] = vibrate;
 
@@ -624,7 +624,7 @@ int rnt_getControllerType(rnt_hdl_t hdl, int chn)
 		return -1;
 	}
 
-	cmd[0] = RQ_GCN64_GET_CONTROLLER_TYPE;
+	cmd[0] = RQ_RNT_GET_CONTROLLER_TYPE;
 	cmd[1] = chn;
 
 	n = rnt_exchange(hdl, cmd, 2, cmd, sizeof(cmd));
@@ -671,7 +671,7 @@ int rnt_bootloader(rnt_hdl_t hdl)
 		return -1;
 	}
 
-	cmd[0] = RQ_GCN64_JUMP_TO_BOOTLOADER;
+	cmd[0] = RQ_RNT_JUMP_TO_BOOTLOADER;
 	cmdlen = 1;
 
 	rnt_exchange(hdl, cmd, cmdlen, cmd, sizeof(cmd));
@@ -688,7 +688,7 @@ int rnt_reset(rnt_hdl_t hdl)
 		return -1;
 	}
 
-	cmd[0] = RQ_GCN64_RESET_FIRMWARE;
+	cmd[0] = RQ_RNT_RESET_FIRMWARE;
 	cmdlen = 1;
 
 	rnt_exchange(hdl, cmd, cmdlen, cmd, sizeof(cmd));
