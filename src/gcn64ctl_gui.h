@@ -49,6 +49,6 @@ void deselect_adapter(struct application *app);
 void syncGuiToCurrentAdapter(struct application *app);
 
 /** Scan for device and rebuild the list for the UI */
-gboolean rebuild_device_list_store(gpointer data);
+gboolean rebuild_device_list_store(gpointer data, wchar_t *auto_select_serial);
 
 #endif // _gcn64ctl_gui_h__

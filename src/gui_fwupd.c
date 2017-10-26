@@ -288,7 +288,7 @@ G_MODULE_EXPORT void recover_usbadapter_firmware(GtkWidget *w, gpointer data)
 		}
 		updatelog_append("Update dialog done\n");
 
-		rebuild_device_list_store(data);
+		rebuild_device_list_store(data, NULL);
 		syncGuiToCurrentAdapter(app);
 		app->inhibit_periodic_updates = 0;
 	}
@@ -413,7 +413,7 @@ G_MODULE_EXPORT void update_usbadapter_firmware(GtkWidget *w, gpointer data)
 		}
 		updatelog_append("Update dialog done\n");
 
-		rebuild_device_list_store(data);
+		rebuild_device_list_store(data, NULL);
 		syncGuiToCurrentAdapter(app);
 		app->inhibit_periodic_updates = 0;
 	}

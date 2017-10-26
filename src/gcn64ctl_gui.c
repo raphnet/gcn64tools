@@ -282,7 +282,7 @@ G_MODULE_EXPORT void pollIntervalChanged(GtkWidget *win, gpointer data)
 	if (n != 0) {
 		errorPopup(app, "Error setting configuration");
 		deselect_adapter(app);
-		rebuild_device_list_store(data);
+		rebuild_device_list_store(data, NULL);
 	}
 }
 
@@ -362,14 +362,14 @@ G_MODULE_EXPORT void config_checkbox_changed(GtkWidget *win, gpointer data)
 		if (n != 0) {
 			errorPopup(app, "Error setting configuration");
 			deselect_adapter(app);
-			rebuild_device_list_store(app);
+			rebuild_device_list_store(app, NULL);
 			break;
 		}
 		printf("cfg param 0x%02x now set to %d\n", configurable_bits[i].cfg_param, buf);
 	}
 }
 
-gboolean rebuild_device_list_store(gpointer data)
+gboolean rebuild_device_list_store(gpointer data, wchar_t *auto_select_serial)
 {
 	struct application *app = data;
 	struct rnt_adap_list_ctx *listctx;
@@ -407,6 +407,10 @@ gboolean rebuild_device_list_store(gpointer data)
 			if (!wcscmp(app->current_adapter_info.str_serial, info.str_serial)) {
 				gtk_combo_box_set_active_iter(cb_adapter_list, &iter);
 			}
+		} else if (auto_select_serial) {
+			if (!wcscmp(auto_select_serial, info.str_serial)) {
+				gtk_combo_box_set_active_iter(cb_adapter_list, &iter);
+			}
 		}
 	}
 
@@ -427,7 +431,7 @@ G_MODULE_EXPORT void onMainWindowShow(GtkWidget *win, gpointer data)
 		return;
 	}
 
-	rebuild_device_list_store(data);
+	rebuild_device_list_store(data, NULL);
 }
 
 G_MODULE_EXPORT void adapterSelected(GtkComboBox *cb, gpointer data)
@@ -488,15 +492,36 @@ G_MODULE_EXPORT void resume_polling(GtkButton *button, gpointer data)
 G_MODULE_EXPORT void reset_adapter(GtkButton *button, gpointer data)
 {
 	struct application *app = data;
+	GET_UI_ELEMENT(GtkDialog, dialog_please_wait);
+	GTimer *reset_timer;
+
+	// Display the please wait dialog (blocks the main window)
+	gtk_widget_show(GTK_WIDGET(dialog_please_wait));
 
 	rnt_reset(app->current_adapter_handle);
 	deselect_adapter(app);
+
+	reset_timer = g_timer_new();
+	g_timer_start(reset_timer);
+
+	/* Do nothing for two seconds */
+	while (g_timer_elapsed(reset_timer, NULL) < 2.0) {
+		while (gtk_events_pending()) {
+			gtk_main_iteration_do(FALSE);
+		}
+	}
+
+	// Try to reopen the same adapter. The serial number is still in app->current_adapter_info...
+	rebuild_device_list_store(data, app->current_adapter_info.str_serial);
+
+	syncGuiToCurrentAdapter(app);
+	gtk_widget_hide(GTK_WIDGET(dialog_please_wait));
 }
 
 
 G_MODULE_EXPORT void onFileRescan(GtkWidget *wid, gpointer data)
 {
-	rebuild_device_list_store(data);
+	rebuild_device_list_store(data, NULL);
 }
 
 static int mempak_io_progress_cb(int progress, void *ctx)
