@@ -1,0 +1,2 @@
+ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="2ff0", TAG+="uaccess" # ATmega32U2 DFU
+ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="2ffb", TAG+="uaccess" # AT90USB128 DFU
