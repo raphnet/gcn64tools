@@ -3,6 +3,7 @@ Date:
  - Add a N64 memory card stress test
  - Add support for raphnet SNES to USB adapter v2.0 (w/advXarch)
  - Add support for raphnet Dual SNES to USB adapter v2.0 (w/advXarch)
+ - Add support for Wii accessory to USB adapters (WUSBMote) v2.0 (w/advXarch)
 
 === Version 2.0 ===
 Date: 2017-10-03
