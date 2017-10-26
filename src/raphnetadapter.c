@@ -649,6 +649,8 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_GCKB: return "GC Keyboard";
 		case CTL_TYPE_NUNCHUK: return "Nunchuk";
 		case CTL_TYPE_CLASSIC: return "Classic controller";
+		case CTL_TYPE_CLASSIC_PRO: return "Classic controller pro";
+		case CTL_TYPE_WIIMOTE_TAIKO: return "Taiko drum";
 		case CTL_TYPE_SNES: return "SNES controller";
 		case CTL_TYPE_NES: return "NES controller";
 		case CTL_TYPE_MD: return "Megadrive controller";
