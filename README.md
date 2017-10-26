@@ -40,8 +40,8 @@ also applies to dfu-programmer.
 An easy way to do this is to copy the two files below to /etc/udev/rules.d, restart
 udev and reconnect the devices.
 
-scripts/99-atmel-dfu.rules
-scripts/99-raphnet.rules
+scripts/10-atmel-dfu.rules
+scripts/10-raphnet.rules
 
 For information on how to actually /use/ the tools, try --help. Ex:
 
