@@ -210,6 +210,12 @@ void syncGuiToCurrentAdapter(struct application *app)
 		gtk_spin_button_set_value(pollInterval0, (gdouble)buf[0]);
 	}
 
+	if (app->current_adapter_info.caps.min_poll_interval) {
+		gtk_spin_button_set_range(pollInterval0, (gdouble)app->current_adapter_info.caps.min_poll_interval, 40);
+	} else {
+		gtk_spin_button_set_range(pollInterval0, 1, 40);
+	}
+
 	for (i=0; configurable_bits[i].widget; i++) {
 		int avail = 0;
 

@@ -34,6 +34,9 @@ struct rnt_adap_caps {
 	// Configuration parameters whose availability depends
 	// on the firmware version.
 	uint32_t features;
+
+	// when non-zero, GUI imposes a 1ms minimum
+	int min_poll_interval;
 };
 
 struct rnt_adap_info {
