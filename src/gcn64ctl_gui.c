@@ -292,6 +292,36 @@ G_MODULE_EXPORT void pollIntervalChanged(GtkWidget *win, gpointer data)
 	}
 }
 
+G_MODULE_EXPORT void reset_adapter(GtkButton *button, gpointer data)
+{
+	struct application *app = data;
+	GET_UI_ELEMENT(GtkDialog, dialog_please_wait);
+	GTimer *reset_timer;
+
+	// Display the please wait dialog (blocks the main window)
+	gtk_widget_show(GTK_WIDGET(dialog_please_wait));
+
+	rnt_reset(app->current_adapter_handle);
+	deselect_adapter(app);
+
+	reset_timer = g_timer_new();
+	g_timer_start(reset_timer);
+
+	/* Do nothing for two seconds */
+	while (g_timer_elapsed(reset_timer, NULL) < 2.0) {
+		while (gtk_events_pending()) {
+			gtk_main_iteration_do(FALSE);
+		}
+	}
+
+	// Try to reopen the same adapter. The serial number is still in app->current_adapter_info...
+	rebuild_device_list_store(data, app->current_adapter_info.str_serial);
+
+	syncGuiToCurrentAdapter(app);
+	gtk_widget_hide(GTK_WIDGET(dialog_please_wait));
+}
+
+
 G_MODULE_EXPORT void cfg_adapter_mode_changed(GtkWidget *win, gpointer data)
 {
 	struct application *app = data;
@@ -335,6 +365,8 @@ G_MODULE_EXPORT void cfg_adapter_mode_changed(GtkWidget *win, gpointer data)
 	printf("Changing adapter mode to: %d\n", next_config);
 	buf[0] = next_config;
 	rnt_setConfig(app->current_adapter_handle, CFG_PARAM_MODE, buf, 1);
+
+	reset_adapter(NULL, data);
 }
 
 G_MODULE_EXPORT void config_checkbox_changed(GtkWidget *win, gpointer data)
@@ -493,35 +525,6 @@ G_MODULE_EXPORT void resume_polling(GtkButton *button, gpointer data)
 	struct application *app = data;
 
 	rnt_suspendPolling(app->current_adapter_handle, 0);
-}
-
-G_MODULE_EXPORT void reset_adapter(GtkButton *button, gpointer data)
-{
-	struct application *app = data;
-	GET_UI_ELEMENT(GtkDialog, dialog_please_wait);
-	GTimer *reset_timer;
-
-	// Display the please wait dialog (blocks the main window)
-	gtk_widget_show(GTK_WIDGET(dialog_please_wait));
-
-	rnt_reset(app->current_adapter_handle);
-	deselect_adapter(app);
-
-	reset_timer = g_timer_new();
-	g_timer_start(reset_timer);
-
-	/* Do nothing for two seconds */
-	while (g_timer_elapsed(reset_timer, NULL) < 2.0) {
-		while (gtk_events_pending()) {
-			gtk_main_iteration_do(FALSE);
-		}
-	}
-
-	// Try to reopen the same adapter. The serial number is still in app->current_adapter_info...
-	rebuild_device_list_store(data, app->current_adapter_info.str_serial);
-
-	syncGuiToCurrentAdapter(app);
-	gtk_widget_hide(GTK_WIDGET(dialog_please_wait));
 }
 
 
