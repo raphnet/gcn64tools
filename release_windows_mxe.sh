@@ -40,6 +40,7 @@ rm -rf $TMPDIR
 mkdir $TMPDIR
 cp src/*.exe $TMPDIR
 cp -r windows_build_resources/* $TMPDIR
+cp -r firmwares $TMPDIR
 mkdir -p $TMPDIR/share/glib-2.0
 cp $GLIB_SCHEMAS -r $TMPDIR/share/glib-2.0
 cp LICENSE $TMPDIR/LICENSE.txt

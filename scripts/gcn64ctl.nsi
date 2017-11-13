@@ -103,6 +103,7 @@ Section "Uninstall"
 
   ; Remove directories used
   RMDir "$SMPROGRAMS\raphnet-tech adapter manager"
+  RMDir /r "$INSTDIR\firmwares"
   RMDir /r "$INSTDIR\dfu-prog-usb-1.2.2"
   RMDir /r "$INSTDIR\share"
   RMDir "$INSTDIR"
