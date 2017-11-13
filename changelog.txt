@@ -1,5 +1,6 @@
 === Version 2.1.2 ===
  - Add a directory with firmwares
+ - Add missing icons for file dialog
 
 === Version 2.1.1 ===
  - Add missing dfu-programmer.exe (for firmware updates under Windows)
