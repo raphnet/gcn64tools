@@ -153,6 +153,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 		{ CFG_PARAM_ENABLE_NUNCHUK_X_ACCEL, GET_ELEMENT(GtkWidget, chkbtn_enable_nunchuk_x_accel), RNTF_NUNCHUK_ACC_ENABLE, TRUE },
 		{ CFG_PARAM_ENABLE_NUNCHUK_Y_ACCEL, GET_ELEMENT(GtkWidget, chkbtn_enable_nunchuk_y_accel), RNTF_NUNCHUK_ACC_ENABLE, TRUE },
 		{ CFG_PARAM_ENABLE_NUNCHUK_Z_ACCEL, GET_ELEMENT(GtkWidget, chkbtn_enable_nunchuk_z_accel), RNTF_NUNCHUK_ACC_ENABLE, TRUE },
+		{ CFG_PARAM_DISABLE_ANALOG_TRIGGERS, GET_ELEMENT(GtkWidget, chkbtn_disable_analog_triggers), RNTF_DISABLE_ANALOG_TRIGGERS, TRUE },
 		{ },
 	};
 
@@ -386,6 +387,7 @@ G_MODULE_EXPORT void config_checkbox_changed(GtkWidget *win, gpointer data)
 		{ CFG_PARAM_ENABLE_NUNCHUK_X_ACCEL, GET_ELEMENT(GtkToggleButton, chkbtn_enable_nunchuk_x_accel) },
 		{ CFG_PARAM_ENABLE_NUNCHUK_Y_ACCEL, GET_ELEMENT(GtkToggleButton, chkbtn_enable_nunchuk_y_accel) },
 		{ CFG_PARAM_ENABLE_NUNCHUK_Z_ACCEL, GET_ELEMENT(GtkToggleButton, chkbtn_enable_nunchuk_z_accel) },
+		{ CFG_PARAM_DISABLE_ANALOG_TRIGGERS, GET_ELEMENT(GtkToggleButton, chkbtn_disable_analog_triggers) },
 		{ },
 	};
 	int i, n;

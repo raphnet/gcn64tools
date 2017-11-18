@@ -25,6 +25,8 @@
 #define RNTF_MOUSE_INVERT_SCROLL	0x040000
 #define RNTF_SWAP_RL_STICKS			0x080000
 #define RNTF_NUNCHUK_ACC_ENABLE		0x100000
+#define RNTF_DISABLE_ANALOG_TRIGGERS	0x200000
+
 
 struct rnt_adap_caps {
 	int rpsize; // report size for adapter IO. (Set to non-zero to override default

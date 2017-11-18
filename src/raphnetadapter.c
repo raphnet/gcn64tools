@@ -75,6 +75,8 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0028, 1, { 63, 1, 0, RNT_V3_STD | RNTF_DPAD_AS_AXES | RNTF_SWAP_RL_STICKS | RNTF_NUNCHUK_ACC_ENABLE | RNTF_ADAPTER_MODE } }, // 1-player WUSBMote v2.0 (w/advXarch)
 	{ OUR_VENDOR_ID, 0x0029, 1, { 63, 2, 0, RNT_V3_STD | RNTF_DPAD_AS_AXES | RNTF_SWAP_RL_STICKS | RNTF_NUNCHUK_ACC_ENABLE | RNTF_ADAPTER_MODE, 3 } }, // 2-player WUSBMote v2.0 (w/advXarch)
 	{ OUR_VENDOR_ID, 0x002A, 1, { 63, 2, 0, RNT_V3_NOPOLLRATE | RNTF_SWAP_RL_STICKS | RNTF_MOUSE_INVERT_SCROLL | RNTF_ADAPTER_MODE } }, // 1-player WUSBMote v2.0 (w/advXarch) Mouse mode
+	{ OUR_VENDOR_ID, 0x002B, 1, { 63, 1, 0, RNT_V3_STD | RNTF_DPAD_AS_AXES | RNTF_SWAP_RL_STICKS | RNTF_NUNCHUK_ACC_ENABLE | RNTF_ADAPTER_MODE | RNTF_DISABLE_ANALOG_TRIGGERS } }, // 1-player WUSBMote v2.1 (w/advXarch)
+	{ OUR_VENDOR_ID, 0x002C, 1, { 63, 2, 0, RNT_V3_STD | RNTF_DPAD_AS_AXES | RNTF_SWAP_RL_STICKS | RNTF_NUNCHUK_ACC_ENABLE | RNTF_ADAPTER_MODE | RNTF_DISABLE_ANALOG_TRIGGERS, 3 } }, // 2-player WUSBMote v2.1 (w/advXarch)
 
 	// Legacy devices (vusb, non-upgradeable and typically without configurable features)
 	{ OUR_VENDOR_ID, 0x0003, -1, { 0, 4 } }, // 4nes4snes 1.4.2, 1.5
