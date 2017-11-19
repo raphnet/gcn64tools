@@ -205,10 +205,12 @@ void syncGuiToCurrentAdapter(struct application *app)
 		printf("Adapter signature: %s\n", adap_sig);
 	}
 
-	n = rnt_getConfig(app->current_adapter_handle, CFG_PARAM_POLL_INTERVAL0, buf, sizeof(buf));
-	if (n == 1) {
-		printf("poll interval: %d\n", buf[0]);
-		gtk_spin_button_set_value(pollInterval0, (gdouble)buf[0]);
+	if (app->current_adapter_info.caps.features & RNTF_POLL_RATE) {
+		n = rnt_getConfig(app->current_adapter_handle, CFG_PARAM_POLL_INTERVAL0, buf, sizeof(buf));
+		if (n == 1) {
+			printf("poll interval: %d\n", buf[0]);
+			gtk_spin_button_set_value(pollInterval0, (gdouble)buf[0]);
+		}
 	}
 
 	if (app->current_adapter_info.caps.min_poll_interval) {
@@ -285,11 +287,13 @@ G_MODULE_EXPORT void pollIntervalChanged(GtkWidget *win, gpointer data)
 	printf("Value: %d\n", (int)value);
 	buf = (int)value;
 
-	n = rnt_setConfig(app->current_adapter_handle, CFG_PARAM_POLL_INTERVAL0, &buf, 1);
-	if (n != 0) {
-		errorPopup(app, "Error setting configuration");
-		deselect_adapter(app);
-		rebuild_device_list_store(data, NULL);
+	if (app->current_adapter_info.caps.features & RNTF_POLL_RATE) {
+		n = rnt_setConfig(app->current_adapter_handle, CFG_PARAM_POLL_INTERVAL0, &buf, 1);
+		if (n != 0) {
+			errorPopup(app, "Error setting configuration");
+			deselect_adapter(app);
+			rebuild_device_list_store(data, NULL);
+		}
 	}
 }
 
