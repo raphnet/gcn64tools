@@ -79,6 +79,7 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x002C, 1, { 63, 2, 0, RNT_V3_STD | RNTF_DPAD_AS_AXES | RNTF_SWAP_RL_STICKS | RNTF_NUNCHUK_ACC_ENABLE | RNTF_ADAPTER_MODE | RNTF_DISABLE_ANALOG_TRIGGERS, 3 } }, // 2-player WUSBMote v2.1 (w/advXarch)
 
 	// Legacy devices (vusb, non-upgradeable and typically without configurable features)
+	{ OUR_VENDOR_ID, 0x0001, -1 }, // GCN64->USB v2.2
 	{ OUR_VENDOR_ID, 0x0003, -1, { 0, 4 } }, // 4nes4snes 1.4.2, 1.5
 	{ 0x288B, 0x0003, -1 }, // 4nes4snes 1.4.1 (wrong vendor id)
 	{ OUR_VENDOR_ID, 0x0004, -1, }, // GCN64->USB v2.3
