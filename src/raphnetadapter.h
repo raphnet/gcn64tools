@@ -30,7 +30,7 @@
 
 struct rnt_adap_caps {
 	int rpsize; // report size for adapter IO. (Set to non-zero to override default
-	int n_channels;
+	int n_channels; // Number of ports. Defaults to 1 (if set to zero)
 	int n_raw_channels;
 
 	// Configuration parameters whose availability depends

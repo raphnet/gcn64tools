@@ -156,6 +156,8 @@ static char isProductIdHandled(unsigned short pid, int interface_number, struct 
 			if (interface_number == supported_adapters[i].if_number || supported_adapters[i].if_number == -1) {
 				if (caps) {
 					memcpy(caps, &supported_adapters[i].caps, sizeof (struct rnt_adap_caps));
+					if (caps->n_channels == 0)
+						caps->n_channels = 1;
 				}
 				return supported_adapters[i].if_number == -1 ? PID_HANDLED_LEGACY : PID_HANDLED;
 			}
