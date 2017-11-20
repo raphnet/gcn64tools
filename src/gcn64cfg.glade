@@ -248,6 +248,18 @@ Author: Raphaël Assénat
     <property name="can_focus">False</property>
     <property name="pixbuf">mouse.png</property>
   </object>
+  <object class="GtkLabel" id="lbl_firmware_preview">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="hexpand">True</property>
+    <property name="label" translatable="yes">abc</property>
+    <property name="wrap">True</property>
+    <property name="width_chars">70</property>
+    <property name="max_width_chars">70</property>
+    <attributes>
+      <attribute name="font-desc" value="Monospace 10"/>
+    </attributes>
+  </object>
   <object class="GtkFileFilter" id="n64_mempak_filter">
     <patterns>
       <pattern>*.mpk</pattern>

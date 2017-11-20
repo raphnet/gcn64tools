@@ -14,6 +14,112 @@
 #define PROGRAMMING_RETRIES	3
 #define PROGRAMMING_DELAY_S	5
 
+static void update_preview_cb(GtkFileChooser *chooser, gpointer data)
+{
+	struct application *app = data;
+	char *full_filename, *path, *listfile, *filename, *filename_lowercase;
+	GET_UI_ELEMENT(GtkLabel, lbl_firmware_preview);
+	GKeyFile *kfile;
+	int ok = 0;
+
+	printf("Update preview callback\n");
+
+	full_filename = gtk_file_chooser_get_preview_filename(chooser);
+	if (!full_filename)
+		return;
+
+	filename = g_path_get_basename(full_filename);
+	filename_lowercase = g_ascii_strdown(filename, -1);
+
+	path = g_path_get_dirname(full_filename);
+
+	// Look for a firmwares.list file in the same directory
+	listfile = g_build_filename(path, "firmwares.list", NULL);
+
+	printf("Full filename: %s\n", full_filename);
+	printf("Filename: %s\n", filename);
+	printf("Path: %s\n", path);
+	printf("List file: %s\n", listfile);
+
+	if (g_file_test(listfile, G_FILE_TEST_EXISTS | G_FILE_TEST_IS_REGULAR))
+	{
+		gchar *version, *date, *notes, *preview;
+
+		kfile = g_key_file_new();
+		g_key_file_load_from_file(kfile, listfile, 0, NULL);
+
+		if (g_key_file_has_group(kfile, filename_lowercase))
+		{
+			version = g_key_file_get_string(kfile, filename_lowercase, "version", NULL);
+			date = g_key_file_get_string(kfile, filename_lowercase, "date", NULL);
+			notes = g_key_file_get_string(kfile, filename_lowercase, "notes", NULL);
+
+			preview = g_strdup_printf("Version: %s\nDate: %s\nRelease notes:\n\n%s\n", version, date, notes);
+
+			gtk_label_set_text(lbl_firmware_preview, preview);
+			gtk_file_chooser_set_preview_widget_active(chooser, 1);
+			ok = 1;
+		}
+
+		g_key_file_free(kfile);
+	}
+
+	gtk_file_chooser_set_preview_widget_active(chooser, ok);
+
+	g_free(filename);
+	g_free(filename_lowercase);
+	g_free(full_filename);
+	g_free(path);
+	g_free(listfile);
+}
+
+static void firmwareFolderShortcutAndSet(GtkFileChooser *chooser, struct application *app)
+{
+	const char *locations[] = {
+		"firmwares", // For windows installations
+		"../firmwares", // For linux compiled and run-in-place build
+		NULL
+	};
+	const char *basepath;
+	char adap_sig[64];
+	int i;
+	gchar *firmware_directory;
+	GET_UI_ELEMENT(GtkLabel, lbl_firmware_preview);
+
+	printf("Adding firmwares shortcut...\n");
+
+	/* First locate the directory where firmwares are kept */
+	for (i=0; locations[i]; i++) {
+		if (g_file_test(locations[i], G_FILE_TEST_EXISTS | G_FILE_TEST_IS_DIR)) {
+			basepath = locations[i];
+			break;
+		}
+	}
+
+	/* Get the adapter signature (compatible firmware are in a directory
+	 * with the same name) */
+	if (rnt_getSignature(app->current_adapter_handle, adap_sig, sizeof(adap_sig)))
+	{
+		return;
+	}
+
+	/* Build the complete path */
+	firmware_directory = g_build_filename(basepath, adap_sig, NULL);
+	if (!firmware_directory)
+		return;
+
+	if (gtk_file_chooser_add_shortcut_folder(chooser, firmware_directory, NULL)) {
+			gtk_file_chooser_set_current_folder(chooser, firmware_directory);
+	}
+
+	printf("Firmware directory: %s\n", firmware_directory);
+
+	gtk_file_chooser_set_preview_widget(chooser, GTK_WIDGET(lbl_firmware_preview));
+	g_signal_connect(chooser, "update-preview", G_CALLBACK(update_preview_cb), app);
+
+	g_free(firmware_directory);
+}
+
 gboolean closeAdapter(gpointer data)
 {
 	struct application *app = data;
@@ -236,6 +342,8 @@ G_MODULE_EXPORT void recover_usbadapter_firmware(GtkWidget *w, gpointer data)
 
 	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), hexfilter);
 
+	firmwareFolderShortcutAndSet(GTK_FILE_CHOOSER(dialog), app);
+
 	updatelog_appendln("Running file dialog...");
 	res = gtk_dialog_run (GTK_DIALOG(dialog));
 	if (res == GTK_RESPONSE_ACCEPT) {
@@ -355,6 +463,8 @@ G_MODULE_EXPORT void update_usbadapter_firmware(GtkWidget *w, gpointer data)
 										NULL);
 
 	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), hexfilter);
+
+	firmwareFolderShortcutAndSet(GTK_FILE_CHOOSER(dialog), app);
 
 	updatelog_appendln("Running file dialog...");
 	res = gtk_dialog_run (GTK_DIALOG(dialog));
