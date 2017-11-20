@@ -1,5 +1,10 @@
 === Version 2.1.3 ===
- - Add support for next Wii accessory to USB adapter firmware
+ - Add Wii accessory to USB adapter firmware version v2.1
+ - Support for Wii accessory to USB adapter v2.1
+ - Firmware update UI improvements:
+   - File chooser opens in the directory containing firmwares compatible with the current adapter
+   - Firmware file preview: Shows the release date and release notes for the selected file
+ - Add support for an old adapter (GCN64USB v2.2)
 
 === Version 2.1.2 ===
  - Add a directory with firmwares
