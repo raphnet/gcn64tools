@@ -1,0 +1,11 @@
+[wusbmote_v2-2.0.1.hex]
+md5=4cf325d135b7b2c6abc38a580d6f3d25
+version=2.0.1
+date=2017-10-27
+notes=- Tighter I2C timing (allows 1ms poll interval with one controller,\n3ms for two controllers)
+
+[wusbmote_v2-2.1.0.hex]
+md5=2b49bef5ebeba51d35de1897cdf812ba
+version=2.1.0
+date=2017-11-19
+notes=- Add a feature to disable analog triggers\n- Internal changes to workaround a presumed Windows bug (Joystick ID confusion where the second controller stops working or gives an error in the Game controller test dialog)\n - Fix minor deviations from the USB standard

@@ -1,0 +1,12 @@
+[gcn64usb-3.3.2.hex]
+md5=1fbdb28ca21d571b0150e4324c0bf94d
+version=3.3.2
+date=2016-11-27
+notes=- Fix the get controller type command
+
+[gcn64usb-3.4.0.hex]
+md5=7decb686c4c1a667cf6048b79f06a32a
+version=3.4.0
+date=2017-01-08
+notes=- New IO request for even lower latency when using the raphnetraw plugins\n- Reduced memory footprint
+
