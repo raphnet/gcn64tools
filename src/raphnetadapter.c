@@ -22,6 +22,7 @@
 #include "gcn64_priv.h"
 #include "gcn64lib.h"
 #include "requests.h"
+#include "hexdump.h"
 
 #include "hidapi.h"
 
@@ -260,6 +261,8 @@ struct rnt_adap_info *gcn64_listDevices(struct rnt_adap_info *info, struct rnt_a
 	return NULL;
 }
 
+static int rnt_featToCaps(const struct rnt_dyn_features *dyn, struct rnt_adap_caps *caps);
+
 rnt_hdl_t rnt_openDevice(struct rnt_adap_info *dev)
 {
 	hid_device *hdev;
@@ -299,10 +302,33 @@ rnt_hdl_t rnt_openDevice(struct rnt_adap_info *dev)
 	hdl->report_size = dev->caps.rpsize ? dev->caps.rpsize : 63;
 
 	if (!(dev->caps.features & RNTF_BLOCK_IO) && !dev->caps.rpsize) {
-		printf("Pre-3.4 version detected. Setting report size to 40 bytes\n");
-		hdl->report_size = 40;
+		if (!(dev->caps.features & RNTF_DYNAMIC_FEATURES)) {
+			printf("Pre-3.4 version detected. Setting report size to 40 bytes\n");
+			hdl->report_size = 40;
+		}
 	}
 
+	if (dev->caps.features & RNTF_DYNAMIC_FEATURES) {
+		struct rnt_dyn_features feats;
+
+		if (rnt_getSupportedFeatures(hdl, &feats) < 0) {
+			fprintf(stderr, "Failed to query features\n");
+			hid_close(hdev);
+			free(hdl);
+			return NULL;
+		}
+#if 0
+		printf("Supported requests: ");
+		printHexBuf(feats.supported_requests, feats.n_supported_requests);
+		printf("Supported modes: ");
+		printHexBuf(feats.supported_modes, feats.n_supported_modes);
+		printf("Supported configuration parameters: ");
+		printHexBuf(feats.supported_cfg_params, feats.n_supported_cfg_params);
+#endif
+		rnt_featToCaps(&feats, &dev->caps);
+	}
+
+	// Fixme: This will eventually match something else (i.e not gcn64-usb) by mistake..
 	if (0 == rnt_getVersion(hdl, version, sizeof(version))) {
 		int a,b,c;
 
@@ -703,4 +729,106 @@ int rnt_reset(rnt_hdl_t hdl)
 	return 0;
 }
 
+int rnt_getSupportedFeatures(rnt_hdl_t hdl, struct rnt_dyn_features *dst_dynfeat)
+{
+	unsigned char cmd[64];
+	int n, i;
+	struct fetchData { uint8_t cmd; uint8_t *dst; int *size; int maxsize; } fdat[] = {
+		{ 	RQ_RNT_GET_SUPPORTED_REQUESTS,
+			dst_dynfeat->supported_requests,
+			&dst_dynfeat->n_supported_requests,
+			sizeof(dst_dynfeat->supported_requests),
+		},
+		{	RQ_RNT_GET_SUPPORTED_CFG_PARAMS,
+			dst_dynfeat->supported_cfg_params,
+			&dst_dynfeat->n_supported_cfg_params,
+			sizeof(dst_dynfeat->supported_cfg_params),
+		},
+		{	RQ_RNT_GET_SUPPORTED_MODES,
+			dst_dynfeat->supported_modes,
+			&dst_dynfeat->n_supported_modes,
+			sizeof(dst_dynfeat->supported_modes),
+		},
 
+		{	}
+	};
+
+
+	if (!hdl || !dst_dynfeat) {
+		return -1;
+	}
+
+	for (i=0; fdat[i].dst; i++) {
+
+		cmd[0] = fdat[i].cmd;
+		n = rnt_exchange(hdl, cmd, 1, cmd, sizeof(cmd));
+		if (n<0)
+			return n;
+		if (n < 1)
+			return -1;
+		if (n-1 > fdat[i].maxsize)
+			return -1;
+
+		*(fdat[i].size) = n - 1;
+		if (n > 1) {
+			memcpy(fdat[i].dst, cmd + 1, n - 1);
+		}
+	}
+
+	return 0;
+}
+
+/* Function to convert from feature set to struct rnt_adap_caps flags.
+ *
+ * This is (hopefully) a temporary function until the code is migrated to
+ * using the rnt_dyn_feature sets directly...
+ */
+static int rnt_featToCaps(const struct rnt_dyn_features *dyn, struct rnt_adap_caps *caps)
+{
+	int i;
+
+	/* Config param to flag relations */
+	struct { uint32_t rntf; uint8_t param; } cfgRel[] = {
+		{	RNTF_POLL_RATE,			CFG_PARAM_POLL_INTERVAL0	},
+		{	RNTF_POLL_RATE,			CFG_PARAM_POLL_INTERVAL1	},
+		{	RNTF_POLL_RATE,			CFG_PARAM_POLL_INTERVAL2	},
+		{	RNTF_POLL_RATE,			CFG_PARAM_POLL_INTERVAL3	},
+		{	RNTF_GC_FULL_SLIDERS,	CFG_PARAM_FULL_SLIDERS		},
+		{	RNTF_GC_INVERT_TRIG,	CFG_PARAM_INVERT_TRIG		},
+		{	RNTF_TRIGGER_AS_BUTTONS,CFG_PARAM_TRIGGERS_AS_BUTTONS	},
+		{	RNTF_DPAD_AS_BUTTONS,	CFG_PARAM_DPAD_AS_BUTTONS	},
+		{	RNTF_DPAD_AS_AXES,		CFG_PARAM_DPAD_AS_AXES		},
+		{	RNTF_MOUSE_INVERT_SCROLL,	CFG_PARAM_MOUSE_INVERT_SCROLL	},
+		{	RNTF_SWAP_RL_STICKS,	CFG_PARAM_SWAP_STICKS	},
+		{	RNTF_NUNCHUK_ACC_ENABLE,	CFG_PARAM_ENABLE_NUNCHUK_X_ACCEL	},
+		{	RNTF_NUNCHUK_ACC_ENABLE,	CFG_PARAM_ENABLE_NUNCHUK_Y_ACCEL	},
+		{	RNTF_NUNCHUK_ACC_ENABLE,	CFG_PARAM_ENABLE_NUNCHUK_Z_ACCEL	},
+		{	RNTF_DISABLE_ANALOG_TRIGGERS,	CFG_PARAM_DISABLE_ANALOG_TRIGGERS	},
+
+		{	}
+	};
+	/* Available requests/commands to flag relations */
+	struct { uint32_t rntf; uint8_t param; } rqRel[] = {
+		{	RNTF_FW_UPDATE,			RQ_RNT_JUMP_TO_BOOTLOADER	},
+		{	RNTF_BLOCK_IO,			RQ_GCN64_BLOCK_IO			},
+		{	RNTF_SUSPEND_POLLING,	RQ_RNT_SUSPEND_POLLING		},
+		{	RNTF_CONTROLLER_TYPE,	RQ_RNT_GET_CONTROLLER_TYPE	},
+
+		{	}
+	};
+
+	/* For each bit that can be set in rnt_adap_caps->features, check
+	 * if the corresponding feature is declared in the rnt_dyn_features */
+	for (i=0; cfgRel[i].rntf; i++) {
+		if (memchr(dyn->supported_cfg_params, cfgRel[i].param, dyn->n_supported_cfg_params)) {
+			caps->features |= cfgRel[i].rntf;
+		}
+	}
+	for (i=0; rqRel[i].rntf; i++) {
+		if (memchr(dyn->supported_requests, rqRel[i].param, dyn->n_supported_requests)) {
+			caps->features |= rqRel[i].rntf;
+		}
+	}
+
+	return 0;
+}

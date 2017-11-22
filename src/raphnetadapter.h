@@ -27,6 +27,8 @@
 #define RNTF_NUNCHUK_ACC_ENABLE		0x100000
 #define RNTF_DISABLE_ANALOG_TRIGGERS	0x200000
 
+// Flags obtainable through RQ_RNT_GET_SUPPORTED_CFG_PARAMS and company
+#define RNTF_DYNAMIC_FEATURES	0x80000000
 
 struct rnt_adap_caps {
 	int rpsize; // report size for adapter IO. (Set to non-zero to override default
@@ -39,6 +41,20 @@ struct rnt_adap_caps {
 
 	// when non-zero, GUI imposes a 1ms minimum
 	int min_poll_interval;
+};
+
+struct rnt_dyn_features {
+	/* The requests/commands (eg: RQ_RNT_RESET_FIRMWARE) the adapter supports */
+	int n_supported_requests;
+	uint8_t supported_requests[256];
+
+	/* The modes that can be passed to CFG_PARAM_MODE */
+	int n_supported_modes;
+	uint8_t supported_modes[256];
+
+	/* Which of CFG_PARAM_* have an effect */
+	int n_supported_cfg_params;
+	uint8_t supported_cfg_params[256];
 };
 
 struct rnt_adap_info {
@@ -97,6 +113,7 @@ int rnt_getControllerType(rnt_hdl_t hdl, int chn);
 const char *rnt_controllerName(int type);
 int rnt_bootloader(rnt_hdl_t hdl);
 int rnt_reset(rnt_hdl_t hdl);
+int rnt_getSupportedFeatures(rnt_hdl_t hdl, struct rnt_dyn_features *dst_dynfeat);
 
 
 #endif // _raphnetadapter_h__
