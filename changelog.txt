@@ -1,3 +1,18 @@
+=== Version 2.1.4 ===
+ - Add snes2usb firmware version 2.1.0:
+   - Internal changes to workaround a presumed Windows bug (Joystick ID
+     confusion where the second controller stops working or gives an
+     error in the Game controller test dialog)
+   - Fix minor deviations from the USB standard
+   - Add dynamic feature set queries
+ - Add Gamecube/N64 to USB firmware version 3.5.0:
+   - Add a "triggers as buttons" mode for Gamecube controllers
+   - Add a "disable analog triggers" mode for Gamecube controllers
+   - Internal changes to workaround a presumed Windows bug
+   - Add dynamic feature set queries
+ - Support for adapters with the dynamic feature set query (no user
+   visible changes)
+
 === Version 2.1.3 ===
  - Add Wii accessory to USB adapter firmware version v2.1
  - Support for Wii accessory to USB adapter v2.1
