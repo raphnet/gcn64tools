@@ -1,0 +1,12 @@
+[snes2usb_v2-2.1.0.hex]
+md5=13c4438c021c2cfb8b5336d22942856f
+version=2.1.0
+date=2017-11-25
+notes=- Internal changes to workaround a presumed Windows bug (Joystick ID confusion where the second controller stops working or gives an error in the Game controller test dialog)\n- Fix minor deviations from the USB standard\n- Add dynamic feature set queries
+
+[snes2usb_v2-2.0.2.hex]
+md5=c23334ca94468029c92e6e6df79fa598
+version=2.0.2
+date=2017-10-16
+notes=- Now detects when there is no controller connected
+
