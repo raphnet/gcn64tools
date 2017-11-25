@@ -1,3 +1,9 @@
+[gcn64usb-3.5.0.hex]
+md5=de82c8c5ffb47e24adbf46acef987d14
+version=3.5.0
+date=2017-11-25
+notes=- Add a "triggers as buttons" mode for Gamecube controllers\n- Add a "disable analog triggers" mode for Gamecube controllers\n- Internal changes to workaround a presumed Windows bug (Joystick ID confusion where the second controller stops working or gives an error in the Game controller test dialog)\n- Implement a feature to let the adapter manager query the feature set of the current firmware.
+
 [gcn64usb-3.3.2.hex]
 md5=1fbdb28ca21d571b0150e4324c0bf94d
 version=3.3.2
