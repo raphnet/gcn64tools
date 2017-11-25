@@ -58,12 +58,12 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0037, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO | RNTF_GC_FULL_SLIDERS | RNTF_GC_INVERT_TRIG } }, // GC/N64 USB v3.4.x (2x GC-only mode)
 
 	// GC/N64 USB v3.5.x flavours
-	{ OUR_VENDOR_ID, 0x0038, 1, { 0, 2, 2, RNTF_DYNAMIC_FEATURES } }, // (GC/N64 mode)
-	{ OUR_VENDOR_ID, 0x0039, 1, { 0, 2, 2, RNTF_DYNAMIC_FEATURES } }, // (N64 mode)
-	{ OUR_VENDOR_ID, 0x003A, 1, { 0, 2, 2, RNTF_DYNAMIC_FEATURES } }, // (GC mode)
-	{ OUR_VENDOR_ID, 0x003B, 2, { 0, 2, 2, RNTF_DYNAMIC_FEATURES } }, // (2x GC/N64 mode)
-	{ OUR_VENDOR_ID, 0x003C, 2, { 0, 2, 2, RNTF_DYNAMIC_FEATURES } }, // (2x N64-only mode)
-	{ OUR_VENDOR_ID, 0x003D, 2, { 0, 2, 2, RNTF_DYNAMIC_FEATURES } }, // (2x GC-only mode)
+	{ OUR_VENDOR_ID, 0x0038, 1, { 0, 1, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES } }, // (GC/N64 mode)
+	{ OUR_VENDOR_ID, 0x0039, 1, { 0, 1, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES } }, // (N64 mode)
+	{ OUR_VENDOR_ID, 0x003A, 1, { 0, 1, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES } }, // (GC mode)
+	{ OUR_VENDOR_ID, 0x003B, 2, { 0, 2, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES } }, // (2x GC/N64 mode)
+	{ OUR_VENDOR_ID, 0x003C, 2, { 0, 2, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES } }, // (2x N64-only mode)
+	{ OUR_VENDOR_ID, 0x003D, 2, { 0, 2, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES } }, // (2x GC-only mode)
 
 	// For future use...
 	{ OUR_VENDOR_ID, 0x003E, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO } },
