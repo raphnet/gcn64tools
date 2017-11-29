@@ -25,6 +25,8 @@ struct gc2n64_adapter_info_app {
 	unsigned char old_v1_5_conversion;
 	// conversion_mode: New field in v2.1. If non-zero, old_v1_5_conversion should be ignored.
 	unsigned char conversion_mode;
+	// gc_controller_detected: New field in v2.2. Always zero on previous versions.
+	unsigned char gc_controller_detected;
 	unsigned char upgradeable;
 	char version[16];
 	struct gc2n64_adapter_mapping mappings[GC2N64_NUM_MAPPINGS];
