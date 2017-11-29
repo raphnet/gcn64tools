@@ -322,7 +322,14 @@ int main(int argc, char **argv)
 
 	if (cmd_list) {
 		printf("Simply listing the devices...\n");
-		return listDevices();
+		res = listDevices();
+		if (res > 0) {
+			printf("Found %d devices\n", res);
+			return 0;
+		} else {
+			printf("No device found\n");
+			return 1;
+		}
 	}
 
 	if (!serial_specified && !use_first) {
@@ -520,6 +527,13 @@ int main(int argc, char **argv)
 					printf("N64 Get caps[%d]: ", n);
 					printHexBuf(cmd, n);
 				}
+
+				if (n != 3) {
+					fprintf(stderr, "Invalid response (expected 3 bytes)\n");
+					retval = 1;
+				} else {
+					retval = 0;
+				}
 				break;
 
 			case OPT_N64_MEMPAK_DETECT:
@@ -528,8 +542,10 @@ int main(int argc, char **argv)
 					res = gcn64lib_mempak_detect(hdl);
 					if (res == 0) {
 						printf("Mempak detected\n");
+						retval = 0;
 					} else {
 						printf("No mempak detected\n");
+						retval = 1;
 					}
 				}
 				break;
