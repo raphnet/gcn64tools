@@ -15,6 +15,7 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include <string.h>
+#include "memmem.h"
 
 void *memmem(const void *haystack, size_t haystack_len,
 		const void *needle, size_t needle_len)

@@ -24,6 +24,10 @@
 #include "ihex.h"
 #include "delay.h"
 
+#ifdef WINDOWS
+#include "memmem.h"
+#endif
+
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 #endif

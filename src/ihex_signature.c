@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include "ihex.h"
 
+#ifdef WINDOWS
+#include "memmem.h"
+#endif
+
 #define IHEX_MAX_FILE_SIZE	0x20000
 
 char check_ihex_for_signature(const char *filename, const char *signature)
