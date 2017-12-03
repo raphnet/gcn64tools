@@ -23,6 +23,9 @@
 #include "mempak_gcn64usb.h"
 #include "gcn64lib.h"
 
+#ifdef WINDOWS
+#include <windows.h>
+#endif
 
 void deselect_adapter(struct application *app)
 {
@@ -676,6 +679,8 @@ main( int    argc,
 #ifdef WINDOWS
     /* Hack to disable non-standard title bar under windows */
     putenv("GTK_CSD=0");
+
+	SetErrorMode(SEM_FAILCRITICALERRORS | SEM_NOGPFAULTERRORBOX | SEM_NOOPENFILEERRORBOX);
 #endif
 
     /* Init GTK+ */
