@@ -34,6 +34,7 @@
 #include "xferpak.h"
 #include "xferpak_tools.h"
 #include "mempak_stresstest.h"
+#include "mempak_fill.h"
 #include "wusbmotelib.h"
 
 static void printUsage(void)
@@ -115,6 +116,7 @@ static void printUsage(void)
 	printf("  --si_8bit_scan                     Try all possible 1-byte commands, to see which one a controller responds to.\n");
 	printf("  --si_16bit_scan                    Try all possible 2-byte commands, to see which one a controller responds to.\n");
 	printf("  --n64_mempak_stresstest            Perform a set of controller pak tests (WARNING: Erases the pack with random data)\n");
+	printf("  --n64_mempak_fill_with_ff          Fill a controller pak with 0xFF (WARNING: Erases your data)\n");
 	printf("  --i2c_detect                       Try reading one byte from each I2C address (For WUSBMote v2)\n");
 }
 
@@ -166,6 +168,8 @@ static void printUsage(void)
 #define OPT_I2C_DETECT					339
 #define OPT_DISABLE_ENCRYPTION			340
 #define OPT_DUMP_WIIMOTE_EXTENSION_MEMORY	341
+#define OPT_N64_MEMPAK_FF_FILL			342
+#define OPT_NO_CONFIRM					343
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -215,6 +219,7 @@ struct option longopts[] = {
 	{ "xfer_write_ram", required_argument, NULL, OPT_XFERPAK_WRITE_RAM },
 	{ "n64_mempak_detect", 0, NULL, OPT_N64_MEMPAK_DETECT },
 	{ "n64_mempak_stresstest", 0, NULL, OPT_N64_MEMPAK_STRESSTEST },
+	{ "n64_mempak_fill_with_ff", 0, NULL, OPT_N64_MEMPAK_FF_FILL },
 	{ "i2c_detect", 0, NULL, OPT_I2C_DETECT },
 	{ "disable_encryption", 0, NULL, OPT_DISABLE_ENCRYPTION },
 	{ "dump_wiimote_extmem", 0, NULL, OPT_DUMP_WIIMOTE_EXTENSION_MEMORY },
@@ -552,8 +557,18 @@ int main(int argc, char **argv)
 
 			case OPT_N64_MEMPAK_STRESSTEST:
 				{
-					res = mempak_stresstest(hdl, channel);
+					res = mempak_stresstest(hdl, channel, 0);
 					printf("Test returned %d\n", res);
+					if (res != 0)
+						retval = 1;
+				}
+				break;
+
+			case OPT_N64_MEMPAK_FF_FILL:
+				{
+					res = mempak_fill(hdl, channel, 0xFF, noconfirm);
+					if (res != 0)
+						retval = 1;
 				}
 				break;
 
@@ -652,8 +667,12 @@ int main(int argc, char **argv)
 				{
 					struct gc2n64_adapter_info inf;
 
-					gc2n64_adapter_getInfo(hdl, channel, &inf);
-					gc2n64_adapter_printInfo(&inf);
+					res = gc2n64_adapter_getInfo(hdl, channel, &inf);
+					if (res == 0) {
+						gc2n64_adapter_printInfo(&inf);
+					} else {
+						retval = 1;
+					}
 				}
 				break;
 
