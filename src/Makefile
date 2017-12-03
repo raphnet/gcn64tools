@@ -2,15 +2,12 @@ CC=gcc
 LD=$(CC)
 include version.inc
 
-VERSION_STR=\"$(VERSION)\"
-
 UNAME := $(shell uname -s)
 ifeq ($(UNAME), Linux)
 HIDAPI_NAME=hidapi-hidraw
 else
 HIDAPI_NAME=hidapi
 endif
-
 
 ifeq ($(shell uname -o), Msys)
 COMPAT_OBJS=sleep.o memmem.o strcasestr.o app.o
@@ -19,7 +16,7 @@ EXTRA_LDFLAGS=-mwindows # uncomment for console output
 MAKENSIS=/c/Program\ Files\ \(x86\)/NSIS/makensis
 endif
 
-CFLAGS=-Wall -g `pkg-config $(HIDAPI_NAME) zlib --cflags` --std=c99 $(PLATFORM_CFLAGS) -DVERSION_STR=$(VERSION_STR)
+CFLAGS=-Wall -g `pkg-config $(HIDAPI_NAME) zlib --cflags`  $(PLATFORM_CFLAGS) -DVERSION_STR=$(VERSION_STR)
 LDFLAGS=`pkg-config $(HIDAPI_NAME) zlib --libs` -g -lz
 GTK_CFLAGS=`pkg-config --cflags gtk+-3.0 gmodule-2.0 gio-2.0`
 GTK_LDFLAGS=`pkg-config --libs gtk+-3.0 gmodule-2.0 gio-2.0`
@@ -31,17 +28,17 @@ PREFIX=/usr/local
 PROGS=gcn64ctl mempak_ls mempak_format mempak_extract_note mempak_insert_note mempak_rm mempak_convert gcn64ctl_gui
 MEMPAKLIB_OBJS=mempak.o mempak_fs.o $(COMPAT_OBJS)
 GUI_OBJS=gcn64ctl_gui.o gui_mpkedit.o gui_fwupd.o gui_logger.o gui_dfu_programmer.o gui_gc2n64_manager.o gui_update_progress_dialog.o gui_xferpak.o resources.o
-
+COMMON_OBJS=raphnetadapter.o gcn64lib.o wusbmotelib.o gc2n64_adapter.o delay.o hexdump.o ihex.o ihex_signature.o mempak_gcn64usb.o xferpak.o xferpak_tools.o gbcart.o uiio.o timer.o
 
 .PHONY : clean install release_windows
 
 all: $(PROGS) gui.xml
 
 
-gcn64ctl_gui: $(GUI_OBJS) raphnetadapter.o gcn64lib.o wusbmotelib.o gc2n64_adapter.o delay.o hexdump.o ihex.o ihex_signature.o mempak_gcn64usb.o xferpak.o xferpak_tools.o gbcart.o uiio.o uiio_gtk.o $(MEMPAKLIB_OBJS)
+gcn64ctl_gui: $(GUI_OBJS) $(COMMON_OBJS) uiio_gtk.o $(MEMPAKLIB_OBJS)
 	$(LD) $^ $(LDFLAGS) $(GTK_LDFLAGS) -o $@ $(EXTRA_LDFLAGS)
 
-gcn64ctl: main.o raphnetadapter.o gcn64lib.o wusbmotelib.o hexdump.o gc2n64_adapter.o ihex.o delay.o mempak_gcn64usb.o perftest.o mempak_stresstest.o biosensor.o xferpak.o xferpak_tools.o gbcart.o uiio.o $(MEMPAKLIB_OBJS)
+gcn64ctl: main.o $(COMMON_OBJS) perftest.o mempak_stresstest.o mempak_fill.o biosensor.o $(MEMPAKLIB_OBJS)
 	$(LD) $^ $(LDFLAGS) -o $@
 
 app.o: app.rc icon.ico

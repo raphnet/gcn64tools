@@ -23,6 +23,7 @@
 #include "gcn64lib.h"
 #include "requests.h"
 #include "hexdump.h"
+#include "timer.h"
 
 #include "hidapi.h"
 
@@ -480,6 +481,7 @@ int rnt_poll_result(rnt_hdl_t hdl, unsigned char *cmd, int cmd_maxlen)
 int rnt_exchange(rnt_hdl_t hdl, unsigned char *outcmd, int outlen, unsigned char *result, int result_max)
 {
 	int n;
+	uint64_t time_start, time_now;
 
 	n = rnt_send_cmd(hdl, outcmd, outlen);
 	if (n<0) {
@@ -488,6 +490,8 @@ int rnt_exchange(rnt_hdl_t hdl, unsigned char *outcmd, int outlen, unsigned char
 			fprintf(stderr, "Error sending command\n");
 		return -1;
 	}
+
+	time_start = getMilliseconds();
 
 	/* Answer to the command comes later. For now, this is polled, but in
 	 * the future an interrupt-in transfer could be used. */
@@ -499,6 +503,12 @@ int rnt_exchange(rnt_hdl_t hdl, unsigned char *outcmd, int outlen, unsigned char
 		}
 		if (n==0) {
 //			printf("."); fflush(stdout);
+		}
+
+		time_now = getMilliseconds();
+		if ((time_now - time_start) > 1000) {
+			fprintf(stderr, "rnt exchange timeout\n");
+			return -1;
 		}
 
 	} while (n==0);
