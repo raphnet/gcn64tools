@@ -50,6 +50,7 @@ static void printUsage(void)
 	printf("  -o, --outfile file    Output file for read operations (eg: --n64-mempak-dump)\n");
 	//printf("  -i, --infile file     Input file for write operations (eg: --gc_to_n64_update)\n");
 	printf("      --nonstop         Continue testing forever or until an error occurs.\n");
+	printf("      --noconfirm       Skip asking the user for confirmation.\n");
 	printf("  -c, --channel chn     Specify channel to use where applicable (for multi-player adapters\n");
 	printf("                        and raw commands, development commands and GC2N64 I/O)\n");
 	printf("\n");
@@ -223,6 +224,7 @@ struct option longopts[] = {
 	{ "i2c_detect", 0, NULL, OPT_I2C_DETECT },
 	{ "disable_encryption", 0, NULL, OPT_DISABLE_ENCRYPTION },
 	{ "dump_wiimote_extmem", 0, NULL, OPT_DUMP_WIIMOTE_EXTENSION_MEMORY },
+	{ "noconfirm", 0, NULL, OPT_NO_CONFIRM },
 	{ },
 };
 
@@ -267,6 +269,7 @@ int main(int argc, char **argv)
 	struct rnt_adap_info *selected_device = NULL;
 	int verbose = 0, use_first = 0, serial_specified = 0;
 	int nonstop = 0;
+	int noconfirm = 0;
 	int cmd_list = 0;
 #define TARGET_SERIAL_CHARS 128
 	wchar_t target_serial[TARGET_SERIAL_CHARS];
@@ -316,6 +319,9 @@ int main(int argc, char **argv)
 				break;
 			case OPT_NONSTOP:
 				nonstop = 1;
+				break;
+			case OPT_NO_CONFIRM:
+				noconfirm = 1;
 				break;
 			case '?':
 				fprintf(stderr, "Unrecognized argument. Try -h\n");
