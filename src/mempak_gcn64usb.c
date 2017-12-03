@@ -308,7 +308,6 @@ int gcn64lib_mempak_download(rnt_hdl_t hdl, int channel, mempak_structure_t **me
 int gcn64lib_mempak_upload(rnt_hdl_t hdl, int channel, mempak_structure_t *pak, int (*progressCb)(int cur_addr, void *ctx), void *ctx)
 {
 	unsigned short addr;
-	unsigned char readback[0x20];
 	int res, try;
 
 	if (!pak) {
@@ -332,18 +331,6 @@ int gcn64lib_mempak_upload(rnt_hdl_t hdl, int channel, mempak_structure_t *pak, 
 			return -2;
 		}
 
-#if 0
-		if (0x20 != gcn64lib_mempak_readBlock(hdl, addr, readback)) {
-			// TODO : Why not retry?
-			fprintf(stderr, "readback failed\n");
-			return -2;
-		}
-
-		if (memcmp(readback, &pak->data[addr], 0x20)) {
-			fprintf(stderr, "Readback compare failed\n");
-			return -2;
-		}
-#endif
 		if (progressCb) {
 			if (progressCb(addr, ctx)) {
 				return -4;
