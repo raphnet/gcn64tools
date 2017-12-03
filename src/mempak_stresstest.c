@@ -217,11 +217,10 @@ static int burstTest(rnt_hdl_t hdl, uiio *u, int n_cycles, int n_blocks)
 	return 0;
 }
 
-int mempak_stresstest(rnt_hdl_t hdl, int channel)
+int mempak_stresstest(rnt_hdl_t hdl, int channel, int first_test)
 {
 	uiio *u = getUIIO(NULL);
 	int res;
-	int first_test = 0;
 	int no_disconnect = 0;
 
 	u->multi_progress = 1;
