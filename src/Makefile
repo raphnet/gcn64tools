@@ -2,6 +2,8 @@ CC=gcc
 LD=$(CC)
 include version.inc
 
+VERSION_STR=\"$(VERSION)\"
+
 UNAME := $(shell uname -s)
 ifeq ($(UNAME), Linux)
 HIDAPI_NAME=hidapi-hidraw
@@ -16,7 +18,7 @@ EXTRA_LDFLAGS=-mwindows # uncomment for console output
 MAKENSIS=/c/Program\ Files\ \(x86\)/NSIS/makensis
 endif
 
-CFLAGS=-Wall -g `pkg-config $(HIDAPI_NAME) zlib --cflags`  $(PLATFORM_CFLAGS) -DVERSION_STR=$(VERSION_STR)
+CFLAGS=-Wall -g `pkg-config $(HIDAPI_NAME) zlib --cflags` --std=gnu99 $(PLATFORM_CFLAGS) -DVERSION_STR=$(VERSION_STR)
 LDFLAGS=`pkg-config $(HIDAPI_NAME) zlib --libs` -g -lz
 GTK_CFLAGS=`pkg-config --cflags gtk+-3.0 gmodule-2.0 gio-2.0`
 GTK_LDFLAGS=`pkg-config --libs gtk+-3.0 gmodule-2.0 gio-2.0`
