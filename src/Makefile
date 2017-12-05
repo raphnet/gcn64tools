@@ -30,7 +30,7 @@ PREFIX=/usr/local
 PROGS=gcn64ctl mempak_ls mempak_format mempak_extract_note mempak_insert_note mempak_rm mempak_convert gcn64ctl_gui
 MEMPAKLIB_OBJS=mempak.o mempak_fs.o $(COMPAT_OBJS)
 GUI_OBJS=gcn64ctl_gui.o gui_mpkedit.o gui_fwupd.o gui_logger.o gui_dfu_programmer.o gui_gc2n64_manager.o gui_update_progress_dialog.o gui_xferpak.o resources.o
-COMMON_OBJS=raphnetadapter.o gcn64lib.o wusbmotelib.o gc2n64_adapter.o delay.o hexdump.o ihex.o ihex_signature.o mempak_gcn64usb.o xferpak.o xferpak_tools.o gbcart.o uiio.o timer.o
+COMMON_OBJS=raphnetadapter.o gcn64lib.o wusbmotelib.o gc2n64_adapter.o delay.o hexdump.o ihex.o ihex_signature.o mempak_gcn64usb.o xferpak.o xferpak_tools.o gbcart.o uiio.o timer.o mempak_fill.o
 
 .PHONY : clean install release_windows
 
@@ -40,7 +40,7 @@ all: $(PROGS) gui.xml
 gcn64ctl_gui: $(GUI_OBJS) $(COMMON_OBJS) uiio_gtk.o $(MEMPAKLIB_OBJS)
 	$(LD) $^ $(LDFLAGS) $(GTK_LDFLAGS) -o $@ $(EXTRA_LDFLAGS)
 
-gcn64ctl: main.o $(COMMON_OBJS) perftest.o mempak_stresstest.o mempak_fill.o biosensor.o $(MEMPAKLIB_OBJS)
+gcn64ctl: main.o $(COMMON_OBJS) perftest.o mempak_stresstest.o biosensor.o $(MEMPAKLIB_OBJS)
 	$(LD) $^ $(LDFLAGS) -o $@
 
 app.o: app.rc icon.ico

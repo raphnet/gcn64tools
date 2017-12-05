@@ -22,22 +22,41 @@
 #include "gcn64ctl_gui.h"
 #include "mempak_gcn64usb.h"
 #include "gcn64lib.h"
+#include "uiio_gtk.h"
+#include "mempak_fill.h"
 
 #ifdef WINDOWS
 #include <windows.h>
 #endif
 
+/* Set sensitivity to FLASE on items that depend on an adapter being selected */
+static void desensitize_adapter_widgets(struct application *app)
+{
+	GtkWidget *widgets[] = {
+		GET_ELEMENT(GtkWidget, adapterDetails),
+		GET_ELEMENT(GtkWidget, menuitem_suspend_polling),
+		GET_ELEMENT(GtkWidget, menuitem_resume_polling),
+		GET_ELEMENT(GtkWidget, menu_manage_gc2n64),
+		NULL
+	};
+	int i;
+
+	for (i=0; widgets[i]; i++) {
+		gtk_widget_set_sensitive(widgets[i], FALSE);
+	}
+}
+
+
 void deselect_adapter(struct application *app)
 {
 	GET_UI_ELEMENT(GtkComboBox, cb_adapter_list);
-	GtkWidget *adapter_details = GTK_WIDGET( gtk_builder_get_object(app->builder, "adapterDetails") );
 
 	printf("deselect adapter\n");
 
 	if (app->current_adapter_handle) {
 		rnt_closeDevice(app->current_adapter_handle);
 		app->current_adapter_handle = NULL;
-		gtk_widget_set_sensitive(adapter_details, FALSE);
+		desensitize_adapter_widgets(app);
 	}
 
 	gtk_combo_box_set_active_iter(cb_adapter_list, NULL);
@@ -78,6 +97,7 @@ static gboolean periodic_updater(gpointer data)
 	GET_UI_ELEMENT(GtkLabel, label_controller_type);
 	GET_UI_ELEMENT(GtkButton, btn_read_mempak);
 	GET_UI_ELEMENT(GtkButton, btn_write_mempak);
+	GET_UI_ELEMENT(GtkButton, btn_erase_mempak);
 	GET_UI_ELEMENT(GtkButton, btn_rumble_test);
 	GET_UI_ELEMENT(GtkWidget, menuitem_display_cart_info);
 	GET_UI_ELEMENT(GtkWidget, menuitem_read_cart_rom);
@@ -93,6 +113,7 @@ static gboolean periodic_updater(gpointer data)
 			case CTL_TYPE_N64:
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_read_mempak), TRUE);
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_write_mempak), TRUE);
+				gtk_widget_set_sensitive(GTK_WIDGET(btn_erase_mempak), TRUE);
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_rumble_test), TRUE);
 
 				gtk_widget_set_sensitive(menuitem_display_cart_info, TRUE);
@@ -104,6 +125,7 @@ static gboolean periodic_updater(gpointer data)
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_rumble_test), TRUE);
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_read_mempak), FALSE);
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_write_mempak), FALSE);
+				gtk_widget_set_sensitive(GTK_WIDGET(btn_erase_mempak), FALSE);
 
 				gtk_widget_set_sensitive(menuitem_display_cart_info, FALSE);
 				gtk_widget_set_sensitive(menuitem_read_cart_rom, FALSE);
@@ -138,8 +160,10 @@ void syncGuiToCurrentAdapter(struct application *app)
 		uint32_t feature_bit; // If zero, always visible and available.
 		gboolean hide_when_unavailable;
 	} configurable_bits[] = {
-		{ 0, GET_ELEMENT(GtkWidget, btn_suspend_polling), RNTF_SUSPEND_POLLING, FALSE },
-		{ 0, GET_ELEMENT(GtkWidget, btn_resume_polling), RNTF_SUSPEND_POLLING, FALSE },
+//		{ 0, GET_ELEMENT(GtkWidget, btn_suspend_polling), RNTF_SUSPEND_POLLING, FALSE },
+//		{ 0, GET_ELEMENT(GtkWidget, btn_resume_polling), RNTF_SUSPEND_POLLING, FALSE },
+		{ 0, GET_ELEMENT(GtkWidget, menuitem_suspend_polling), RNTF_FW_UPDATE, FALSE },
+		{ 0, GET_ELEMENT(GtkWidget, menuitem_resume_polling), RNTF_FW_UPDATE, FALSE },
 		{ 0, GET_ELEMENT(GtkWidget, btn_update_firmware), RNTF_FW_UPDATE, FALSE },
 		{ 0, GET_ELEMENT(GtkWidget, box_poll_interval), RNTF_POLL_RATE, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, lbl_controller_type), RNTF_CONTROLLER_TYPE, TRUE },
@@ -493,9 +517,8 @@ G_MODULE_EXPORT void adapterSelected(GtkComboBox *cb, gpointer data)
 	if (app->current_adapter_handle) {
 		rnt_closeDevice(app->current_adapter_handle);
 		app->current_adapter_handle = NULL;
-		gtk_widget_set_sensitive(adapter_details, FALSE);
-		gtk_widget_set_sensitive((GtkWidget*)menu_manage_gc2n64, FALSE);
 
+		desensitize_adapter_widgets(app);
 	}
 
 	if (gtk_combo_box_get_active_iter(cb, &iter)) {
@@ -513,6 +536,7 @@ G_MODULE_EXPORT void adapterSelected(GtkComboBox *cb, gpointer data)
 
 		syncGuiToCurrentAdapter(app);
 		gtk_widget_set_sensitive(adapter_details, TRUE);
+		// TODO : Should only be available for adapters with an N64 port
 		gtk_widget_set_sensitive((GtkWidget*)menu_manage_gc2n64, TRUE);
 	}
 }
@@ -559,6 +583,19 @@ G_MODULE_EXPORT void mempak_io_stop(GtkWidget *wid, gpointer data)
 {
 	struct application *app = data;
 	app->stop_mempak_io = 1;
+}
+
+G_MODULE_EXPORT void erase_n64_pak(GtkWidget *wid, gpointer data)
+{
+	struct application *app = data;
+	uiio *u = getUIIO_gtk(NULL, app->mainwindow);
+
+	if (!app->current_adapter_handle)
+		return;
+
+	u->caption = "Erasing Controller Pak...";
+
+	mempak_fill(app->current_adapter_handle, 0, 0xFF, 0, u);
 }
 
 G_MODULE_EXPORT void write_n64_pak(GtkWidget *wid, gpointer data)
