@@ -30,6 +30,44 @@ static int uiio_gtk_error(const char *fmt, ...)
 	return i;
 }
 
+static int uiio_gtk_ask(int type, const char *fmt, ...)
+{
+	GtkDialogFlags confirmationDialogFlags = GTK_DIALOG_DESTROY_WITH_PARENT;
+	GtkWidget *confirmationDialog;
+	char messagebuffer[512];
+	va_list ap;
+	gint res;
+
+	va_start(ap, fmt);
+	vsnprintf(messagebuffer, 512, fmt, ap);
+	va_end(ap);
+
+	confirmationDialog = gtk_message_dialog_new(g_mainwin,
+									confirmationDialogFlags,
+									GTK_MESSAGE_QUESTION,
+									0,
+									messagebuffer);
+
+	if (type == UIIO_YESNO || type == UIIO_NOYES) {
+		gtk_dialog_add_buttons(GTK_DIALOG(confirmationDialog), "No", 1, "Yes", 2, NULL);
+	} else if (type == UIIO_CONTINUE_ABORT) {
+		gtk_dialog_add_buttons(GTK_DIALOG(confirmationDialog), "Abort", 3, "Continue", 4, NULL);
+	}
+
+	res = gtk_dialog_run(GTK_DIALOG(confirmationDialog));
+	gtk_widget_destroy(confirmationDialog);
+
+	switch(res) {
+		case 1: return UIIO_NO;
+		case 2: return UIIO_YES;
+		case 3: return UIIO_ABORT;
+		case 4: return UIIO_CONTINUE;
+	}
+
+	return UIIO_ABORT;
+}
+
+
 static void cancel_progress(GtkDialog *dialog, gint response_id, gpointer user_data)
 {
 	uiio *u = user_data;
@@ -122,6 +160,7 @@ uiio *getUIIO_gtk(uiio *u, GtkWindow *mainWindow)
 	uiio_init_std(&uiio_gtk);
 
 	uiio_gtk.error = uiio_gtk_error,
+	uiio_gtk.ask = uiio_gtk_ask,
 	uiio_gtk.progressStart = progressStart,
 	uiio_gtk.progressEnd = progressEnd,
 	uiio_gtk.update = progressUpdate,
