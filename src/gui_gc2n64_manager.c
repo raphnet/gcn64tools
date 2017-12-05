@@ -34,6 +34,7 @@ G_MODULE_EXPORT void gc2n64_manager_on_show(GtkWidget *win, gpointer data)
 	GET_UI_ELEMENT(GtkLabel, label_gc2n64_upgradeable);
 	GET_UI_ELEMENT(GtkLabel, label_gc2n64_conversion_mode);
 	GET_UI_ELEMENT(GtkLabel, label_gc2n64_deadzone);
+	GET_UI_ELEMENT(GtkLabel, label_gc2n64_gamecube_controller_present);
 	int channel = 0;
 
 	printf("Enter gc2n64 manager window\n");
@@ -53,6 +54,7 @@ G_MODULE_EXPORT void gc2n64_manager_on_show(GtkWidget *win, gpointer data)
 		gtk_label_set_text(label_gc2n64_upgradeable, inf.app.upgradeable ? "Yes":"No");
 		gtk_label_set_text(label_gc2n64_conversion_mode, gc2n64_adapter_getConversionModeName(&inf));
 		gtk_label_set_text(label_gc2n64_deadzone, inf.app.deadzone_enabled ? "Enabled":"Disabled");
+		gtk_label_set_text(label_gc2n64_gamecube_controller_present, inf.app.gc_controller_detected ? "Present":"Absent");
 	}
 }
 #if 0
