@@ -46,6 +46,25 @@ static void desensitize_adapter_widgets(struct application *app)
 	}
 }
 
+static void setsensitive_n64_adapter_widgets(struct application *app, int sensitive)
+{
+	GtkWidget *widgets[] = {
+		GET_ELEMENT(GtkWidget, menu_manage_gc2n64),
+		GET_ELEMENT(GtkWidget, btn_read_mempak),
+		GET_ELEMENT(GtkWidget, btn_write_mempak),
+		GET_ELEMENT(GtkWidget, btn_erase_mempak),
+		GET_ELEMENT(GtkWidget, menuitem_display_cart_info),
+		GET_ELEMENT(GtkWidget, menuitem_read_cart_rom),
+		GET_ELEMENT(GtkWidget, menuitem_read_cart_ram),
+		GET_ELEMENT(GtkWidget, menuitem_write_cart_ram),
+		NULL
+	};
+	int i;
+
+	for (i=0; widgets[i]; i++) {
+		gtk_widget_set_sensitive(widgets[i], sensitive);
+	}
+}
 
 void deselect_adapter(struct application *app)
 {
@@ -95,54 +114,28 @@ static gboolean periodic_updater(gpointer data)
 {
 	struct application *app = data;
 	GET_UI_ELEMENT(GtkLabel, label_controller_type);
-	GET_UI_ELEMENT(GtkButton, btn_read_mempak);
-	GET_UI_ELEMENT(GtkButton, btn_write_mempak);
-	GET_UI_ELEMENT(GtkButton, btn_erase_mempak);
 	GET_UI_ELEMENT(GtkButton, btn_rumble_test);
-	GET_UI_ELEMENT(GtkWidget, menuitem_display_cart_info);
-	GET_UI_ELEMENT(GtkWidget, menuitem_read_cart_rom);
-	GET_UI_ELEMENT(GtkWidget, menuitem_read_cart_ram);
-	GET_UI_ELEMENT(GtkWidget, menuitem_write_cart_ram);
 
 	if (app->current_adapter_handle && !app->inhibit_periodic_updates) {
 		app->controller_type = rnt_getControllerType(app->current_adapter_handle, 0);
 		gtk_label_set_text(label_controller_type, rnt_controllerName(app->controller_type));
 
+		setsensitive_n64_adapter_widgets(app, FALSE);
+		gtk_widget_set_sensitive(GTK_WIDGET(btn_rumble_test), FALSE);
+
 		switch (app->controller_type)
 		{
 			case CTL_TYPE_N64:
-				gtk_widget_set_sensitive(GTK_WIDGET(btn_read_mempak), TRUE);
-				gtk_widget_set_sensitive(GTK_WIDGET(btn_write_mempak), TRUE);
-				gtk_widget_set_sensitive(GTK_WIDGET(btn_erase_mempak), TRUE);
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_rumble_test), TRUE);
-
-				gtk_widget_set_sensitive(menuitem_display_cart_info, TRUE);
-				gtk_widget_set_sensitive(menuitem_read_cart_rom, TRUE);
-				gtk_widget_set_sensitive(menuitem_read_cart_ram, TRUE);
-				gtk_widget_set_sensitive(menuitem_write_cart_ram, TRUE);
+				setsensitive_n64_adapter_widgets(app, TRUE);
 				break;
+
 			case CTL_TYPE_GC:
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_rumble_test), TRUE);
-				gtk_widget_set_sensitive(GTK_WIDGET(btn_read_mempak), FALSE);
-				gtk_widget_set_sensitive(GTK_WIDGET(btn_write_mempak), FALSE);
-				gtk_widget_set_sensitive(GTK_WIDGET(btn_erase_mempak), FALSE);
-
-				gtk_widget_set_sensitive(menuitem_display_cart_info, FALSE);
-				gtk_widget_set_sensitive(menuitem_read_cart_rom, FALSE);
-				gtk_widget_set_sensitive(menuitem_read_cart_ram, FALSE);
-				gtk_widget_set_sensitive(menuitem_write_cart_ram, FALSE);
 				break;
 
 			default:
 			case CTL_TYPE_NONE:
-				gtk_widget_set_sensitive(GTK_WIDGET(btn_read_mempak), FALSE);
-				gtk_widget_set_sensitive(GTK_WIDGET(btn_write_mempak), FALSE);
-				gtk_widget_set_sensitive(GTK_WIDGET(btn_rumble_test), FALSE);
-
-				gtk_widget_set_sensitive(menuitem_display_cart_info, FALSE);
-				gtk_widget_set_sensitive(menuitem_read_cart_rom, FALSE);
-				gtk_widget_set_sensitive(menuitem_read_cart_ram, FALSE);
-				gtk_widget_set_sensitive(menuitem_write_cart_ram, FALSE);
 				break;
 		}
 
