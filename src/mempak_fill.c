@@ -45,7 +45,7 @@ static int fill_pak(rnt_hdl_t hdl, uiio *u, uint8_t v)
 		}
 	}
 
-	u->progressEnd(u, "OK");
+	u->progressEnd(u, "Overwrite OK");
 	return 0;
 }
 
@@ -79,13 +79,13 @@ static int check_fill(rnt_hdl_t hdl, uiio *u, uint8_t v)
 		}
 	}
 
-	u->progressEnd(u, "OK");
+	u->progressEnd(u, "Verify OK");
 	return 0;
 }
 
-int mempak_fill(rnt_hdl_t hdl, int channel, uint8_t pattern, int no_confirm)
+int mempak_fill(rnt_hdl_t hdl, int channel, uint8_t pattern, int no_confirm, uiio *uio)
 {
-	uiio *u = getUIIO(NULL);
+	uiio *u = getUIIO(uio);
 	int res;
 
 	u->multi_progress = 1;
@@ -98,14 +98,15 @@ int mempak_fill(rnt_hdl_t hdl, int channel, uint8_t pattern, int no_confirm)
 	}
 
 	///////////////////////////////////////////
-	u->caption = "Test 10: Fill with pattern";
+	u->caption = "Fill with pattern";
 	if (fill_pak(hdl, u, pattern) < 0) {
 		u->error("Error writing to mempak");
 		return -1;
 	}
 
 	///////////////////////////////////////////
-	u->caption = "Test 11: Verify fill";
+	u->multi_progress = 0; // this is the last step
+	u->caption = "Verify fill";
 	res = check_fill(hdl, u, pattern);
 	if (res < 0) {
 		if (res == -1) {

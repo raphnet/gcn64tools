@@ -572,7 +572,7 @@ int main(int argc, char **argv)
 
 			case OPT_N64_MEMPAK_FF_FILL:
 				{
-					res = mempak_fill(hdl, channel, 0xFF, noconfirm);
+					res = mempak_fill(hdl, channel, 0xFF, noconfirm, NULL);
 					if (res != 0)
 						retval = 1;
 				}
