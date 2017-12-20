@@ -79,9 +79,11 @@ static void printUsage(void)
 	printf("  --get_signature                    Get the firmware signature\n");
 	printf("\n");
 	printf("Raw N64/Gamecube controller commands:\n");
-	printf("  --n64_getstatus                    Read N64 controller status now\n");
+	printf("  --gc_getid                         Get controller ID\n");
 	printf("  --gc_getstatus                     Read GC controller status now (turns rumble OFF)\n");
 	printf("  --gc_getstatus_rumble              Read GC controller status now (turns rumble ON)\n");
+	printf("  --gc_getorigins                    Send 8-bit command 0x41 to a gamecube controller\n");
+	printf("  --n64_getstatus                    Read N64 controller status now\n");
 	printf("  --n64_getcaps                      Get N64 controller capabilities (or status such as pak present)\n");
 	printf("  --n64_mempak_dump                  Dump N64 mempak contents (Use with --outfile to write to file)\n");
 	printf("  --n64_mempak_write file            Write file to N64 mempak\n");
@@ -171,6 +173,8 @@ static void printUsage(void)
 #define OPT_DUMP_WIIMOTE_EXTENSION_MEMORY	341
 #define OPT_N64_MEMPAK_FF_FILL			342
 #define OPT_NO_CONFIRM					343
+#define OPT_GC_GETORIGINS				344
+#define OPT_GC_GETID					345
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -185,8 +189,10 @@ struct option longopts[] = {
 	{ "reset", 0, NULL, OPT_RESET },
 	{ "n64_getstatus", 0, NULL, OPT_N64_GETSTATUS },
 	{ "gc_getstatus", 0, NULL, OPT_GC_GETSTATUS },
+	{ "gc_getorigins", 0, NULL, OPT_GC_GETORIGINS },
 	{ "gc_getstatus_rumble", 0, NULL, OPT_GC_GETSTATUS_RUMBLE },
 	{ "n64_getcaps", 0, NULL, OPT_N64_GETCAPS },
+	{ "gc_getid", 0, NULL, OPT_GC_GETID },
 	{ "n64_mempak_dump", 0, NULL, OPT_N64_MEMPAK_DUMP },
 	{ "suspend_polling", 0, NULL, OPT_SUSPEND_POLLING },
 	{ "resume_polling", 0, NULL, OPT_RESUME_POLLING },
@@ -518,6 +524,16 @@ int main(int argc, char **argv)
 				}
 				break;
 
+			case OPT_GC_GETORIGINS:
+				cmd[0] = GC_GET_ORIGINS;
+				n = gcn64lib_rawSiCommand(hdl, channel, cmd, 1, cmd, sizeof(cmd));
+				if (n >= 0) {
+					printf("GC Get origins answer[%d]: ", n);
+					printHexBuf(cmd, n);
+				}
+
+				break;
+
 			case OPT_GC_GETSTATUS_RUMBLE:
 			case OPT_GC_GETSTATUS:
 				cmd[0] = GC_GETSTATUS1;
@@ -527,6 +543,23 @@ int main(int argc, char **argv)
 				if (n >= 0) {
 					printf("GC Get status[%d]: ", n);
 					printHexBuf(cmd, n);
+				}
+				break;
+
+			case OPT_GC_GETID:
+				cmd[0] = GC_GETID;
+				//cmd[0] = 0xff;
+				n = gcn64lib_rawSiCommand(hdl, channel, cmd, 1, cmd, sizeof(cmd));
+				if (n >= 0) {
+					printf("GC Get ID[%d]: ", n);
+					printHexBuf(cmd, n);
+				}
+
+				if (n != GC_GETID_REPLY_LENGTH) {
+					fprintf(stderr, "Invalid response (expected 3 bytes)\n");
+					retval = 1;
+				} else {
+					retval = 0;
 				}
 				break;
 

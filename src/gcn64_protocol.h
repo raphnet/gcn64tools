@@ -30,6 +30,12 @@
 #define GC_GETID					0x00
 #define GC_GETID_REPLY_LENGTH		3
 
+/* Return 80 bits, the first 64 have the same meaning as
+ * the status command answer (see below), but with axis
+ * at their origin. (buttons still work) */
+#define GC_GET_ORIGINS				0x41
+#define GC_GET_ORIGINS_LENGTH		10
+
 /* 3-byte get status command. Returns axis and buttons. Also 
  * controls motor. */
 #define GC_GETSTATUS1				0x40

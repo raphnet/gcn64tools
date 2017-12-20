@@ -1,3 +1,6 @@
+=== Version 2.1.5 ===
+ - Command-line: Add --gc_getid and --gc_getorigins
+
 === Version 2.1.4 ===
  - Add snes2usb firmware version 2.1.0:
    - Internal changes to workaround a presumed Windows bug (Joystick ID
