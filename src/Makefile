@@ -18,7 +18,7 @@ EXTRA_LDFLAGS=-mwindows # uncomment for console output
 MAKENSIS=/c/Program\ Files\ \(x86\)/NSIS/makensis
 endif
 
-CFLAGS=-Wall -g `pkg-config $(HIDAPI_NAME) zlib --cflags` --std=gnu99 $(PLATFORM_CFLAGS) -DVERSION_STR=$(VERSION_STR)
+CFLAGS=-Wall -g `pkg-config $(HIDAPI_NAME) zlib --cflags` --std=gnu99 $(PLATFORM_CFLAGS) -DVERSION_STR=$(VERSION_STR) -Irntlib
 LDFLAGS=`pkg-config $(HIDAPI_NAME) zlib --libs` -g -lz
 GTK_CFLAGS=`pkg-config --cflags gtk+-3.0 gmodule-2.0 gio-2.0`
 GTK_LDFLAGS=`pkg-config --libs gtk+-3.0 gmodule-2.0 gio-2.0`
@@ -33,6 +33,8 @@ GUI_OBJS=gcn64ctl_gui.o gui_mpkedit.o gui_fwupd.o gui_logger.o gui_dfu_programme
 COMMON_OBJS=raphnetadapter.o gcn64lib.o wusbmotelib.o x2gcn64_adapters.o delay.o hexdump.o ihex.o ihex_signature.o mempak_gcn64usb.o xferpak.o xferpak_tools.o gbcart.o uiio.o timer.o mempak_fill.o
 
 .PHONY : clean install release_windows
+
+VPATH=./rntlib
 
 all: $(PROGS) gui.xml
 
