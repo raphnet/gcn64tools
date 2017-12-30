@@ -80,7 +80,7 @@ void rnt_shutdown(void);
 
 struct rnt_adap_list_ctx *rnt_allocListCtx(void);
 void rnt_freeListCtx(struct rnt_adap_list_ctx *ctx);
-struct rnt_adap_info *gcn64_listDevices(struct rnt_adap_info *info, struct rnt_adap_list_ctx *ctx);
+struct rnt_adap_info *rnt_listDevices(struct rnt_adap_info *info, struct rnt_adap_list_ctx *ctx);
 int rnt_countDevices(void);
 
 rnt_hdl_t rnt_openDevice(struct rnt_adap_info *dev);

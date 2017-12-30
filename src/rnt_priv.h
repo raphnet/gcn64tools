@@ -1,5 +1,5 @@
-#ifndef _gcn64_priv_h__
-#define _gcn64_priv_h__
+#ifndef _rnt_priv_h__
+#define _rnt_priv_h__
 
 #include "hidapi.h"
 #include "raphnetadapter.h"

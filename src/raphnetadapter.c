@@ -19,7 +19,7 @@
 #include <string.h>
 #include <stdint.h>
 #include "raphnetadapter.h"
-#include "gcn64_priv.h"
+#include "rnt_priv.h"
 #include "gcn64lib.h"
 #include "requests.h"
 #include "hexdump.h"
@@ -198,7 +198,7 @@ int rnt_countDevices(void)
 	int count = 0;
 
 	ctx = rnt_allocListCtx();
-	while (gcn64_listDevices(&inf, ctx)) {
+	while (rnt_listDevices(&inf, ctx)) {
 		count++;
 	}
 	rnt_freeListCtx(ctx);
@@ -212,7 +212,7 @@ int rnt_countDevices(void)
  * \param dst Destination buffer for device serial number/id.
  * \param dstbuf_size Destination buffer size.
  */
-struct rnt_adap_info *gcn64_listDevices(struct rnt_adap_info *info, struct rnt_adap_list_ctx *ctx)
+struct rnt_adap_info *rnt_listDevices(struct rnt_adap_info *info, struct rnt_adap_list_ctx *ctx)
 {
 	struct rnt_adap_caps caps;
 	int handled;
@@ -220,7 +220,7 @@ struct rnt_adap_info *gcn64_listDevices(struct rnt_adap_info *info, struct rnt_a
 	memset(info, 0, sizeof(struct rnt_adap_info));
 
 	if (!ctx) {
-		fprintf(stderr, "gcn64_listDevices: Passed null context\n");
+		fprintf(stderr, "rnt_listDevices: Passed null context\n");
 		return NULL;
 	}
 
@@ -363,7 +363,7 @@ rnt_hdl_t rnt_openBy(struct rnt_adap_info *dev, unsigned char flags)
 	if (!ctx)
 		return NULL;
 
-	while (gcn64_listDevices(&inf, ctx)) {
+	while (rnt_listDevices(&inf, ctx)) {
 		if (IS_VERBOSE())
 			printf("Considering '%s'\n", inf.str_path);
 

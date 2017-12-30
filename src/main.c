@@ -256,7 +256,7 @@ static int listDevices(void)
 		fprintf(stderr, "List context could not be allocated\n");
 		return -1;
 	}
-	while (gcn64_listDevices(&inf, listctx))
+	while (rnt_listDevices(&inf, listctx))
 	{
 		n_found++;
 		printf("Found device '%ls', serial '%ls'. Supports %d channel(s), %d raw channel(s), Block io: %s\n",
@@ -360,7 +360,7 @@ int main(int argc, char **argv)
 	}
 
 	listctx = rnt_allocListCtx();
-	while ((selected_device = gcn64_listDevices(&inf, listctx)))
+	while ((selected_device = rnt_listDevices(&inf, listctx)))
 	{
 		if (serial_specified) {
 			if (0 == wcscmp(inf.str_serial, target_serial)) {

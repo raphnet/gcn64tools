@@ -16,8 +16,8 @@
 */
 #include <string.h>
 #include <stdio.h>
+#include "rnt_priv.h"
 #include "gcn64lib.h"
-#include "gcn64_priv.h"
 #include "requests.h"
 #include "gcn64_protocol.h"
 #include "hexdump.h"

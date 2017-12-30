@@ -450,7 +450,7 @@ gboolean rebuild_device_list_store(gpointer data, wchar_t *auto_select_serial)
 	if (!listctx)
 		return FALSE;
 
-	while (gcn64_listDevices(&info, listctx)) {
+	while (rnt_listDevices(&info, listctx)) {
 		GtkTreeIter iter;
 		printf("Device '%ls'\n", info.str_prodname);
 		gtk_list_store_append(list_store, &iter);
