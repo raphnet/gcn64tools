@@ -24,7 +24,7 @@
 #include "hexdump.h"
 #include "raphnetadapter.h"
 #include "gcn64lib.h"
-#include "gc2n64_adapter.h"
+#include "x2gcn64_adapters.h"
 #include "mempak.h"
 #include "mempak_gcn64usb.h"
 #include "requests.h"

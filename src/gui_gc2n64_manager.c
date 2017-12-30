@@ -3,7 +3,7 @@
 #include "ihex.h"
 #include "ihex_signature.h"
 
-#include "gc2n64_adapter.h"
+#include "x2gcn64_adapters.h"
 #include "gui_update_progress_dialog.h"
 
 G_MODULE_EXPORT void gc2n64_manager_show(GtkWidget *win, gpointer data)

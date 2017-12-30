@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "gcn64lib.h"
-#include "gc2n64_adapter.h"
+#include "x2gcn64_adapters.h"
 #include "hexdump.h"
 #include "ihex.h"
 #include "delay.h"
