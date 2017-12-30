@@ -102,19 +102,24 @@ static void printUsage(void)
 	printf("  --xfer_dump_ram file               Dump a gameboy cartridge RAM to a file.\n");
 	printf("  --xfer_write_ram file              Write file to a gameboy cartridge RAM.\n");
 	printf("\n");
+
+	printf("x2gcn64 Adapter commands: (For SNES, Gamecube, Classic to GC or N64 adapters, connected through\n");
+	printf("                                        a raphnet-tech GC/N64 to USB adapter V3)\n");
+	printf("  --x2gcn64_info                     Display adapter information (version, configuration, etc)\n");
+	printf("  --x2gnc64_update file.hex          Update the adapter firmware (auto-detects and validate file\n");
+	printf("                                     compatiblity with adapter type)\n");
+	printf("  --x2gcn64_echotest                 Perform a communication test (usable with --nonstop)\n");
+	printf("  --x2gcn64_fw_dump                  Display the firmware content in hex.\n");
+	printf("  --x2gnc64_enter_bootloader         Jump to the bootloader.\n");
+	printf("  --x2gnc64_boot_application         Exit bootloader and start application.\n");
+	printf("\n");
+
 	printf("GC to N64 adapter commands: (For GC to N64 adapter connected to GC/N64 to USB adapter)\n");
-	printf("  --gc_to_n64_info                   Display info on adapter (version, config, etc)\n");
-	printf("  --gc_to_n64_update file.hex        Update GC to N64 adapter firmware\n");
 	printf("  --gc_to_n64_read_mapping id        Dump a mapping (Use with --outfile to write to file)\n");
 	printf("  --gc_to_n64_load_mapping file      Load a mapping from a file and send it to the adapter\n");
 	printf("  --gc_to_n64_store_current_mapping slot    Store the current mapping to one of the D-Pad slots.\n");
 	printf("\n");
-	printf("GC to N64 adapter, development/debug commands:\n");
-	printf("  --gc_to_n64_echotest               Perform a communication test (usable with --nonstop)\n");
-	printf("  --gc_to_n64_dump                   Display the firmware content in hex.\n");
-	printf("  --gc_to_n64_enter_bootloader       Jump to the bootloader.\n");
-	printf("  --gc_to_n64_boot_application       Exit bootloader and start application.\n");
-	printf("\n");
+
 	printf("Development/Experimental/Research commands: (use at your own risk)\n");
 	printf("  --si_8bit_scan                     Try all possible 1-byte commands, to see which one a controller responds to.\n");
 	printf("  --si_16bit_scan                    Try all possible 2-byte commands, to see which one a controller responds to.\n");
@@ -203,12 +208,12 @@ struct option longopts[] = {
 	{ "n64_mempak_write", 1, NULL, OPT_N64_MEMPAK_WRITE },
 	{ "si_8bit_scan", 0, NULL, OPT_SI8BIT_SCAN },
 	{ "si_16bit_scan", 0, NULL, OPT_SI16BIT_SCAN },
-	{ "gc_to_n64_info", 0, NULL, OPT_GC_TO_N64_INFO },
-	{ "gc_to_n64_echotest", 0, NULL, OPT_GC_TO_N64_TEST },
-	{ "gc_to_n64_update", 1, NULL, OPT_GC_TO_N64_UPDATE },
-	{ "gc_to_n64_dump", 0, NULL, OPT_GC_TO_N64_DUMP },
-	{ "gc_to_n64_enter_bootloader", 0, NULL, OPT_GC_TO_N64_ENTER_BOOTLOADER },
-	{ "gc_to_n64_boot_application", 0, NULL, OPT_GC_TO_N64_BOOT_APPLICATION },
+	{ "x2gcn64_info", 0, NULL, OPT_GC_TO_N64_INFO },
+	{ "x2gcn64_echotest", 0, NULL, OPT_GC_TO_N64_TEST },
+	{ "x2gcn64_update", 1, NULL, OPT_GC_TO_N64_UPDATE },
+	{ "x2gcn64_fw_dump", 0, NULL, OPT_GC_TO_N64_DUMP },
+	{ "x2gnc64_enter_bootloader", 0, NULL, OPT_GC_TO_N64_ENTER_BOOTLOADER },
+	{ "x2gcn64_boot_application", 0, NULL, OPT_GC_TO_N64_BOOT_APPLICATION },
 	{ "gc_to_n64_read_mapping", 1, NULL, OPT_GC_TO_N64_READ_MAPPING },
 	{ "gc_to_n64_load_mapping", 1, NULL, OPT_GC_TO_N64_LOAD_MAPPING },
 	{ "gc_to_n64_store_current_mapping", 1, NULL, OPT_GC_TO_N64_STORE_CURRENT_MAPPING },
@@ -736,7 +741,7 @@ int main(int argc, char **argv)
 				break;
 
 			case OPT_GC_TO_N64_UPDATE:
-				gc2n64_adapter_updateFirmware(hdl, channel, optarg);
+				x2gcn64_adapter_updateFirmware(hdl, channel, optarg, NULL);
 				break;
 
 			case OPT_GC_TO_N64_DUMP:
