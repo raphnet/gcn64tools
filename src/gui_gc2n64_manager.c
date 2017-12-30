@@ -19,7 +19,7 @@ G_MODULE_EXPORT void gc2n64_manager_show(GtkWidget *win, gpointer data)
 		return;
 	}
 
-	if (gc2n64_adapter_echotest(app->current_adapter_handle, channel, 0)) {
+	if (x2gcn64_adapter_echotest(app->current_adapter_handle, channel, 0)) {
 		errorPopup(app, "No gamecube to N64 adapter detected.\nEither too old (pre 2.0) or not connected the first port.");
 		return;
 	}
@@ -39,22 +39,28 @@ G_MODULE_EXPORT void gc2n64_manager_on_show(GtkWidget *win, gpointer data)
 
 	printf("Enter gc2n64 manager window\n");
 
-	struct gc2n64_adapter_info inf;
+	struct x2gcn64_adapter_info inf;
 
-	if (gc2n64_adapter_getInfo(app->current_adapter_handle, channel, &inf)) {
+	if (x2gcn64_adapter_getInfo(app->current_adapter_handle, channel, &inf)) {
 		errorPopup(app, "No gamecube to N64 adapter detected.\nEither too old (pre 2.0) or not connected the first port.");
 		return;
 	}
+
 
 	if (inf.in_bootloader) {
 		gtk_label_set_text(label_gc2n64_firmware, "Unknown (currently in bootloader)");
 		gtk_label_set_text(label_gc2n64_upgradeable, "Yes");
 	} else {
+		if (inf.app.adapter_type != ADAPTER_TYPE_GC_TO_N64) {
+			errorPopup(app, "Not a gamecube to N64 adapter\n");
+			return;
+		}
+
 		gtk_label_set_text(label_gc2n64_firmware, (char*)inf.app.version);
 		gtk_label_set_text(label_gc2n64_upgradeable, inf.app.upgradeable ? "Yes":"No");
-		gtk_label_set_text(label_gc2n64_conversion_mode, gc2n64_adapter_getConversionModeName(&inf));
-		gtk_label_set_text(label_gc2n64_deadzone, inf.app.deadzone_enabled ? "Enabled":"Disabled");
-		gtk_label_set_text(label_gc2n64_gamecube_controller_present, inf.app.gc_controller_detected ? "Present":"Absent");
+		gtk_label_set_text(label_gc2n64_conversion_mode, gc2n64_adapter_getConversionModeName(&inf.app.gc2n64));
+		gtk_label_set_text(label_gc2n64_deadzone, inf.app.gc2n64.deadzone_enabled ? "Enabled":"Disabled");
+		gtk_label_set_text(label_gc2n64_gamecube_controller_present, inf.app.gc2n64.gc_controller_detected ? "Present":"Absent");
 	}
 }
 #if 0

@@ -704,11 +704,11 @@ int main(int argc, char **argv)
 
 			case OPT_GC_TO_N64_INFO:
 				{
-					struct gc2n64_adapter_info inf;
+					struct x2gcn64_adapter_info inf;
 
-					res = gc2n64_adapter_getInfo(hdl, channel, &inf);
+					res = x2gcn64_adapter_getInfo(hdl, channel, &inf);
 					if (res == 0) {
-						gc2n64_adapter_printInfo(&inf);
+						x2gcn64_adapter_printInfo(&inf);
 					} else {
 						retval = 1;
 					}
@@ -720,7 +720,7 @@ int main(int argc, char **argv)
 					int i=0;
 
 					do {
-						n = gc2n64_adapter_echotest(hdl, channel, 1);
+						n = x2gcn64_adapter_echotest(hdl, channel, 1);
 						if (n != 0) {
 							printf("Test failed\n");
 							return -1;
@@ -740,21 +740,21 @@ int main(int argc, char **argv)
 				break;
 
 			case OPT_GC_TO_N64_DUMP:
-				gc2n64_adapter_dumpFlash(hdl, channel);
+				x2gcn64_adapter_dumpFlash(hdl, channel);
 				break;
 
 			case OPT_GC_TO_N64_ENTER_BOOTLOADER:
-				gc2n64_adapter_enterBootloader(hdl, channel);
-				gc2n64_adapter_waitForBootloader(hdl, channel, 5);
+				x2gcn64_adapter_enterBootloader(hdl, channel);
+				x2gcn64_adapter_waitForBootloader(hdl, channel, 5);
 				break;
 
 			case OPT_GC_TO_N64_BOOT_APPLICATION:
-				gc2n64_adapter_bootApplication(hdl, channel);
+				x2gcn64_adapter_bootApplication(hdl, channel);
 				break;
 
 			case OPT_GC_TO_N64_READ_MAPPING:
 				{
-					struct gc2n64_adapter_info inf;
+					struct x2gcn64_adapter_info inf;
 					int map_id;
 
 					map_id = atoi(optarg);
@@ -763,13 +763,13 @@ int main(int argc, char **argv)
 						return -1;
 					}
 
-					gc2n64_adapter_getInfo(hdl, channel, &inf);
+					x2gcn64_adapter_getInfo(hdl, channel, &inf);
 					printf("Mapping %d : { ", map_id);
-					gc2n64_adapter_printMapping(&inf.app.mappings[map_id-1]);
+					gc2n64_adapter_printMapping(&inf.app.gc2n64.mappings[map_id-1]);
 					printf(" }\n");
 					if (outfile) {
 						printf("Writing mapping to file '%s'\n", outfile);
-						gc2n64_adapter_saveMapping(&inf.app.mappings[map_id-1], outfile);
+						gc2n64_adapter_saveMapping(&inf.app.gc2n64.mappings[map_id-1], outfile);
 					}
 				}
 				break;

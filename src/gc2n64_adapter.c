@@ -32,7 +32,7 @@
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 #endif
 
-int gc2n64_adapter_echotest(rnt_hdl_t hdl, int channel, int verbose)
+int x2gcn64_adapter_echotest(rnt_hdl_t hdl, int channel, int verbose)
 {
 	unsigned char cmd[30];
 	unsigned char buf[30];
@@ -80,7 +80,7 @@ int gc2n64_adapter_storeCurrentMapping(rnt_hdl_t hdl, int channel, int dst_slot)
 	}
 
 	if (cmd[0] == 0x00) {
-		return gc2n64_adapter_waitNotBusy(hdl, channel, 0);
+		return x2gcn64_adapter_waitNotBusy(hdl, channel, 0);
 	}
 	else {
 		fprintf(stderr, "storeCurrentMapping: Command NACKed\n");
@@ -399,8 +399,8 @@ void gc2n64_adapter_printMapping(struct gc2n64_adapter_mapping *map)
 
 const char *gc2n64_adapter_getConversionModeName(struct gc2n64_adapter_info *inf)
 {
-	switch(inf->app.conversion_mode) {
-		case 0: if (!inf->app.old_v1_5_conversion) { return "Version 2.0 (standard)"; }
+	switch(inf->conversion_mode) {
+		case 0: if (!inf->old_v1_5_conversion) { return "Version 2.0 (standard)"; }
 		// fallthrough
 		case GC2N64_CONVERSION_MODE_OLD_1v5: return "Version 1.5 (old)";
 		case GC2N64_CONVERSION_MODE_V2: return "Version 2.0 (standard)";
@@ -409,28 +409,45 @@ const char *gc2n64_adapter_getConversionModeName(struct gc2n64_adapter_info *inf
 	return "(unknown - invalid)";
 }
 
-void gc2n64_adapter_printInfo(struct gc2n64_adapter_info *inf)
+const char *x2gcn64_adapter_type_name(int t)
+{
+	switch (t)
+	{
+		case ADAPTER_TYPE_GC_TO_N64: return "GC to N64";
+		case ADAPTER_TYPE_SNES_TO_N64: return "SNES to N64";
+		case ADAPTER_TYPE_CLASSIC_TO_N64: return "Classic to N64";
+		case ADAPTER_TYPE_SNES_TO_GC: return "SNES to GC";
+		case ADAPTER_TYPE_N64_TO_GC: return "N64 to GC";
+		case ADAPTER_TYPE_CLASSIC_TO_GC: return "Classic to GC";
+	}
+	return "(unknown - invalid)";
+}
+
+void x2gcn64_adapter_printInfo(struct x2gcn64_adapter_info *inf)
 {
 	int i;
 
 	if (!inf->in_bootloader) {
-		printf("gc_to_n64 adapter info: {\n");
-
-		printf("\tDefault mapping id: %d (%s)\n", inf->app.default_mapping_id, gc2n64_adapter_getMappingSlotName(inf->app.default_mapping_id, 1) );
-		printf("\tDeadzone enabled: %d\n", inf->app.deadzone_enabled);
-		if (inf->app.conversion_mode) {
-			printf("\tConversion mode: %s\n", gc2n64_adapter_getConversionModeName(inf));
-
-		} else {
-			printf("\tOld v1.5 conversion: %d\n", inf->app.old_v1_5_conversion);
-		}
-		printf("\tGamecube controller: %s\n", inf->app.gc_controller_detected ? "Present":"Not present");
+		printf("x2gcn64 adapter info: {\n");
+		printf("\tAdapter type: %s\n", x2gcn64_adapter_type_name(inf->app.adapter_type));
 		printf("\tFirmware version: %s\n", inf->app.version);
 		printf("\tUpgradable: %s\n", inf->app.upgradeable ? "Yes":"No (Atmega8)");
-		for (i=0; i<GC2N64_NUM_MAPPINGS; i++) {
-			printf("\tMapping %d (%-13s): { ", i, gc2n64_adapter_getMappingSlotName(i, 0));
-			gc2n64_adapter_printMapping(&inf->app.mappings[i]);
-			printf(" }\n");
+
+		if (inf->app.adapter_type == ADAPTER_TYPE_GC_TO_N64)
+		{
+			printf("\tDefault mapping id: %d (%s)\n", inf->app.gc2n64.default_mapping_id, gc2n64_adapter_getMappingSlotName(inf->app.gc2n64.default_mapping_id, 1) );
+			printf("\tDeadzone enabled: %d\n", inf->app.gc2n64.deadzone_enabled);
+			if (inf->app.gc2n64.conversion_mode) {
+				printf("\tConversion mode: %s\n", gc2n64_adapter_getConversionModeName(&inf->app.gc2n64));
+			} else {
+				printf("\tOld v1.5 conversion: %d\n", inf->app.gc2n64.old_v1_5_conversion);
+			}
+			printf("\tGamecube controller: %s\n", inf->app.gc2n64.gc_controller_detected ? "Present":"Not present");
+			for (i=0; i<GC2N64_NUM_MAPPINGS; i++) {
+				printf("\tMapping %d (%-13s): { ", i, gc2n64_adapter_getMappingSlotName(i, 0));
+				gc2n64_adapter_printMapping(&inf->app.gc2n64.mappings[i]);
+				printf(" }\n");
+			}
 		}
 	} else {
 		printf("gc_to_n64 adapter in bootloader mode: {\n");
@@ -443,7 +460,7 @@ void gc2n64_adapter_printInfo(struct gc2n64_adapter_info *inf)
 	printf("}\n");
 }
 
-int gc2n64_adapter_getInfo(rnt_hdl_t hdl, int channel, struct gc2n64_adapter_info *inf)
+int x2gcn64_adapter_getInfo(rnt_hdl_t hdl, int channel, struct x2gcn64_adapter_info *inf)
 {
 	unsigned char buf[32];
 	int n;
@@ -466,23 +483,34 @@ int gc2n64_adapter_getInfo(rnt_hdl_t hdl, int channel, struct gc2n64_adapter_inf
 		inf->in_bootloader = buf[0];
 
 		if (!inf->in_bootloader) {
-			inf->app.default_mapping_id = buf[1];
-			inf->app.deadzone_enabled = buf[2];
-			inf->app.old_v1_5_conversion = buf[3];
-			inf->app.conversion_mode = buf[4];
-			inf->app.gc_controller_detected = buf[8];
+			/* common stuff */
 			inf->app.upgradeable = buf[9];
 			inf->app.version[sizeof(inf->app.version)-1]=0;
 			strncpy(inf->app.version, (char*)buf+10, sizeof(inf->app.version)-1);
+
+			inf->app.adapter_type = buf[8];
+
+			// SNES to N64 v1.1 reports 2 in the upgradeable field.
+			if (buf[8] == 0 && buf[9] == 2) {
+				inf->app.adapter_type = ADAPTER_TYPE_SNES_TO_N64;
+			}
+
+			/* gc2n64 specific */
+			if (inf->app.adapter_type == ADAPTER_TYPE_GC_TO_N64) {
+				inf->app.gc2n64.default_mapping_id = buf[1];
+				inf->app.gc2n64.deadzone_enabled = buf[2];
+				inf->app.gc2n64.old_v1_5_conversion = buf[3];
+				inf->app.gc2n64.conversion_mode = buf[4];
+				inf->app.gc2n64.gc_controller_detected = buf[8];
+				for (n=0; n<GC2N64_NUM_MAPPINGS; n++) {
+					gc2n64_adapter_getMapping(hdl, channel, n, &inf->app.gc2n64.mappings[n]);
+				}
+			}
 		} else {
 			inf->bootldr.mcu_page_size = buf[1];
 			inf->bootldr.bootloader_start_address = buf[2] << 8 | buf[3];
 			inf->bootldr.version[sizeof(inf->bootldr.version)-1]=0;
 			strncpy(inf->bootldr.version, (char*)buf+10, sizeof(inf->bootldr.version)-1);
-		}
-
-		for (n=0; n<GC2N64_NUM_MAPPINGS; n++) {
-			gc2n64_adapter_getMapping(hdl, channel, n, &inf->app.mappings[n]);
 		}
 
 	} else {
@@ -493,7 +521,7 @@ int gc2n64_adapter_getInfo(rnt_hdl_t hdl, int channel, struct gc2n64_adapter_inf
 	return 0;
 }
 
-int gc2n64_adapter_isBusy(rnt_hdl_t hdl, int channel)
+int x2gcn64_adapter_boot_isBusy(rnt_hdl_t hdl, int channel)
 {
 	unsigned char buf[64];
 	int n;
@@ -516,13 +544,13 @@ int gc2n64_adapter_isBusy(rnt_hdl_t hdl, int channel)
 	return 0; // Idle
 }
 
-int gc2n64_adapter_waitNotBusy(rnt_hdl_t hdl, int channel, int verbose)
+int x2gcn64_adapter_waitNotBusy(rnt_hdl_t hdl, int channel, int verbose)
 {
 	char spinner[4] = { '|','/','-','\\' };
 	int busy, no_reply_count=0;
 	int c=0;
 
-	while ((busy = gc2n64_adapter_isBusy(hdl, channel)))
+	while ((busy = x2gcn64_adapter_boot_isBusy(hdl, channel)))
 	{
 		if (busy < 0) {
 			return -1;
@@ -542,7 +570,7 @@ int gc2n64_adapter_waitNotBusy(rnt_hdl_t hdl, int channel, int verbose)
 	return 0;
 }
 
-int gc2n64_adapter_boot_eraseAll(rnt_hdl_t hdl, int channel)
+int x2gcn64_adapter_boot_eraseAll(rnt_hdl_t hdl, int channel)
 {
 	unsigned char buf[64];
 	int n;
@@ -567,7 +595,7 @@ int gc2n64_adapter_boot_eraseAll(rnt_hdl_t hdl, int channel)
 	return 0;
 }
 
-int gc2n64_adapter_boot_readBlock(rnt_hdl_t hdl, int channel, unsigned int block_id, unsigned char dst[32])
+int x2gcn64_adapter_boot_readBlock(rnt_hdl_t hdl, int channel, unsigned int block_id, unsigned char dst[32])
 {
 	unsigned char buf[32];
 	int n;
@@ -591,13 +619,13 @@ int gc2n64_adapter_boot_readBlock(rnt_hdl_t hdl, int channel, unsigned int block
 	return 0;
 }
 
-int gc2n64_adapter_dumpFlash(rnt_hdl_t hdl, int channel)
+int x2gcn64_adapter_dumpFlash(rnt_hdl_t hdl, int channel)
 {
 	int i;
 	unsigned char buf[0x10000];
-	struct gc2n64_adapter_info inf;
+	struct x2gcn64_adapter_info inf;
 
-	i = gc2n64_adapter_getInfo(hdl, channel, &inf);
+	i = x2gcn64_adapter_getInfo(hdl, channel, &inf);
 	if (i)
 		return i;
 
@@ -609,14 +637,14 @@ int gc2n64_adapter_dumpFlash(rnt_hdl_t hdl, int channel)
 	// Atmega168 : 16K
 	for (i=0; i<16*1024; i+= 32)
 	{
-		gc2n64_adapter_boot_readBlock(hdl, channel, i/32, buf + i);
+		x2gcn64_adapter_boot_readBlock(hdl, channel, i/32, buf + i);
 		printf("0x%04x: ", i);
 		printHexBuf(buf + i, 32);
 	}
 	return 0;
 }
 
-int gc2n64_adapter_enterBootloader(rnt_hdl_t hdl, int channel)
+int x2gcn64_adapter_enterBootloader(rnt_hdl_t hdl, int channel)
 {
 	unsigned char buf[4];
 	int n;
@@ -658,7 +686,7 @@ int gc2n64_adapter_enterBootloader(rnt_hdl_t hdl, int channel)
 	return 0;
 }
 
-int gc2n64_adapter_bootApplication(rnt_hdl_t hdl, int channel)
+int x2gcn64_adapter_bootApplication(rnt_hdl_t hdl, int channel)
 {
 	unsigned char buf[2];
 	int n;
@@ -684,7 +712,7 @@ int gc2n64_adapter_bootApplication(rnt_hdl_t hdl, int channel)
 }
 
 // Note: eraseAll needs to be performed first
-int gc2n64_adapter_sendFirmwareBlocks(rnt_hdl_t hdl, int channel, unsigned char *firmware, int len)
+int x2gcn64_adapter_sendFirmwareBlocks(rnt_hdl_t hdl, int channel, unsigned char *firmware, int len)
 {
 	unsigned char buf[64];
 	int i, block_id;
@@ -722,7 +750,7 @@ int gc2n64_adapter_sendFirmwareBlocks(rnt_hdl_t hdl, int channel, unsigned char 
 		}
 
 		if (buf[1]) {
-			if (gc2n64_adapter_waitNotBusy(hdl, channel, 1)) {
+			if (x2gcn64_adapter_waitNotBusy(hdl, channel, 1)) {
 				fprintf(stderr, "Error waiting not busy\n");
 				return -1;
 			}
@@ -735,14 +763,14 @@ int gc2n64_adapter_sendFirmwareBlocks(rnt_hdl_t hdl, int channel, unsigned char 
 	return 0;
 }
 
-int gc2n64_adapter_verifyFirmware(rnt_hdl_t hdl, int channel, unsigned char *firmware, int len)
+int x2gcn64_adapter_verifyFirmware(rnt_hdl_t hdl, int channel, unsigned char *firmware, int len)
 {
 	unsigned char buf[32];
 	int i;
 
 	for (i=0; i<len; i+=32) {
 
-		gc2n64_adapter_boot_readBlock(hdl, channel, i/32, buf);
+		x2gcn64_adapter_boot_readBlock(hdl, channel, i/32, buf);
 		if (memcmp(buf, firmware + i, 32)) {
 			printf("\nMismatch in block address 0x%04x\n", i);
 			printf("Written: "); printHexBuf(firmware + i, 32);
@@ -755,17 +783,17 @@ int gc2n64_adapter_verifyFirmware(rnt_hdl_t hdl, int channel, unsigned char *fir
 	return 0;
 }
 
-int gc2n64_adapter_waitForBootloader(rnt_hdl_t hdl, int channel, int timeout_s)
+int x2gcn64_adapter_waitForBootloader(rnt_hdl_t hdl, int channel, int timeout_s)
 {
-	struct gc2n64_adapter_info inf;
+	struct x2gcn64_adapter_info inf;
 	int i;
 	int n;
 
 	for (i=0; i<=timeout_s; i++) {
-		n = gc2n64_adapter_getInfo(hdl, channel, &inf);
+		n = x2gcn64_adapter_getInfo(hdl, channel, &inf);
 		// Errors (caused by timeouts) are just ignored since they are expected.
 		if (n == 0) {
-			gc2n64_adapter_printInfo(&inf);
+			x2gcn64_adapter_printInfo(&inf);
 			if (inf.in_bootloader)
 				return 0;
 		}
@@ -781,7 +809,7 @@ int gc2n64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfil
 	unsigned char *buf;
 	int max_addr;
 	int ret = 0, res;
-	struct gc2n64_adapter_info inf;
+	struct x2gcn64_adapter_info inf;
 	const char *signature = "41d938a8-6f8a-11e5-a45e-001bfca3c593";
 
 	////////////////////
@@ -814,12 +842,12 @@ int gc2n64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfil
 
 	////////////////////
 	printf("step [2/7] : Get adapter info...\n");
-	res = gc2n64_adapter_getInfo(hdl, channel, &inf);
+	res = x2gcn64_adapter_getInfo(hdl, channel, &inf);
 	if (res < 0) {
 		fprintf(stderr, "Failed to read adapter info\n");
 		return -1;
 	}
-	gc2n64_adapter_printInfo(&inf);
+	x2gcn64_adapter_printInfo(&inf);
 
 	if (inf.in_bootloader) {
 		printf("step [3/7] : Enter bootloader... Skipped. Already in bootloader.\n");
@@ -832,7 +860,7 @@ int gc2n64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfil
 		}
 
 		printf("step [3/7] : Enter bootloader...\n");
-		res = gc2n64_adapter_enterBootloader(hdl, channel);
+		res = x2gcn64_adapter_enterBootloader(hdl, channel);
 		if (res < 0) {
 			fprintf(stderr, "Failed to enter the bootloader\n");
 			ret = -1;
@@ -840,7 +868,7 @@ int gc2n64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfil
 		}
 
 		// Re-read the info structure, as we will need the bootloader start address.
-		res = gc2n64_adapter_getInfo(hdl, channel, &inf);
+		res = x2gcn64_adapter_getInfo(hdl, channel, &inf);
 		if (res < 0) {
 			fprintf(stderr, "Failed to read info after enterring bootloader\n");
 			ret = -1;
@@ -850,9 +878,9 @@ int gc2n64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfil
 
 	////////////////////
 	printf("step [4/7] : Erase current firmware... "); fflush(stdout);
-	gc2n64_adapter_boot_eraseAll(hdl, channel);
+	x2gcn64_adapter_boot_eraseAll(hdl, channel);
 
-	if (gc2n64_adapter_waitNotBusy(hdl, channel, 1)) {
+	if (x2gcn64_adapter_waitNotBusy(hdl, channel, 1)) {
 		ret = -1;
 		goto err;
 	}
@@ -862,14 +890,14 @@ int gc2n64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfil
 	printf("step [5/7] : Write new firmware...\n");
 	// Note: We write up to the bootloader, even if the firmware was shorter (it usually is).
 	// This is to make sure that the marker we placed at the end gets written.
-	res = gc2n64_adapter_sendFirmwareBlocks(hdl, channel, buf, inf.bootldr.bootloader_start_address);
+	res = x2gcn64_adapter_sendFirmwareBlocks(hdl, channel, buf, inf.bootldr.bootloader_start_address);
 	if (res < 0) {
 		ret = -1;
 		goto err;
 	}
 
 	printf("step [6/7] : Verify firmware...\n");
-	res = gc2n64_adapter_verifyFirmware(hdl, channel, buf, inf.bootldr.bootloader_start_address);
+	res = x2gcn64_adapter_verifyFirmware(hdl, channel, buf, inf.bootldr.bootloader_start_address);
 	if (res < 0) {
 		printf("Verify failed : Update failed\n");
 		ret = -1;
@@ -877,7 +905,7 @@ int gc2n64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfil
 	}
 
 	printf("step [7/7] : Launch new firmware.\n");
-	gc2n64_adapter_bootApplication(hdl, channel);
+	x2gcn64_adapter_bootApplication(hdl, channel);
 
 err:
 	free(buf);
