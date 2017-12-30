@@ -803,14 +803,43 @@ int x2gcn64_adapter_waitForBootloader(rnt_hdl_t hdl, int channel, int timeout_s)
 	return -1;
 }
 
+static const char *x2gcn64_getAdapterSignature(int type)
+{
+	switch (type)
+	{
+		case ADAPTER_TYPE_GC_TO_N64: return "41d938a8-6f8a-11e5-a45e-001bfca3c593";
+		case ADAPTER_TYPE_SNES_TO_N64: return "59a5f772-8353-11e6-bdcd-001bfca3c593";
+		case ADAPTER_TYPE_SNES_TO_GC: return "746f5e17-9306-41be-ac74-d4af28b97fc7";
+		case ADAPTER_TYPE_N64_TO_GC: return NULL;
+		case ADAPTER_TYPE_CLASSIC_TO_GC: return NULL;
+		case ADAPTER_TYPE_CLASSIC_TO_N64: return NULL;
+	}
+	return NULL;
+}
+
 #define FIRMWARE_BUF_SIZE	0x10000
-int gc2n64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfile)
+
+/**
+ * \param signature If NULL, reads adapter info and automatically use the corresponding signature.
+ */
+int x2gcn64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfile, const char *signature)
 {
 	unsigned char *buf;
 	int max_addr;
 	int ret = 0, res;
 	struct x2gcn64_adapter_info inf;
-	const char *signature = "41d938a8-6f8a-11e5-a45e-001bfca3c593";
+
+	if (!signature) {
+		res = x2gcn64_adapter_getInfo(hdl, channel, &inf);
+		if (res < 0) {
+			fprintf(stderr, "Failed to read adapter info\n");
+			return -1;
+		}
+
+		if (!inf.in_bootloader) {
+			signature = x2gcn64_getAdapterSignature(inf.app.adapter_type);
+		}
+	}
 
 	////////////////////
 	printf("step [1/7] : Load .hex file...\n");
@@ -828,13 +857,14 @@ int gc2n64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfil
 		goto err;
 	}
 
-	// look for the signature somewhere in the file to make sure
-	// this firmware is intended for this product
-	if (!memmem(buf, max_addr + 1, signature, strlen(signature))) {
-		fprintf(stderr, "Update aborted : Signature not found. This hex file is not for this adapter.\n");
-		ret = -1;
-		printHexBuf(buf + 0x1bde, 30);
-		goto err;
+	if (signature) {
+		// look for the signature somewhere in the file to make sure
+		// this firmware is intended for this product
+		if (!memmem(buf, max_addr + 1, signature, strlen(signature))) {
+			fprintf(stderr, "Update aborted : Signature not found. This hex file is not for this adapter.\n");
+			ret = -1;
+			goto err;
+		}
 	}
 
 	printf("Firmware size: %d bytes\n", max_addr+1);
@@ -913,3 +943,7 @@ err:
 }
 
 
+int gc2n64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfile)
+{
+	return x2gcn64_adapter_updateFirmware(hdl, channel, hexfile, x2gcn64_getAdapterSignature(ADAPTER_TYPE_GC_TO_N64));
+}

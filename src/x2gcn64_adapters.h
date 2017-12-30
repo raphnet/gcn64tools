@@ -82,6 +82,7 @@ int x2gcn64_adapter_sendFirmwareBlocks(rnt_hdl_t hdl, int channel, unsigned char
 int x2gcn64_adapter_verifyFirmware(rnt_hdl_t hdl, int channel, unsigned char *firmware, int len);
 int x2gcn64_adapter_waitForBootloader(rnt_hdl_t hdl, int channel, int timeout_s);
 
+int x2gcn64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfile, const char *signature);
 
 /* Gamecube to N64 adapter specific */
 void gc2n64_adapter_printMapping(struct gc2n64_adapter_mapping *map);
