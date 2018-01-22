@@ -36,6 +36,10 @@
 #define GC_GET_ORIGINS				0x41
 #define GC_GET_ORIGINS_LENGTH		10
 
+// I don't see calibration taking place. The pad
+// just answers like it does to GET_STATUS
+#define GC_CALIBRATE                0x42
+
 /* 3-byte get status command. Returns axis and buttons. Also 
  * controls motor. */
 #define GC_GETSTATUS1				0x40
