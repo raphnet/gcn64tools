@@ -814,7 +814,7 @@ static const char *x2gcn64_getAdapterSignature(int type)
 		case ADAPTER_TYPE_SNES_TO_N64: return "59a5f772-8353-11e6-bdcd-001bfca3c593";
 		case ADAPTER_TYPE_SNES_TO_GC: return "746f5e17-9306-41be-ac74-d4af28b97fc7";
 		case ADAPTER_TYPE_N64_TO_GC: return NULL;
-		case ADAPTER_TYPE_CLASSIC_TO_GC: return NULL;
+		case ADAPTER_TYPE_CLASSIC_TO_GC: return "3b47b8c5-e5bf-4197-974d-54c4b0a024c1";
 		case ADAPTER_TYPE_CLASSIC_TO_N64: return NULL;
 	}
 	return NULL;
