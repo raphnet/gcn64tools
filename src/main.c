@@ -1,5 +1,5 @@
 /*	gc_n64_usb : Gamecube/N64 to USB adapter management tools
-	Copyright (C) 2007-2017  Raphael Assenat <raph@raphnet.net>
+	Copyright (C) 2007-2018  Raphael Assenat <raph@raphnet.net>
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -107,12 +107,12 @@ static void printUsage(void)
 	printf("x2gcn64 Adapter commands: (For SNES, Gamecube, Classic to GC or N64 adapters, connected through\n");
 	printf("                                        a raphnet-tech GC/N64 to USB adapter V3)\n");
 	printf("  --x2gcn64_info                     Display adapter information (version, configuration, etc)\n");
-	printf("  --x2gnc64_update file.hex          Update the adapter firmware (auto-detects and validate file\n");
+	printf("  --x2gcn64_update file.hex          Update the adapter firmware (auto-detects and validate file\n");
 	printf("                                     compatiblity with adapter type)\n");
 	printf("  --x2gcn64_echotest                 Perform a communication test (usable with --nonstop)\n");
 	printf("  --x2gcn64_fw_dump                  Display the firmware content in hex.\n");
 	printf("  --x2gcn64_enter_bootloader         Jump to the bootloader.\n");
-	printf("  --x2gnc64_boot_application         Exit bootloader and start application.\n");
+	printf("  --x2gcn64_boot_application         Exit bootloader and start application.\n");
 	printf("\n");
 
 	printf("GC to N64 adapter commands: (For GC to N64 adapter connected to GC/N64 to USB adapter)\n");
