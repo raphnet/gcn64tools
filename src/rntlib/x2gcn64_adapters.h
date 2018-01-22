@@ -43,7 +43,6 @@ struct snes2gc_adapter_info {
 };
 
 struct x2gcn64_adapter_info_app {
-	uint8_t adapter_type;
 	unsigned char upgradeable;
 	char version[16];
 	union {
@@ -59,6 +58,7 @@ struct x2gcn64_adapter_info_bootloader {
 };
 
 struct x2gcn64_adapter_info {
+	uint8_t adapter_type;
 	int in_bootloader;
 	union {
 		struct x2gcn64_adapter_info_app app;

@@ -429,11 +429,11 @@ void x2gcn64_adapter_printInfo(struct x2gcn64_adapter_info *inf)
 
 	if (!inf->in_bootloader) {
 		printf("x2gcn64 adapter info: {\n");
-		printf("\tAdapter type: %s\n", x2gcn64_adapter_type_name(inf->app.adapter_type));
+		printf("\tAdapter type: %s\n", x2gcn64_adapter_type_name(inf->adapter_type));
 		printf("\tFirmware version: %s\n", inf->app.version);
 		printf("\tUpgradable: %s\n", inf->app.upgradeable ? "Yes":"No (Atmega8)");
 
-		if (inf->app.adapter_type == ADAPTER_TYPE_GC_TO_N64)
+		if (inf->adapter_type == ADAPTER_TYPE_GC_TO_N64)
 		{
 			printf("\tDefault mapping id: %d (%s)\n", inf->app.gc2n64.default_mapping_id, gc2n64_adapter_getMappingSlotName(inf->app.gc2n64.default_mapping_id, 1) );
 			printf("\tDeadzone enabled: %d\n", inf->app.gc2n64.deadzone_enabled);
@@ -452,6 +452,7 @@ void x2gcn64_adapter_printInfo(struct x2gcn64_adapter_info *inf)
 	} else {
 		printf("gc_to_n64 adapter in bootloader mode: {\n");
 
+		printf("\tAdapter type: %s\n", x2gcn64_adapter_type_name(inf->adapter_type));
 		printf("\tBootloader firmware version: %s\n", inf->bootldr.version);
 		printf("\tMCU page size: %d bytes\n", inf->bootldr.mcu_page_size);
 		printf("\tBootloader code start address: 0x%04x\n", inf->bootldr.bootloader_start_address);
@@ -481,6 +482,14 @@ int x2gcn64_adapter_getInfo(rnt_hdl_t hdl, int channel, struct x2gcn64_adapter_i
 			return 0;
 
 		inf->in_bootloader = buf[0];
+		inf->adapter_type = buf[8];
+
+		// SNES to N64 v1.1 reports 2 in the upgradeable field.
+		if (!inf->in_bootloader) {
+			if (buf[8] == 0 && buf[9] == 2) {
+				inf->adapter_type = ADAPTER_TYPE_SNES_TO_N64;
+			}
+		}
 
 		if (!inf->in_bootloader) {
 			/* common stuff */
@@ -488,15 +497,8 @@ int x2gcn64_adapter_getInfo(rnt_hdl_t hdl, int channel, struct x2gcn64_adapter_i
 			inf->app.version[sizeof(inf->app.version)-1]=0;
 			strncpy(inf->app.version, (char*)buf+10, sizeof(inf->app.version)-1);
 
-			inf->app.adapter_type = buf[8];
-
-			// SNES to N64 v1.1 reports 2 in the upgradeable field.
-			if (buf[8] == 0 && buf[9] == 2) {
-				inf->app.adapter_type = ADAPTER_TYPE_SNES_TO_N64;
-			}
-
 			/* gc2n64 specific */
-			if (inf->app.adapter_type == ADAPTER_TYPE_GC_TO_N64) {
+			if (inf->adapter_type == ADAPTER_TYPE_GC_TO_N64) {
 				inf->app.gc2n64.default_mapping_id = buf[1];
 				inf->app.gc2n64.deadzone_enabled = buf[2];
 				inf->app.gc2n64.old_v1_5_conversion = buf[3];
@@ -511,6 +513,7 @@ int x2gcn64_adapter_getInfo(rnt_hdl_t hdl, int channel, struct x2gcn64_adapter_i
 			inf->bootldr.bootloader_start_address = buf[2] << 8 | buf[3];
 			inf->bootldr.version[sizeof(inf->bootldr.version)-1]=0;
 			strncpy(inf->bootldr.version, (char*)buf+10, sizeof(inf->bootldr.version)-1);
+
 		}
 
 	} else {
@@ -837,7 +840,7 @@ int x2gcn64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfi
 		}
 
 		if (!inf.in_bootloader) {
-			signature = x2gcn64_getAdapterSignature(inf.app.adapter_type);
+			signature = x2gcn64_getAdapterSignature(inf.adapter_type);
 		}
 	}
 

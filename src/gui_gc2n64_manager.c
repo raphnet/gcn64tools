@@ -51,7 +51,7 @@ G_MODULE_EXPORT void gc2n64_manager_on_show(GtkWidget *win, gpointer data)
 		gtk_label_set_text(label_gc2n64_firmware, "Unknown (currently in bootloader)");
 		gtk_label_set_text(label_gc2n64_upgradeable, "Yes");
 	} else {
-		if (inf.app.adapter_type != ADAPTER_TYPE_GC_TO_N64) {
+		if (inf.adapter_type != ADAPTER_TYPE_GC_TO_N64) {
 			errorPopup(app, "Not a gamecube to N64 adapter\n");
 			return;
 		}
