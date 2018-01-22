@@ -42,7 +42,7 @@ all: $(PROGS) gui.xml
 gcn64ctl_gui: $(GUI_OBJS) $(COMMON_OBJS) uiio_gtk.o $(MEMPAKLIB_OBJS)
 	$(LD) $^ $(LDFLAGS) $(GTK_LDFLAGS) -o $@ $(EXTRA_LDFLAGS)
 
-gcn64ctl: main.o $(COMMON_OBJS) perftest.o mempak_stresstest.o biosensor.o $(MEMPAKLIB_OBJS)
+gcn64ctl: main.o $(COMMON_OBJS) perftest.o mempak_stresstest.o biosensor.o $(MEMPAKLIB_OBJS) pollraw.o
 	$(LD) $^ $(LDFLAGS) -o $@
 
 app.o: app.rc icon.ico

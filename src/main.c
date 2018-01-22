@@ -83,6 +83,7 @@ static void printUsage(void)
 	printf("  --gc_getstatus                     Read GC controller status now (turns rumble OFF)\n");
 	printf("  --gc_getstatus_rumble              Read GC controller status now (turns rumble ON)\n");
 	printf("  --gc_getorigins                    Send 8-bit command 0x41 to a gamecube controller\n");
+	printf("  --gc_calibrate                     Send 8-bit command 0x42 to a gamecube controller\n");
 	printf("  --n64_getstatus                    Read N64 controller status now\n");
 	printf("  --n64_getcaps                      Get N64 controller capabilities (or status such as pak present)\n");
 	printf("  --n64_mempak_dump                  Dump N64 mempak contents (Use with --outfile to write to file)\n");
@@ -110,7 +111,7 @@ static void printUsage(void)
 	printf("                                     compatiblity with adapter type)\n");
 	printf("  --x2gcn64_echotest                 Perform a communication test (usable with --nonstop)\n");
 	printf("  --x2gcn64_fw_dump                  Display the firmware content in hex.\n");
-	printf("  --x2gnc64_enter_bootloader         Jump to the bootloader.\n");
+	printf("  --x2gcn64_enter_bootloader         Jump to the bootloader.\n");
 	printf("  --x2gnc64_boot_application         Exit bootloader and start application.\n");
 	printf("\n");
 
@@ -126,6 +127,7 @@ static void printUsage(void)
 	printf("  --n64_mempak_stresstest            Perform a set of controller pak tests (WARNING: Erases the pack with random data)\n");
 	printf("  --n64_mempak_fill_with_ff          Fill a controller pak with 0xFF (WARNING: Erases your data)\n");
 	printf("  --i2c_detect                       Try reading one byte from each I2C address (For WUSBMote v2)\n");
+	printf("  --gc_pollraw                       Read and display raw values from a gamecube controller\n");
 }
 
 
@@ -180,6 +182,8 @@ static void printUsage(void)
 #define OPT_NO_CONFIRM					343
 #define OPT_GC_GETORIGINS				344
 #define OPT_GC_GETID					345
+#define OPT_GC_CALIBRATE				346
+#define OPT_GC_POLLRAW					347
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -195,7 +199,9 @@ struct option longopts[] = {
 	{ "n64_getstatus", 0, NULL, OPT_N64_GETSTATUS },
 	{ "gc_getstatus", 0, NULL, OPT_GC_GETSTATUS },
 	{ "gc_getorigins", 0, NULL, OPT_GC_GETORIGINS },
+	{ "gc_calibrate", 0, NULL, OPT_GC_CALIBRATE },
 	{ "gc_getstatus_rumble", 0, NULL, OPT_GC_GETSTATUS_RUMBLE },
+	{ "gc_pollraw", 0, NULL, OPT_GC_POLLRAW },
 	{ "n64_getcaps", 0, NULL, OPT_N64_GETCAPS },
 	{ "gc_getid", 0, NULL, OPT_GC_GETID },
 	{ "n64_mempak_dump", 0, NULL, OPT_N64_MEMPAK_DUMP },
@@ -212,7 +218,7 @@ struct option longopts[] = {
 	{ "x2gcn64_echotest", 0, NULL, OPT_GC_TO_N64_TEST },
 	{ "x2gcn64_update", 1, NULL, OPT_GC_TO_N64_UPDATE },
 	{ "x2gcn64_fw_dump", 0, NULL, OPT_GC_TO_N64_DUMP },
-	{ "x2gnc64_enter_bootloader", 0, NULL, OPT_GC_TO_N64_ENTER_BOOTLOADER },
+	{ "x2gcn64_enter_bootloader", 0, NULL, OPT_GC_TO_N64_ENTER_BOOTLOADER },
 	{ "x2gcn64_boot_application", 0, NULL, OPT_GC_TO_N64_BOOT_APPLICATION },
 	{ "gc_to_n64_read_mapping", 1, NULL, OPT_GC_TO_N64_READ_MAPPING },
 	{ "gc_to_n64_load_mapping", 1, NULL, OPT_GC_TO_N64_LOAD_MAPPING },
@@ -536,7 +542,21 @@ int main(int argc, char **argv)
 					printf("GC Get origins answer[%d]: ", n);
 					printHexBuf(cmd, n);
 				}
+				break;
 
+			case OPT_GC_CALIBRATE:
+				cmd[0] = GC_CALIBRATE;
+				cmd[1] = 0;
+				cmd[2] = 0;
+				n = gcn64lib_rawSiCommand(hdl, channel, cmd, 3, cmd, sizeof(cmd));
+				if (n >= 0) {
+					printf("GC Calibrate command answer[%d]: ", n);
+					printHexBuf(cmd, n);
+				}
+				break;
+
+			case OPT_GC_POLLRAW:
+				retval = pollraw_gamecube(hdl, channel);
 				break;
 
 			case OPT_GC_GETSTATUS_RUMBLE:
