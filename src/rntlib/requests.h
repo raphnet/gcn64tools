@@ -44,6 +44,7 @@
 #define CTL_TYPE_NUNCHUK	112
 #define CTL_TYPE_CLASSIC_PRO	113
 #define CTL_TYPE_WIIMOTE_TAIKO	114
+#define CTL_TYPE_XE1AP		115
 
 /* Configuration parameters and constants */
 #define CFG_PARAM_MODE			0x00

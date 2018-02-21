@@ -705,6 +705,7 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_PCE6: return "PC engine 6 button controller";
 		case CTL_TYPE_SNES_NDK10: return "NTT Data controller";
 		case CTL_TYPE_SNES_MOUSE: return "SNES mouse";
+		case CTL_TYPE_XE1AP: return "XE-1AP";
 		default:
 			return "Unknown";
 	}
