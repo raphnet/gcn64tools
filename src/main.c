@@ -862,7 +862,7 @@ int main(int argc, char **argv)
 			case OPT_GET_CTLTYPE:
 				{
 					int type;
-					type = rnt_getControllerType(hdl, 0);
+					type = rnt_getControllerType(hdl, channel);
 					printf("Controller type 0x%02x: %s\n", type, rnt_controllerName(type));
 				}
 				break;
