@@ -28,5 +28,7 @@ SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="003c", TAG+="ua
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="003d", TAG+="uaccess"
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="003e", TAG+="uaccess"
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="003f", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="0041", TAG+="uaccess"
+SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="0042", TAG+="uaccess"
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="0050", TAG+="uaccess"
 SUBSYSTEM=="hidraw", ATTRS{idVendor}=="289b", ATTRS{idProduct}=="0051", TAG+="uaccess"

@@ -85,6 +85,9 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x002E, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // SNES to USB adapter v2.1 (w/advXarch)
 	{ OUR_VENDOR_ID, 0x002F, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES } }, // Dual SNES to USB adapter v2.1 (w/advXarch)
 
+	{ OUR_VENDOR_ID, 0x0041, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // NES to USB adpater v2.0 (w/advXarch)
+	{ OUR_VENDOR_ID, 0x0042, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES } }, // Dual NES to USB adpater v2.0 (w/advXarch)
+
 	// Legacy devices (vusb, non-upgradeable and typically without configurable features)
 	{ OUR_VENDOR_ID, 0x0001, -1 }, // GCN64->USB v2.2
 	{ OUR_VENDOR_ID, 0x0003, -1, { 0, 4 } }, // 4nes4snes 1.4.2, 1.5
