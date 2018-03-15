@@ -36,6 +36,7 @@
 #include "mempak_stresstest.h"
 #include "mempak_fill.h"
 #include "wusbmotelib.h"
+#include "pcelib.h"
 
 static void printUsage(void)
 {
@@ -62,6 +63,9 @@ static void printUsage(void)
 	printf("                                         0: Standard 1 player (eg: GC/N64 to USB)\n");
 	printf("                                         1: N64-only\n");
 	printf("                                         2: GC-only\n");
+	printf("                                         3: Standard 3 player\n");
+	printf("                                         4: Standard 4 player\n");
+	printf("                                         5: Standard 5 player\n");
 	printf("                                         16: Standard 2 player (eg: WUSBMote 2port)\n");
 	printf("                                         17: Dual N64-only\n");
 	printf("                                         18: Dual GC-only\n");
@@ -184,6 +188,7 @@ static void printUsage(void)
 #define OPT_GC_GETID					345
 #define OPT_GC_CALIBRATE				346
 #define OPT_GC_POLLRAW					347
+#define OPT_PCE_RAWTEST					348
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -242,6 +247,7 @@ struct option longopts[] = {
 	{ "disable_encryption", 0, NULL, OPT_DISABLE_ENCRYPTION },
 	{ "dump_wiimote_extmem", 0, NULL, OPT_DUMP_WIIMOTE_EXTENSION_MEMORY },
 	{ "noconfirm", 0, NULL, OPT_NO_CONFIRM },
+	{ "pce_rawtest", 0, NULL, OPT_PCE_RAWTEST },
 	{ },
 };
 
@@ -877,6 +883,10 @@ int main(int argc, char **argv)
 
 			case OPT_DUMP_WIIMOTE_EXTENSION_MEMORY:
 				wusbmotelib_dumpMemory(hdl, channel, NULL, 1);
+				break;
+
+			case OPT_PCE_RAWTEST:
+				pcelib_rawpoll(hdl);
 				break;
 		}
 
