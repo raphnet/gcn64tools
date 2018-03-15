@@ -185,20 +185,55 @@ void syncGuiToCurrentAdapter(struct application *app)
 	GET_UI_ELEMENT(GtkSpinButton, pollInterval0);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_1p_joystick_mode);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_2p_joystick_mode);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_3p_joystick_mode);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_4p_joystick_mode);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_5p_joystick_mode);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_mouse_mode);
 	int i;
 	struct rnt_adap_info *info = &app->current_adapter_info;
 	char adap_sig[64];
 	char ports_str[32];
 	int cur_mode = -1;
+	struct rnt_dyn_features features;
 
 	if (!app->current_adapter_handle) {
 		deselect_adapter(app);
 		return;
 	}
 
+
 	if (1 == rnt_getConfig(app->current_adapter_handle, CFG_PARAM_MODE, buf, sizeof(buf))) {
 		cur_mode = buf[0];
+
+		if (info->caps.features & RNTF_DYNAMIC_FEATURES) {
+			if (0 == rnt_getSupportedFeatures(app->current_adapter_handle, &features)) {
+				struct {
+					GtkRadioButton *w;
+					uint8_t mode;
+				} availableModes[] = {
+					{	rbtn_1p_joystick_mode, CFG_MODE_STANDARD	},
+					{	rbtn_2p_joystick_mode, CFG_MODE_2P_STANDARD },
+					{	rbtn_3p_joystick_mode, CFG_MODE_3P_STANDARD },
+					{	rbtn_4p_joystick_mode, CFG_MODE_4P_STANDARD },
+					{	rbtn_5p_joystick_mode, CFG_MODE_5P_STANDARD	},
+					{	rbtn_mouse_mode, CFG_MODE_MOUSE },
+					{	}
+				};
+				for (i=0; availableModes[i].w; i++) {
+					int available = 0;
+					if (memchr(features.supported_modes, availableModes[i].mode, features.n_supported_modes)) {
+						available = 1;
+					}
+					if (available) {
+						printf("Mode %d available\n", availableModes[i].mode);
+						gtk_widget_show(GTK_WIDGET(availableModes[i].w));
+					} else {
+						printf("Mode %d unavailable\n", availableModes[i].mode);
+						gtk_widget_hide(GTK_WIDGET(availableModes[i].w));
+					}
+				}
+			}
+		}
 
 		switch(cur_mode)
 		{
@@ -207,6 +242,15 @@ void syncGuiToCurrentAdapter(struct application *app)
 				break;
 			case CFG_MODE_2P_STANDARD:
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_2p_joystick_mode), buf[0]);
+				break;
+			case CFG_MODE_3P_STANDARD:
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_3p_joystick_mode), buf[0]);
+				break;
+			case CFG_MODE_4P_STANDARD:
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_4p_joystick_mode), buf[0]);
+				break;
+			case CFG_MODE_5P_STANDARD:
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_5p_joystick_mode), buf[0]);
 				break;
 			case CFG_MODE_MOUSE:
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_mouse_mode), buf[0]);
@@ -356,6 +400,9 @@ G_MODULE_EXPORT void cfg_adapter_mode_changed(GtkWidget *win, gpointer data)
 	} modeButtons[] = {
 		{ CFG_MODE_STANDARD, GET_ELEMENT(GtkRadioButton, rbtn_1p_joystick_mode) },
 		{ CFG_MODE_2P_STANDARD, GET_ELEMENT(GtkRadioButton, rbtn_2p_joystick_mode) },
+		{ CFG_MODE_3P_STANDARD, GET_ELEMENT(GtkRadioButton, rbtn_3p_joystick_mode) },
+		{ CFG_MODE_4P_STANDARD, GET_ELEMENT(GtkRadioButton, rbtn_4p_joystick_mode) },
+		{ CFG_MODE_5P_STANDARD, GET_ELEMENT(GtkRadioButton, rbtn_5p_joystick_mode) },
 		{ CFG_MODE_MOUSE, GET_ELEMENT(GtkRadioButton, rbtn_mouse_mode) },
 		{ },
 	};

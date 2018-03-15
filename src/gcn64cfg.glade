@@ -248,6 +248,21 @@ Author: Raphaël Assénat
     <property name="can_focus">False</property>
     <property name="pixbuf">mouse.png</property>
   </object>
+  <object class="GtkImage" id="image7">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">3players.png</property>
+  </object>
+  <object class="GtkImage" id="image8">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">4players.png</property>
+  </object>
+  <object class="GtkImage" id="image9">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">5players.png</property>
+  </object>
   <object class="GtkLabel" id="lbl_firmware_preview">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -1084,6 +1099,66 @@ Author: Raphaël Assénat
                                           </packing>
                                         </child>
                                         <child>
+                                          <object class="GtkRadioButton" id="rbtn_3p_joystick_mode">
+                                            <property name="label" translatable="yes">Joystick mode (3-player)</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="image">image7</property>
+                                            <property name="xalign">0</property>
+                                            <property name="image_position">right</property>
+                                            <property name="always_show_image">True</property>
+                                            <property name="active">True</property>
+                                            <property name="draw_indicator">True</property>
+                                            <property name="group">rbtn_1p_joystick_mode</property>
+                                            <signal name="toggled" handler="cfg_adapter_mode_changed" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkRadioButton" id="rbtn_4p_joystick_mode">
+                                            <property name="label" translatable="yes">Joystick mode (4-player)</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="image">image8</property>
+                                            <property name="xalign">0</property>
+                                            <property name="image_position">right</property>
+                                            <property name="always_show_image">True</property>
+                                            <property name="active">True</property>
+                                            <property name="draw_indicator">True</property>
+                                            <property name="group">rbtn_1p_joystick_mode</property>
+                                            <signal name="toggled" handler="cfg_adapter_mode_changed" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkRadioButton" id="rbtn_5p_joystick_mode">
+                                            <property name="label" translatable="yes">Joystick mode (5-player)</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="image">image9</property>
+                                            <property name="xalign">0</property>
+                                            <property name="image_position">right</property>
+                                            <property name="always_show_image">True</property>
+                                            <property name="active">True</property>
+                                            <property name="draw_indicator">True</property>
+                                            <property name="group">rbtn_1p_joystick_mode</property>
+                                            <signal name="toggled" handler="cfg_adapter_mode_changed" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">4</property>
+                                          </packing>
+                                        </child>
+                                        <child>
                                           <object class="GtkRadioButton" id="rbtn_mouse_mode">
                                             <property name="label" translatable="yes">Mouse mode</property>
                                             <property name="visible">True</property>
@@ -1101,7 +1176,7 @@ Author: Raphaël Assénat
                                           <packing>
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
-                                            <property name="position">2</property>
+                                            <property name="position">5</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -1413,6 +1488,48 @@ configurable parameters.</property>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">4</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkDialog" id="dialog_please_wait">
+    <property name="can_focus">False</property>
+    <property name="modal">True</property>
+    <property name="type_hint">dialog</property>
+    <property name="transient_for">mainWindow</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="label" translatable="yes">Please wait...</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>
