@@ -70,8 +70,11 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x003E, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO } },
 	{ OUR_VENDOR_ID, 0x003F, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO } },
 
-	{ OUR_VENDOR_ID, 0x0050, 1, { 63, 1, 0, RNT_V3_STD | RNTF_DPAD_AS_BUTTONS } }, // PC Engine to USB v1.0.0
-	{ OUR_VENDOR_ID, 0x0051, 1, { 63, 5, 0, RNT_V3_STD | RNTF_DPAD_AS_BUTTONS } }, // PC Engine to USB v1.0.0 (5 player mode)
+	{ OUR_VENDOR_ID, 0x0050, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // PC Engine to USB v1.0.0
+	{ OUR_VENDOR_ID, 0x0051, 1, { 63, 5, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // PC Engine to USB v1.0.0 (5 player mode)
+	{ OUR_VENDOR_ID, 0x0052, 1, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // PC Engine to USB v1.0.0 (2 player mode)
+	{ OUR_VENDOR_ID, 0x0053, 1, { 63, 3, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // PC Engine to USB v1.0.0 (3 player mode)
+	{ OUR_VENDOR_ID, 0x0054, 1, { 63, 4, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // PC Engine to USB v1.0.0 (4 player mode)
 
 	{ OUR_VENDOR_ID, 0x0026, 1, { 63, 1, 0, RNT_V3_STD | RNTF_DPAD_AS_BUTTONS } }, // SNES to USB adapter v2.0 (w/advXarch)
 	{ OUR_VENDOR_ID, 0x0027, 1, { 63, 2, 0, RNT_V3_STD | RNTF_DPAD_AS_BUTTONS } }, // Dual SNES to USB adapter v2.0 (w/advXarch)
