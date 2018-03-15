@@ -22,6 +22,9 @@
 /* WUSBMote specific */
 #define RQ_WUSBMOTE_I2C_TRANSACTIONS	0x82
 
+/* PC engine to USB specific */
+#define RQ_PCENGINE_RAW					0x83
+
 /* Get controller type values */
 // Legacy values (GC/N64 specific)
 #define CTL_TYPE_NONE	0
