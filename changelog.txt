@@ -1,4 +1,8 @@
 === Version 2.1.5 ===
+ - Add support for new NES to USB adapters (V2)
+ - Add support for Classic controller to Gamecube adapter update (through GC
+ to USB adpater)
+ - Finalize PCEngine to USB adapter support (soon to be released)
  - Command-line: Add --gc_getid and --gc_getorigins
 
 === Version 2.1.4 ===
