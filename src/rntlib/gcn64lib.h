@@ -4,10 +4,10 @@
 #include "raphnetadapter.h"
 
 int gcn64lib_rawSiCommand(rnt_hdl_t hdl, unsigned char channel, unsigned char *tx, unsigned char tx_len, unsigned char *rx, unsigned char max_rx);
-int gcn64lib_n64_expansionWrite(rnt_hdl_t hdl, unsigned short addr, const unsigned char *data, int len);
-int gcn64lib_n64_expansionRead(rnt_hdl_t hdl, unsigned short addr, unsigned char *dst, int max_len);
-int gcn64lib_8bit_scan(rnt_hdl_t hdl, unsigned char min, unsigned char max);
-int gcn64lib_16bit_scan(rnt_hdl_t hdl, unsigned short min, unsigned short max);
+int gcn64lib_n64_expansionWrite(rnt_hdl_t hdl, unsigned char channel, unsigned short addr, const unsigned char *data, int len);
+int gcn64lib_n64_expansionRead(rnt_hdl_t hdl, unsigned char channel, unsigned short addr, unsigned char *dst, int max_len);
+int gcn64lib_8bit_scan(rnt_hdl_t hdl, unsigned char channel, unsigned char min, unsigned char max);
+int gcn64lib_16bit_scan(rnt_hdl_t hdl, unsigned char channel, unsigned short min, unsigned short max);
 
 #define BIO_RXTX_MASK		0x3F
 #define BIO_RX_LEN_TIMEDOUT	0x80

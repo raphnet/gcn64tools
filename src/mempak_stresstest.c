@@ -33,7 +33,7 @@ static void lfsr_clock(void)
 	lfsr ^= 0xB400u;
 }
 
-static int fill_pak_pseudoRandom(rnt_hdl_t hdl, uiio *u, uint16_t seed)
+static int fill_pak_pseudoRandom(rnt_hdl_t hdl, unsigned char channel, uiio *u, uint16_t seed)
 {
 	int block, i;
 	uint8_t fill[32];
@@ -57,7 +57,7 @@ static int fill_pak_pseudoRandom(rnt_hdl_t hdl, uiio *u, uint16_t seed)
 			lfsr_clock();
 		}
 
-		res = gcn64lib_mempak_writeBlock(hdl, block, fill);
+		res = gcn64lib_mempak_writeBlock(hdl, channel, block, fill);
 		if (res < 0) {
 			return -1;
 		}
@@ -68,7 +68,7 @@ static int fill_pak_pseudoRandom(rnt_hdl_t hdl, uiio *u, uint16_t seed)
 	return 0;
 }
 
-static int verify_pak_pseudoRandom(rnt_hdl_t hdl, uiio *u, uint16_t seed)
+static int verify_pak_pseudoRandom(rnt_hdl_t hdl, unsigned char channel, uiio *u, uint16_t seed)
 {
 	int block, i;
 	uint8_t fill[32];
@@ -93,7 +93,7 @@ static int verify_pak_pseudoRandom(rnt_hdl_t hdl, uiio *u, uint16_t seed)
 			lfsr_clock();
 		}
 
-		res = gcn64lib_mempak_readBlock(hdl, block, actual);
+		res = gcn64lib_mempak_readBlock(hdl, channel, block, actual);
 		if (res < 0) {
 			return -1;
 		}
@@ -109,7 +109,7 @@ static int verify_pak_pseudoRandom(rnt_hdl_t hdl, uiio *u, uint16_t seed)
 	return 0;
 }
 
-static int fill_pak(rnt_hdl_t hdl, uiio *u, uint8_t v)
+static int fill_pak(rnt_hdl_t hdl, unsigned char channel, uiio *u, uint8_t v)
 {
 	int block;
 	uint8_t fill[32];
@@ -126,7 +126,7 @@ static int fill_pak(rnt_hdl_t hdl, uiio *u, uint8_t v)
 		u->cur_progress = block;
 		u->update(u);
 
-		res = gcn64lib_mempak_writeBlock(hdl, block, fill);
+		res = gcn64lib_mempak_writeBlock(hdl, channel, block, fill);
 		if (res < 0) {
 			return -1;
 		}
@@ -136,7 +136,7 @@ static int fill_pak(rnt_hdl_t hdl, uiio *u, uint8_t v)
 	return 0;
 }
 
-static int check_fill(rnt_hdl_t hdl, uiio *u, uint8_t v)
+static int check_fill(rnt_hdl_t hdl, unsigned char channel, uiio *u, uint8_t v)
 {
 	int block;
 	uint8_t expected[32];
@@ -154,7 +154,7 @@ static int check_fill(rnt_hdl_t hdl, uiio *u, uint8_t v)
 		u->cur_progress = block;
 		u->update(u);
 
-		res = gcn64lib_mempak_readBlock(hdl, block, buf);
+		res = gcn64lib_mempak_readBlock(hdl, channel, block, buf);
 		if (res < 0) {
 			return -1;
 		}
@@ -170,7 +170,7 @@ static int check_fill(rnt_hdl_t hdl, uiio *u, uint8_t v)
 	return 0;
 }
 
-static int burstTest(rnt_hdl_t hdl, uiio *u, int n_cycles, int n_blocks)
+static int burstTest(rnt_hdl_t hdl, unsigned char channel, uiio *u, int n_cycles, int n_blocks)
 {
 	uint8_t outbuf[32], inbuf[32];
 	int cycle, i, res, block;
@@ -194,12 +194,12 @@ static int burstTest(rnt_hdl_t hdl, uiio *u, int n_cycles, int n_blocks)
 				lfsr_clock();
 			}
 
-			res = gcn64lib_mempak_writeBlock(hdl, block, outbuf);
+			res = gcn64lib_mempak_writeBlock(hdl, channel, block, outbuf);
 			if (res < 0) {
 				return -1;
 			}
 
-			res = gcn64lib_mempak_readBlock(hdl, block, inbuf);
+			res = gcn64lib_mempak_readBlock(hdl, channel, block, inbuf);
 			if (res < 0) {
 				return -1;
 			}
@@ -236,7 +236,7 @@ int mempak_stresstest(rnt_hdl_t hdl, int channel, int first_test)
 		u->cur_progress = 0;
 		u->max_progress = 1;
 		u->progressStart(u);
-		if (gcn64lib_mempak_detect(hdl) < 0) {
+		if (gcn64lib_mempak_detect(hdl, channel) < 0) {
 			u->error("No mempak detected");
 			return -1;
 		}
@@ -248,7 +248,7 @@ int mempak_stresstest(rnt_hdl_t hdl, int channel, int first_test)
 	///////////////////////////////////////////
 	if (first_test <= 2) {
 		u->caption = "Test 2: Fill with 0x00";
-		if (fill_pak(hdl, u, 0) < 0) {
+		if (fill_pak(hdl, channel, u, 0) < 0) {
 			u->error("Error writing to mempak");
 			return -1;
 		}
@@ -257,7 +257,7 @@ int mempak_stresstest(rnt_hdl_t hdl, int channel, int first_test)
 	///////////////////////////////////////////
 	if (first_test <= 3) {
 		u->caption = "Test 3: Verify fill";
-		res = check_fill(hdl, u, 0);
+		res = check_fill(hdl, channel, u, 0);
 		if (res < 0) {
 			if (res == -1) {
 				u->error("read error");
@@ -274,7 +274,7 @@ int mempak_stresstest(rnt_hdl_t hdl, int channel, int first_test)
 	///////////////////////////////////////////
 	if (first_test <= 4) {
 		u->caption = "Test 4: Write/Read burst on a single block";
-		res = burstTest(hdl, u, 100, 1);
+		res = burstTest(hdl, channel, u, 100, 1);
 		if (res < 0) {
 			if (res == -1) {
 				u->error("IO error");
@@ -288,7 +288,7 @@ int mempak_stresstest(rnt_hdl_t hdl, int channel, int first_test)
 	///////////////////////////////////////////
 	if (first_test <= 5) {
 		u->caption = "Test 5: Write/Read burst on 10 blocks";
-		res = burstTest(hdl, u, 100, 10);
+		res = burstTest(hdl, channel, u, 100, 10);
 		if (res < 0) {
 			if (res == -1) {
 				u->error("IO error");
@@ -302,7 +302,7 @@ int mempak_stresstest(rnt_hdl_t hdl, int channel, int first_test)
 	///////////////////////////////////////////
 	if (first_test <= 6) {
 		u->caption = "Test 6: Fill with pseudo-random data";
-		if (fill_pak_pseudoRandom(hdl, u, LFSR_SEED) < 0) {
+		if (fill_pak_pseudoRandom(hdl, channel, u, LFSR_SEED) < 0) {
 			u->error("Error writing to mempak");
 			return -1;
 		}
@@ -318,7 +318,7 @@ int mempak_stresstest(rnt_hdl_t hdl, int channel, int first_test)
 			u->cur_progress = 0;
 			u->max_progress = 1;
 			u->progressStart(u);
-			if (gcn64lib_mempak_detect(hdl) < 0) {
+			if (gcn64lib_mempak_detect(hdl, channel) < 0) {
 				// Found it. Good.
 			} else {
 				u->progressEnd(u, "Mempak is still present");
@@ -338,7 +338,7 @@ int mempak_stresstest(rnt_hdl_t hdl, int channel, int first_test)
 			u->cur_progress = 0;
 			u->max_progress = 1;
 			u->progressStart(u);
-			if (gcn64lib_mempak_detect(hdl) < 0) {
+			if (gcn64lib_mempak_detect(hdl, channel) < 0) {
 				u->error("No mempak detected");
 				return -1;
 			}
@@ -351,7 +351,7 @@ int mempak_stresstest(rnt_hdl_t hdl, int channel, int first_test)
 	///////////////////////////////////////////
 	if (first_test <= 9) {
 		u->caption = "Test 9: Verify pseudo-random values";
-		res = verify_pak_pseudoRandom(hdl, u, LFSR_SEED);
+		res = verify_pak_pseudoRandom(hdl, channel, u, LFSR_SEED);
 		if (res < 0) {
 			if (res == -1) {
 				u->error("read error");
@@ -368,7 +368,7 @@ int mempak_stresstest(rnt_hdl_t hdl, int channel, int first_test)
 	///////////////////////////////////////////
 	if (first_test <= 10) {
 		u->caption = "Test 10: Fill with 0xFF";
-		if (fill_pak(hdl, u, 0xff) < 0) {
+		if (fill_pak(hdl, channel, u, 0xff) < 0) {
 			u->error("Error writing to mempak");
 			return -1;
 		}
@@ -377,7 +377,7 @@ int mempak_stresstest(rnt_hdl_t hdl, int channel, int first_test)
 	///////////////////////////////////////////
 	if (first_test <= 11) {
 		u->caption = "Test 11: Verify fill";
-		res = check_fill(hdl, u, 0xff);
+		res = check_fill(hdl, channel, u, 0xff);
 		if (res < 0) {
 			if (res == -1) {
 				u->error("read error");

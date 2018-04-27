@@ -55,7 +55,7 @@ int gcn64lib_rawSiCommand(rnt_hdl_t hdl, unsigned char channel, unsigned char *t
 	return rx_len;
 }
 
-int gcn64lib_16bit_scan(rnt_hdl_t hdl, unsigned short min, unsigned short max)
+int gcn64lib_16bit_scan(rnt_hdl_t hdl, unsigned char channel, unsigned short min, unsigned short max)
 {
 	int id, n;
 	unsigned char buf[64];
@@ -67,7 +67,7 @@ int gcn64lib_16bit_scan(rnt_hdl_t hdl, unsigned short min, unsigned short max)
 	for (id = min; id<=max; id++) {
 		buf[0] = id >> 8;
 		buf[1] = id & 0xff;
-		n = gcn64lib_rawSiCommand(hdl, 0, buf, 2, buf, sizeof(buf));
+		n = gcn64lib_rawSiCommand(hdl, channel, buf, 2, buf, sizeof(buf));
 		if (n > 0) {
 			printf("CMD 0x%04x answer: ", id);
 			printHexBuf(buf, n);
@@ -77,7 +77,7 @@ int gcn64lib_16bit_scan(rnt_hdl_t hdl, unsigned short min, unsigned short max)
 	return 0;
 }
 
-int gcn64lib_8bit_scan(rnt_hdl_t hdl, unsigned char min, unsigned char max)
+int gcn64lib_8bit_scan(rnt_hdl_t hdl, unsigned char channel, unsigned char min, unsigned char max)
 {
 	int id, n;
 	unsigned char buf[64];
@@ -98,7 +98,7 @@ int gcn64lib_8bit_scan(rnt_hdl_t hdl, unsigned char min, unsigned char max)
 	return 0;
 }
 
-int gcn64lib_n64_expansionWrite(rnt_hdl_t hdl, unsigned short addr, const unsigned char *data, int len)
+int gcn64lib_n64_expansionWrite(rnt_hdl_t hdl, unsigned char channel, unsigned short addr, const unsigned char *data, int len)
 {
 	unsigned char cmd[3 + len];
 	int cmdlen;
@@ -114,7 +114,7 @@ int gcn64lib_n64_expansionWrite(rnt_hdl_t hdl, unsigned short addr, const unsign
 	memcpy(cmd + 3, data, len);
 	cmdlen = 3 + len;
 
-	n = gcn64lib_rawSiCommand(hdl, 0, cmd, cmdlen, cmd, sizeof(cmd));
+	n = gcn64lib_rawSiCommand(hdl, channel, cmd, cmdlen, cmd, sizeof(cmd));
 	if (n != 1) {
 		printf("expansion write returned != 1 (%d)\n", n);
 		return -1;
@@ -123,7 +123,7 @@ int gcn64lib_n64_expansionWrite(rnt_hdl_t hdl, unsigned short addr, const unsign
 	return cmd[0];
 }
 
-int gcn64lib_n64_expansionRead(rnt_hdl_t hdl, unsigned short addr, unsigned char *dst, int max_len)
+int gcn64lib_n64_expansionRead(rnt_hdl_t hdl, unsigned char channel, unsigned short addr, unsigned char *dst, int max_len)
 {
 	unsigned char cmd[3];
 	int n;
@@ -136,7 +136,7 @@ int gcn64lib_n64_expansionRead(rnt_hdl_t hdl, unsigned short addr, unsigned char
 	cmd[1] = addr>>8; // Address high byte
 	cmd[2] = addr&0xff; // Address low byte
 
-	n = gcn64lib_rawSiCommand(hdl, 0, cmd, 3, dst, max_len);
+	n = gcn64lib_rawSiCommand(hdl, channel, cmd, 3, dst, max_len);
 	if (n < 0)
 		return n;
 

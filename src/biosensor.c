@@ -12,12 +12,12 @@
  *
  * \return 0: Not in beat, 32: In beat, [1..31] maybe?
  */
-int gcn64lib_biosensorPoll(rnt_hdl_t hdl)
+int gcn64lib_biosensorPoll(rnt_hdl_t hdl, unsigned char channel)
 {
 	unsigned char buf[32];
 	int res, i;
 
-	res = gcn64lib_mempak_readBlock(hdl, 0xC000, buf);
+	res = gcn64lib_mempak_readBlock(hdl, channel, 0xC000, buf);
 	if (res < 0) {
 		return res;
 	}
@@ -53,7 +53,7 @@ int gcn64lib_biosensorPoll(rnt_hdl_t hdl)
 #define MIN_PULSE_LENGTH	5
 #define AVERAGES			3
 
-int gcn64lib_biosensorMonitor(rnt_hdl_t hdl)
+int gcn64lib_biosensorMonitor(rnt_hdl_t hdl, unsigned char channel)
 {
 	int res;
 	int in_pulse = 0;
@@ -77,7 +77,7 @@ int gcn64lib_biosensorMonitor(rnt_hdl_t hdl)
 	{
 		usleep(16000);
 
-		res = gcn64lib_biosensorPoll(hdl);
+		res = gcn64lib_biosensorPoll(hdl, channel);
 		if (res < 0) {
 			return res;
 		}
@@ -127,7 +127,7 @@ int gcn64lib_biosensorMonitor(rnt_hdl_t hdl)
 /*
 	while(1)
 	{
-		res = gcn64lib_biosensorPoll(hdl);
+		res = gcn64lib_biosensorPoll(hdl, channel);
 		if (res < 0) {
 			return res;
 		}

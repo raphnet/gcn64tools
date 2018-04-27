@@ -22,7 +22,7 @@
 #include "mempak_gcn64usb.h"
 #include "uiio.h"
 
-static int fill_pak(rnt_hdl_t hdl, uiio *u, uint8_t v)
+static int fill_pak(rnt_hdl_t hdl, unsigned char channel, uiio *u, uint8_t v)
 {
 	int block;
 	uint8_t fill[32];
@@ -39,7 +39,7 @@ static int fill_pak(rnt_hdl_t hdl, uiio *u, uint8_t v)
 		u->cur_progress = block;
 		u->update(u);
 
-		res = gcn64lib_mempak_writeBlock(hdl, block, fill);
+		res = gcn64lib_mempak_writeBlock(hdl, channel, block, fill);
 		if (res < 0) {
 			return -1;
 		}
@@ -49,7 +49,7 @@ static int fill_pak(rnt_hdl_t hdl, uiio *u, uint8_t v)
 	return 0;
 }
 
-static int check_fill(rnt_hdl_t hdl, uiio *u, uint8_t v)
+static int check_fill(rnt_hdl_t hdl, unsigned char channel, uiio *u, uint8_t v)
 {
 	int block;
 	uint8_t expected[32];
@@ -67,7 +67,7 @@ static int check_fill(rnt_hdl_t hdl, uiio *u, uint8_t v)
 		u->cur_progress = block;
 		u->update(u);
 
-		res = gcn64lib_mempak_readBlock(hdl, block, buf);
+		res = gcn64lib_mempak_readBlock(hdl, channel, block, buf);
 		if (res < 0) {
 			return -1;
 		}
@@ -99,7 +99,7 @@ int mempak_fill(rnt_hdl_t hdl, int channel, uint8_t pattern, int no_confirm, uii
 
 	///////////////////////////////////////////
 	u->caption = "Fill with pattern";
-	if (fill_pak(hdl, u, pattern) < 0) {
+	if (fill_pak(hdl, channel, u, pattern) < 0) {
 		u->error("Error writing to mempak");
 		return -1;
 	}
@@ -107,7 +107,7 @@ int mempak_fill(rnt_hdl_t hdl, int channel, uint8_t pattern, int no_confirm, uii
 	///////////////////////////////////////////
 	u->multi_progress = 0; // this is the last step
 	u->caption = "Verify fill";
-	res = check_fill(hdl, u, pattern);
+	res = check_fill(hdl, channel, u, pattern);
 	if (res < 0) {
 		if (res == -1) {
 			u->error("read error");

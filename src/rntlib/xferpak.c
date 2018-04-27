@@ -86,12 +86,12 @@ void xferpak_free(xferpak *xpak)
 
 int xferpak_writeBlock(xferpak *xpak, unsigned int addr, const unsigned char data[32])
 {
-	return gcn64lib_mempak_writeBlock(xpak->hdl, addr, data);
+	return gcn64lib_mempak_writeBlock(xpak->hdl, xpak->channel, addr, data);
 }
 
 int xferpak_readBlock(xferpak *xpak, unsigned int addr, unsigned char data[32])
 {
-	return gcn64lib_mempak_readBlock(xpak->hdl, addr, data);
+	return gcn64lib_mempak_readBlock(xpak->hdl, xpak->channel, addr, data);
 }
 
 static int xferpak_testPresence(xferpak *xpak)

@@ -479,7 +479,7 @@ int main(int argc, char **argv)
 						[0 ... 31] = 0x80
 					};
 
-					n = gcn64lib_mempak_writeBlock(hdl, 0x8000, cmdbuf);
+					n = gcn64lib_mempak_writeBlock(hdl, channel, 0x8000, cmdbuf);
 					if (n < 0) {
 						printHexBuf(cmd, n);
 					} else {
@@ -496,7 +496,7 @@ int main(int argc, char **argv)
 						[0 ... 31] = on ? 0x01 : 0x00,
 					};
 
-					n = gcn64lib_mempak_writeBlock(hdl, 0xC000, cmdbuf);
+					n = gcn64lib_mempak_writeBlock(hdl, channel, 0xC000, cmdbuf);
 					if (n < 0) {
 						printf("Error %d\n", n);
 					}
@@ -504,7 +504,7 @@ int main(int argc, char **argv)
 				break;
 
 			case OPT_BIOSENSOR:
-				gcn64lib_biosensorMonitor(hdl);
+				gcn64lib_biosensorMonitor(hdl, channel);
 				break;
 
 			case OPT_XFERPAK_INFO:
@@ -614,7 +614,7 @@ int main(int argc, char **argv)
 			case OPT_N64_MEMPAK_DETECT:
 				{
 					printf("Detecting mempak...\n");
-					res = gcn64lib_mempak_detect(hdl);
+					res = gcn64lib_mempak_detect(hdl, channel);
 					if (res == 0) {
 						printf("Mempak detected\n");
 						retval = 0;
@@ -648,7 +648,7 @@ int main(int argc, char **argv)
 					int res;
 
 					printf("Reading mempak...\n");
-					res = gcn64lib_mempak_download(hdl, 0, &pak, mempak_progress_cb, "Reading address");
+					res = gcn64lib_mempak_download(hdl, channel, &pak, mempak_progress_cb, "Reading address");
 					printf("\n");
 					switch (res)
 					{
@@ -700,7 +700,7 @@ int main(int argc, char **argv)
 					}
 
 					printf("Writing to mempak...\n");
-					res = gcn64lib_mempak_upload(hdl, 0, pak, mempak_progress_cb, "Writing address");
+					res = gcn64lib_mempak_upload(hdl, channel, pak, mempak_progress_cb, "Writing address");
 					printf("\n");
 					if (res) {
 						switch(res)
@@ -722,11 +722,11 @@ int main(int argc, char **argv)
 				break;
 
 			case OPT_SI8BIT_SCAN:
-				gcn64lib_8bit_scan(hdl, 0, 255);
+				gcn64lib_8bit_scan(hdl, channel, 0, 255);
 				break;
 
 			case OPT_SI16BIT_SCAN:
-				gcn64lib_16bit_scan(hdl, 0, 0xffff);
+				gcn64lib_16bit_scan(hdl, channel, 0, 0xffff);
 				break;
 
 			case OPT_I2C_DETECT:

@@ -114,7 +114,7 @@ static uint8_t __calc_data_crc( const uint8_t *data )
     return ret;
 }
 
-int gcn64lib_mempak_readBlock(rnt_hdl_t hdl, unsigned short addr, unsigned char dst[32])
+int gcn64lib_mempak_readBlock(rnt_hdl_t hdl, unsigned char channel, unsigned short addr, unsigned char dst[32])
 {
 	unsigned char cmd[64];
 	//int cmdlen;
@@ -128,7 +128,7 @@ int gcn64lib_mempak_readBlock(rnt_hdl_t hdl, unsigned short addr, unsigned char 
 	cmd[1] = addr_crc>>8; // Address high byte
 	cmd[2] = addr_crc&0xff; // Address low byte
 
-	n = gcn64lib_rawSiCommand(hdl, 0, cmd, 3, cmd, sizeof(cmd));
+	n = gcn64lib_rawSiCommand(hdl, channel, cmd, 3, cmd, sizeof(cmd));
 	if (n != 33) {
 		printf("Hey! %d\n", n);
 		return -1;
@@ -145,7 +145,7 @@ int gcn64lib_mempak_readBlock(rnt_hdl_t hdl, unsigned short addr, unsigned char 
 	return 0x20;
 }
 
-int gcn64lib_mempak_detect(rnt_hdl_t hdl)
+int gcn64lib_mempak_detect(rnt_hdl_t hdl, unsigned char channel)
 {
 	unsigned char buf[40];
 	int res;
@@ -153,7 +153,7 @@ int gcn64lib_mempak_detect(rnt_hdl_t hdl)
 	int first_read, second_read;
 
 	buf[0] = N64_GET_CAPABILITIES;
-	res = gcn64lib_rawSiCommand(hdl, 0, buf, 1, buf, sizeof(buf));
+	res = gcn64lib_rawSiCommand(hdl, channel, buf, 1, buf, sizeof(buf));
 	if (res < 0) {
 		return -1;
 	}
@@ -167,7 +167,7 @@ int gcn64lib_mempak_detect(rnt_hdl_t hdl)
 
 	/* first write 32 0xFEs */
 	memset(buf, 0xfe, 32);
-	res = gcn64lib_n64_expansionWrite(hdl, addr, buf, 32);
+	res = gcn64lib_n64_expansionWrite(hdl, channel, addr, buf, 32);
 	if (res < 0) {
 		return -1;
 	}
@@ -176,7 +176,7 @@ int gcn64lib_mempak_detect(rnt_hdl_t hdl)
 	}
 
 	/* Read back (normally zeros) */
-	res = gcn64lib_n64_expansionRead(hdl, addr, buf, sizeof(buf));
+	res = gcn64lib_n64_expansionRead(hdl, channel, addr, buf, sizeof(buf));
 	if (res < 0) {
 		return -1;
 	}
@@ -184,7 +184,7 @@ int gcn64lib_mempak_detect(rnt_hdl_t hdl)
 
 	/* Now write 32 0x80s */
 	memset(buf, 0x80, 32);
-	res = gcn64lib_n64_expansionWrite(hdl, addr, buf, 32);
+	res = gcn64lib_n64_expansionWrite(hdl, channel, addr, buf, 32);
 	if (res < 0) {
 		return -1;
 	}
@@ -197,7 +197,7 @@ int gcn64lib_mempak_detect(rnt_hdl_t hdl)
 	 * But I found out that the values that are read back are just always equal to while
 	 * for other hardware, reading after writing the 0xfe values always seem to return 0x00.
 	 */
-	res = gcn64lib_n64_expansionRead(hdl, addr, buf, sizeof(buf));
+	res = gcn64lib_n64_expansionRead(hdl, channel, addr, buf, sizeof(buf));
 	if (res < 0) {
 		printf("failed to detect mempak: %d\n", res);
 		return -1;
@@ -229,12 +229,12 @@ int gcn64lib_mempak_detect(rnt_hdl_t hdl)
 	}
 }
 
-int gcn64lib_mempak_writeBlock(rnt_hdl_t hdl, unsigned short addr, const unsigned char data[32])
+int gcn64lib_mempak_writeBlock(rnt_hdl_t hdl, unsigned char channel, unsigned short addr, const unsigned char data[32])
 {
 	int res;
 	uint8_t data_crc;
 
-	res = gcn64lib_n64_expansionWrite(hdl, pak_address_crc(addr), data, 32);
+	res = gcn64lib_n64_expansionWrite(hdl, channel, pak_address_crc(addr), data, 32);
 	if (res < 0) {
 		return res;
 	}
@@ -269,7 +269,7 @@ int gcn64lib_mempak_download(rnt_hdl_t hdl, int channel, mempak_structure_t **me
 		return -3;
 	}
 
-	if (gcn64lib_mempak_detect(hdl)) {
+	if (gcn64lib_mempak_detect(hdl, channel)) {
 		return -1;
 	}
 
@@ -282,7 +282,7 @@ int gcn64lib_mempak_download(rnt_hdl_t hdl, int channel, mempak_structure_t **me
 	for (addr = 0x0000; addr < MEMPAK_MEM_SIZE; addr+= 0x20)
 	{
 		for (try = 0; try < MEMPAK_IO_RETRIES; try++) {
-			res = gcn64lib_mempak_readBlock(hdl, addr, &pak->data[addr]);
+			res = gcn64lib_mempak_readBlock(hdl, channel, addr, &pak->data[addr]);
 			if (res == 0x20) {
 				break;
 			}
@@ -313,14 +313,14 @@ int gcn64lib_mempak_upload(rnt_hdl_t hdl, int channel, mempak_structure_t *pak, 
 	if (!pak) {
 		return -3;
 	}
-	if (gcn64lib_mempak_detect(hdl)) {
+	if (gcn64lib_mempak_detect(hdl, channel)) {
 		return -1;
 	}
 
 	for (addr = 0x0000; addr < MEMPAK_MEM_SIZE; addr+= 0x20)
 	{
 		for (try = 0; try < MEMPAK_IO_RETRIES; try++) {
-			res = gcn64lib_mempak_writeBlock(hdl, addr, &pak->data[addr]);
+			res = gcn64lib_mempak_writeBlock(hdl, channel, addr, &pak->data[addr]);
 			if (res == 0) {
 				break;
 			}
