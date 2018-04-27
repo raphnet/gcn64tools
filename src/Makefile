@@ -1,6 +1,6 @@
 CC=gcc
 LD=$(CC)
-PREFIX=/usr/local
+PREFIX?=/usr/local
 
 EXEEXT=
 PLATFORM_CFLAGS=
@@ -28,5 +28,9 @@ GTK_LDFLAGS=`pkg-config --libs gtk+-3.0 gmodule-2.0 gio-2.0`
 GLIB_CRES=$(shell pkg-config --variable=glib_compile_resources gio-2.0)
 RESOURCES=$(shell $(GLIB_CRES) --sourcedir=. --generate-dependencies resources.xml)
 
-
 include Makefile.common
+
+install:
+	cp gcn64ctl gcn64ctl_gui mempak_convert mempak_extract_note mempak_insert_note mempak_ls mempak_rm $(PREFIX)/bin
+
+
