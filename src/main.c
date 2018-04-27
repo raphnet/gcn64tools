@@ -30,6 +30,7 @@
 #include "requests.h"
 #include "gcn64_protocol.h"
 #include "perftest.h"
+#include "usbtest.h"
 #include "biosensor.h"
 #include "xferpak.h"
 #include "xferpak_tools.h"
@@ -37,6 +38,7 @@
 #include "mempak_fill.h"
 #include "wusbmotelib.h"
 #include "pcelib.h"
+#include "pollraw.h"
 
 static void printUsage(void)
 {
@@ -132,6 +134,7 @@ static void printUsage(void)
 	printf("  --n64_mempak_fill_with_ff          Fill a controller pak with 0xFF (WARNING: Erases your data)\n");
 	printf("  --i2c_detect                       Try reading one byte from each I2C address (For WUSBMote v2)\n");
 	printf("  --gc_pollraw                       Read and display raw values from a gamecube controller\n");
+	printf("  --usbtest                          Perform a test transfer between host and adapter\n");
 }
 
 
@@ -189,6 +192,7 @@ static void printUsage(void)
 #define OPT_GC_CALIBRATE				346
 #define OPT_GC_POLLRAW					347
 #define OPT_PCE_RAWTEST					348
+#define OPT_USB_TEST					349
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -248,6 +252,7 @@ struct option longopts[] = {
 	{ "dump_wiimote_extmem", 0, NULL, OPT_DUMP_WIIMOTE_EXTENSION_MEMORY },
 	{ "noconfirm", 0, NULL, OPT_NO_CONFIRM },
 	{ "pce_rawtest", 0, NULL, OPT_PCE_RAWTEST },
+	{ "usbtest", 0, NULL, OPT_USB_TEST },
 	{ },
 };
 
@@ -887,6 +892,15 @@ int main(int argc, char **argv)
 
 			case OPT_PCE_RAWTEST:
 				pcelib_rawpoll(hdl);
+				break;
+
+			case OPT_USB_TEST:
+				do {
+					retval = usbtest(hdl, verbose);
+					if (retval) {
+						break;
+					}
+				} while (nonstop);
 				break;
 		}
 

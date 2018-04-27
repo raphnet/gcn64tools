@@ -2,6 +2,7 @@
 #define _gcn64_requests_h__
 
 /* Generic commands */
+#define RQ_RNT_ECHO					0x00
 #define RQ_RNT_SET_CONFIG_PARAM		0x01
 #define RQ_RNT_GET_CONFIG_PARAM		0x02
 #define RQ_RNT_SUSPEND_POLLING		0x03
