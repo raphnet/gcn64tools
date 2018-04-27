@@ -421,6 +421,7 @@ int rnt_send_cmd(rnt_hdl_t hdl, const unsigned char *cmd, int cmdlen)
 	hid_device *hdev = hdl->hdev;
 	unsigned char buffer[hdl->report_size+1];
 	int n;
+	int attempts_left=2;
 
 	if (!hdev) {
 		return -1;
@@ -436,7 +437,14 @@ int rnt_send_cmd(rnt_hdl_t hdl, const unsigned char *cmd, int cmdlen)
 	buffer[0] = 0x00; // report ID set to 0 (device has only one)
 	memcpy(buffer + 1, cmd, cmdlen);
 
-	n = hid_send_feature_report(hdev, buffer, sizeof(buffer));
+	while (attempts_left--) {
+		n = hid_send_feature_report(hdev, buffer, sizeof(buffer));
+		if (n >= 0) {
+			break;
+		}
+		fprintf(stderr, "send feature report: retry\n");
+	}
+
 	if (n < 0) {
 		fprintf(stderr, "Could not send feature report (%ls)\n", hid_error(hdev));
 		return -1;
