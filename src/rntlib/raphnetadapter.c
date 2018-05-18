@@ -91,6 +91,8 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0041, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // NES to USB adpater v2.0 (w/advXarch)
 	{ OUR_VENDOR_ID, 0x0042, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES } }, // Dual NES to USB adpater v2.0 (w/advXarch)
 
+	{ OUR_VENDOR_ID, 0x0043, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // Saturn to USB adapter v2.0 (w/advXarch)
+
 	// Legacy devices (vusb, non-upgradeable and typically without configurable features)
 	{ OUR_VENDOR_ID, 0x0001, -1 }, // GCN64->USB v2.2
 	{ OUR_VENDOR_ID, 0x0003, -1, { 0, 4 } }, // 4nes4snes 1.4.2, 1.5
@@ -720,6 +722,9 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_SNES_NDK10: return "NTT Data controller";
 		case CTL_TYPE_SNES_MOUSE: return "SNES mouse";
 		case CTL_TYPE_XE1AP: return "XE-1AP";
+		case CTL_TYPE_SATURN: return "Saturn Controller";
+		case CTL_TYPE_SATURN_ANALOG: return "Saturn Analog Controller";
+		case CTL_TYPE_SATURN_MOUSE: return "Saturn Mouse";
 		default:
 			return "Unknown";
 	}
