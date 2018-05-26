@@ -708,6 +708,7 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_N64: return "N64 Controller";
 		case CTL_TYPE_GAMECUBE_NEW:
 		case CTL_TYPE_GC: return "GC Controller";
+		case CTL_TYPE_GAMECUBE_KEYBOARD:
 		case CTL_TYPE_GCKB: return "GC Keyboard";
 		case CTL_TYPE_NUNCHUK: return "Nunchuk";
 		case CTL_TYPE_CLASSIC: return "Classic controller";
@@ -725,6 +726,7 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_SATURN: return "Saturn Controller";
 		case CTL_TYPE_SATURN_ANALOG: return "Saturn Analog Controller";
 		case CTL_TYPE_SATURN_MOUSE: return "Saturn Mouse";
+		case CTL_TYPE_RANDNET_KEYBOARD: return "N64 Keyboard";
 		default:
 			return "Unknown";
 	}

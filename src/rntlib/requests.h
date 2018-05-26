@@ -53,6 +53,9 @@
 #define CTL_TYPE_SATURN_ANALOG	117
 #define CTL_TYPE_SATURN_MOUSE	118
 
+#define CTL_TYPE_RANDNET_KEYBOARD	140
+#define CTL_TYPE_GAMECUBE_KEYBOARD	141
+
 /* Configuration parameters and constants */
 #define CFG_PARAM_MODE			0x00
 
