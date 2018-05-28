@@ -1,9 +1,11 @@
 #include <stdio.h>
+#include <string.h>
 #include "raphnetadapter.h"
 #include "gcn64lib.h"
 #include "wusbmotelib.h"
 #include "gcn64_protocol.h"
 #include "pollraw.h"
+#include "hexdump.h"
 
 int pollraw_gamecube(rnt_hdl_t hdl, int chn)
 {
@@ -46,3 +48,75 @@ int pollraw_gamecube(rnt_hdl_t hdl, int chn)
 
 	return 0;
 }
+
+int pollraw_gamecube_keyboard(rnt_hdl_t hdl, int chn)
+{
+	uint8_t getstatus[3] = { 0x54, 0x00, 0x00 };
+	uint8_t status[8];
+	int res;
+	int i;
+	uint8_t lrc;
+	uint8_t prev_keys[3] = { };
+	uint8_t active_keys[256] = { };
+
+	printf("Polling gamecube keyboard.\n");
+	printf("CTRL+C to stop\n");
+	while(1)
+	{
+		res = gcn64lib_rawSiCommand(hdl, chn, getstatus, sizeof(getstatus), status, sizeof(status));
+		if (res != sizeof(status)) {
+			printf("Not enough data received\n");
+			break;
+		}
+
+		// Status
+		//       Bit
+		// Byte  7    | 6    | 5  |  4  |  3    2    1    0   |
+		//    0  ERR  | ERRL | ?  |  ?  |  Sequence counter   |
+		//    1  ????????
+		//    2  ????????
+		//    3  ????????
+		//    4  Keycode 1
+		//    5  Keycode 2
+		//    6  Keycode 3
+		//    7  LRC (XOR of bytes 0-6)
+		//
+		for (i=0, lrc=0; i<sizeof(status)-1; i++) {
+			lrc ^= status[i];
+		}
+		if (status[7] != lrc) {
+			printf("LRC error! ");
+			printHexBuf(status, res);
+		}
+
+		if (status[4] == 0x02 && status[5] == 0x02 && status[6] == 0x02) {
+			printf("Too many keys down\n");
+		}
+
+		// Detect changes
+		if (memcmp(prev_keys, status + 4, sizeof(prev_keys))) {
+			for (i=1; i<sizeof(active_keys); i++) {
+				// If a given key is reported active by the keyboard...
+				if (memchr(status+4, i, 3)) {
+					// ... and we do not already know:
+					if (!active_keys[i]) {
+						printf("KEY 0x%02x down\n", i);
+						active_keys[i] = 1;
+					}
+				}
+				else {
+					// If a key is not reported active by the keyboard
+					// but it was in the previous iteration
+					if (active_keys[i]) {
+						printf("KEY 0x%02x up\n", i);
+						active_keys[i] = 0;
+					}
+				}
+			}
+		}
+		memcpy(prev_keys, status + 4, sizeof(prev_keys));
+	}
+
+	return 0;
+}
+
