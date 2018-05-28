@@ -1,3 +1,8 @@
+=== Version 2.1.6 (work in progress) ===
+ - Add Saturn to USB v2 adapter support
+ - Add PSX to USB adapter support
+ - Command-line: Add Gamecube and N64 keyboard poll tests
+
 === Version 2.1.5 ===
  - Add support for new NES to USB adapters (V2)
  - Add support for Classic controller to Gamecube adapter update (through GC
