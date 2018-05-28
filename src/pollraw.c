@@ -120,3 +120,66 @@ int pollraw_gamecube_keyboard(rnt_hdl_t hdl, int chn)
 	return 0;
 }
 
+int pollraw_randnet_keyboard(rnt_hdl_t hdl, int chn)
+{
+	uint8_t getstatus[] = { 0x13, 0x00 };
+	uint8_t status[7];
+	uint8_t prev_status[7] = { };
+	int res;
+	int i;
+
+	printf("Polling randnet keyboard (experimental, not tested).\n");
+	printf("CTRL+C to stop\n");
+	while(1)
+	{
+		res = gcn64lib_rawSiCommand(hdl, chn, getstatus, sizeof(getstatus), status, sizeof(status));
+		if (res != sizeof(status)) {
+			printf("Not enough data received (Expected %d bytes but got %d)\n", (int)sizeof(status), res);
+			break;
+		}
+
+		// Thanks to https://sites.google.com/site/consoleprotocols/home/nintendo-joy-bus-documentation/randnet-keyboard
+		//
+		// Note: Untested
+
+		// Status
+		//       Bit
+		// Byte  7  | 6 | 5 | 4    | 3 | 2 | 1 | 0        |
+		//    0  Keycode 1 MSB                            |
+		//    1  Keycode 1 LSB                            |
+		//    2  Keycode 2 MSB                            |
+		//    3  Keycode 2 LSB                            |
+		//    4  Keycode 3 MSB                            |
+		//    5  Keycode 3 LSB                            |
+		//    6  ? | ? | ? | Error | ? | ? | ? | Home key |
+		//
+		// Up to 3 keys can be pressed. When inactive, the key
+		// CMD 0x1300 answer: 00 00 00 00 00 00 00
+		//
+
+		if (memcmp(prev_status, status, sizeof(status))) {
+			printf("---------------------\n");
+			printf("Raw: ");
+			printHexBuf(status, res);
+			printf("Active keys(s): ");
+			for (i=0; i<3; i++) {
+				uint16_t keycode = status[i*2] << 8 | status[i*2+1];
+				if (keycode) {
+					printf("%04x ", keycode);
+				}
+			}
+			printf("\n");
+			printf("Status: %02x %s%s",
+						status[6],
+						status[6] & 0x10 ? "Error ":"",
+						status[6] & 0x01 ? "Home key":"");
+
+		}
+		memcpy(prev_status, status, sizeof(status));
+	}
+
+	return 0;
+
+
+	return 0;
+}

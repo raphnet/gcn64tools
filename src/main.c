@@ -135,6 +135,7 @@ static void printUsage(void)
 	printf("  --i2c_detect                       Try reading one byte from each I2C address (For WUSBMote v2)\n");
 	printf("  --gc_pollraw                       Read and display raw values from a gamecube controller\n");
 	printf("  --gc_pollraw_keyboard              Read and display raw values from a gamecube keyboard\n");
+	printf("  --n64_pollraw_keyboard             Read and display raw values from a N64 keyboard (untested)\n");
 	printf("  --usbtest                          Perform a test transfer between host and adapter\n");
 }
 
@@ -195,6 +196,7 @@ static void printUsage(void)
 #define OPT_PCE_RAWTEST					348
 #define OPT_USB_TEST					349
 #define OPT_GC_POLLRAW_KEYBOARD			350
+#define OPT_N64_POLLRAW_KEYBOARD		351
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -214,6 +216,7 @@ struct option longopts[] = {
 	{ "gc_getstatus_rumble", 0, NULL, OPT_GC_GETSTATUS_RUMBLE },
 	{ "gc_pollraw", 0, NULL, OPT_GC_POLLRAW },
 	{ "gc_pollraw_keyboard", 0, NULL, OPT_GC_POLLRAW_KEYBOARD },
+	{ "n64_pollraw_keyboard", 0, NULL, OPT_N64_POLLRAW_KEYBOARD },
 	{ "n64_getcaps", 0, NULL, OPT_N64_GETCAPS },
 	{ "gc_getid", 0, NULL, OPT_GC_GETID },
 	{ "n64_mempak_dump", 0, NULL, OPT_N64_MEMPAK_DUMP },
@@ -575,6 +578,10 @@ int main(int argc, char **argv)
 
 			case OPT_GC_POLLRAW_KEYBOARD:
 				retval = pollraw_gamecube_keyboard(hdl, channel);
+				break;
+
+			case OPT_N64_POLLRAW_KEYBOARD:
+				retval = pollraw_randnet_keyboard(hdl, channel);
 				break;
 
 			case OPT_GC_GETSTATUS_RUMBLE:
