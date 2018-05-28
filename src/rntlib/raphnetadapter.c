@@ -93,6 +93,9 @@ static struct supported_adapter supported_adapters[] = {
 
 	{ OUR_VENDOR_ID, 0x0043, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // Saturn to USB adapter v2.0 (w/advXarch)
 
+	{ OUR_VENDOR_ID, 0x0044, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // PS1/PS2 controller to USB adapter (w/advXarch)
+	{ OUR_VENDOR_ID, 0x0045, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES } }, // PS1/PS2 controller to USB adapter (w/advXarch)
+
 	// Legacy devices (vusb, non-upgradeable and typically without configurable features)
 	{ OUR_VENDOR_ID, 0x0001, -1 }, // GCN64->USB v2.2
 	{ OUR_VENDOR_ID, 0x0003, -1, { 0, 4 } }, // 4nes4snes 1.4.2, 1.5
@@ -727,6 +730,10 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_SATURN_ANALOG: return "Saturn Analog Controller";
 		case CTL_TYPE_SATURN_MOUSE: return "Saturn Mouse";
 		case CTL_TYPE_RANDNET_KEYBOARD: return "N64 Keyboard";
+		case CTL_TYPE_PSX_DIGITAL: return "PSX Digital";
+		case CTL_TYPE_PSX_ANALOG: return "PSX Analog";
+		case CTL_TYPE_PSX_NEGCON: return "NEGCON";
+		case CTL_TYPE_PSX_MOUSE: return "PSX Mouse";
 		default:
 			return "Unknown";
 	}
