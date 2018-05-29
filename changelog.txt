@@ -4,6 +4,8 @@
  - Command-line: Add Gamecube and N64 keyboard poll tests (--gc_pollraw_keyboard and --n64_pollraw_keyboard)
  - Command-line: Add Wii Classic Controller raw poll test --wii_pollraw
  - Command-line: Add Playstation controller raw poll test --psx_pollraw
+ - Command-line: Add --si_txrx to send arbitrary byte sequences to a GC/N64
+   controller/peripheral. (for research)
 
 === Version 2.1.5 ===
  - Add support for new NES to USB adapters (V2)

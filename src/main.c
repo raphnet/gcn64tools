@@ -130,6 +130,7 @@ static void printUsage(void)
 	printf("Development/Experimental/Research commands: (use at your own risk)\n");
 	printf("  --si_8bit_scan                     Try all possible 1-byte commands, to see which one a controller responds to.\n");
 	printf("  --si_16bit_scan                    Try all possible 2-byte commands, to see which one a controller responds to.\n");
+	printf("  --si_txrx hexbytes                 Send specified bytes and maybe receive something. Ex: --si_txrx 400000 (read GC controller)\n");
 	printf("  --n64_mempak_stresstest            Perform a set of controller pak tests (WARNING: Erases the pack with random data)\n");
 	printf("  --n64_mempak_fill_with_ff          Fill a controller pak with 0xFF (WARNING: Erases your data)\n");
 	printf("  --i2c_detect                       Try reading one byte from each I2C address (For WUSBMote v2)\n");
@@ -201,6 +202,7 @@ static void printUsage(void)
 #define OPT_N64_POLLRAW_KEYBOARD		351
 #define OPT_PSX_POLLRAW					352
 #define OPT_WII_POLLRAW					353
+#define OPT_SITXRX						354
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -235,6 +237,7 @@ struct option longopts[] = {
 	{ "n64_mempak_write", 1, NULL, OPT_N64_MEMPAK_WRITE },
 	{ "si_8bit_scan", 0, NULL, OPT_SI8BIT_SCAN },
 	{ "si_16bit_scan", 0, NULL, OPT_SI16BIT_SCAN },
+	{ "si_txrx", 1, NULL, OPT_SITXRX },
 	{ "x2gcn64_info", 0, NULL, OPT_GC_TO_N64_INFO },
 	{ "x2gcn64_echotest", 0, NULL, OPT_GC_TO_N64_TEST },
 	{ "x2gcn64_update", 1, NULL, OPT_GC_TO_N64_UPDATE },
@@ -751,6 +754,37 @@ int main(int argc, char **argv)
 						printf("Mempak uploaded\n");
 					}
 					mempak_free(pak);
+				}
+				break;
+
+			case OPT_SITXRX:
+				{
+					uint8_t txbuf[64];
+					int txlen;
+					uint8_t rxbuf[64];
+					int v, i;
+
+					if (strlen(optarg) % 2) {
+						fprintf(stderr, "Error: An even number of nibbles must be specified, and no space between bytes. Ex: 1301 not 13 01\n");
+						return -1;
+					}
+
+					txlen = strlen(optarg)/2;
+					for (i=0; i<txlen; i++) {
+						sscanf(optarg + (i*2), "%02x", &v);
+						txbuf[i] = v;
+					}
+
+					printf("Data to transmit[%d] : ", txlen);
+					printHexBuf(txbuf, txlen);
+
+					res = gcn64lib_rawSiCommand(hdl, channel, txbuf, txlen, rxbuf, sizeof(rxbuf));
+					if (res < 0) {
+						return -1;
+					}
+
+					printf("Data received[%d] : ", res);
+					printHexBuf(rxbuf, res);
 				}
 				break;
 
