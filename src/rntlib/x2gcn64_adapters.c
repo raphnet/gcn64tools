@@ -806,7 +806,7 @@ int x2gcn64_adapter_waitForBootloader(rnt_hdl_t hdl, int channel, int timeout_s)
 	return -1;
 }
 
-static const char *x2gcn64_getAdapterSignature(int type)
+const char *x2gcn64_getAdapterSignature(int type)
 {
 	switch (type)
 	{
@@ -945,8 +945,3 @@ err:
 	return ret;
 }
 
-
-int gc2n64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfile)
-{
-	return x2gcn64_adapter_updateFirmware(hdl, channel, hexfile, x2gcn64_getAdapterSignature(ADAPTER_TYPE_GC_TO_N64));
-}

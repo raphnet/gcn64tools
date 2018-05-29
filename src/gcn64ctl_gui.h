@@ -6,6 +6,7 @@
 
 #include "raphnetadapter.h"
 #include "gcn64lib.h"
+#include "x2gcn64_adapters.h"
 #include "gui_mpkedit.h"
 #include "gui_fwupd.h"
 #include "gui_logger.h"
@@ -37,6 +38,9 @@ struct application {
 	int controller_type;
 	int firmware_maj, firmware_min, firmware_build;
 	int at90usb1287;
+
+	// for gui_gc2n64_manager
+	struct x2gcn64_adapter_info inf;
 };
 
 void errorPopup(struct application *app, const char *message);

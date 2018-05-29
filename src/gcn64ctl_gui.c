@@ -29,7 +29,7 @@
 #include <windows.h>
 #endif
 
-/* Set sensitivity to FLASE on items that depend on an adapter being selected */
+/* Set sensitivity to FALSE on items that depend on an adapter being selected */
 static void desensitize_adapter_widgets(struct application *app)
 {
 	GtkWidget *widgets[] = {
@@ -57,6 +57,19 @@ static void setsensitive_n64_adapter_widgets(struct application *app, int sensit
 		GET_ELEMENT(GtkWidget, menuitem_read_cart_rom),
 		GET_ELEMENT(GtkWidget, menuitem_read_cart_ram),
 		GET_ELEMENT(GtkWidget, menuitem_write_cart_ram),
+		NULL
+	};
+	int i;
+
+	for (i=0; widgets[i]; i++) {
+		gtk_widget_set_sensitive(widgets[i], sensitive);
+	}
+}
+
+static void setsensitive_gc_adapter_widgets(struct application *app, int sensitive)
+{
+	GtkWidget *widgets[] = {
+		GET_ELEMENT(GtkWidget, menu_manage_x2gcwii),
 		NULL
 	};
 	int i;
@@ -132,6 +145,7 @@ static gboolean periodic_updater(gpointer data)
 
 			case CTL_TYPE_GC:
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_rumble_test), TRUE);
+				setsensitive_gc_adapter_widgets(app, TRUE);
 				break;
 
 			default:

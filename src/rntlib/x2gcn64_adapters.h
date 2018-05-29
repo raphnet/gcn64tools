@@ -102,7 +102,7 @@ int gc2n64_adapter_storeCurrentMapping(rnt_hdl_t hdl, int channel, int dst_slot)
 int gc2n64_adapter_saveMapping(struct gc2n64_adapter_mapping *map, const char *dstfile);
 struct gc2n64_adapter_mapping *gc2n64_adapter_loadMapping(const char *srcfile);
 
-int gc2n64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfile);
+const char *x2gcn64_getAdapterSignature(int type);
 
 #endif // _gc2n64_adapter_h__
 

@@ -31,7 +31,7 @@ Author: Raphaël Assénat
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
     <property name="program_name">raphnet-tech adapter manager</property>
-    <property name="copyright" translatable="yes">Copyright (C) 2015-2017 Raphaël Assénat &lt;raph@raphnet.net&gt;</property>
+    <property name="copyright" translatable="yes">Copyright (C) 2015-2018 Raphaël Assénat &lt;raph@raphnet.net&gt;</property>
     <property name="website">http://www.raphnet-tech.com</property>
     <property name="website_label" translatable="yes">www.raphnet-tech.com</property>
     <property name="authors">Raphaël Assénat</property>
@@ -402,6 +402,15 @@ Author: Raphaël Assénat
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
                         <property name="label" translatable="yes">Manage GC to N64 adapter</property>
+                        <property name="use_underline">True</property>
+                        <signal name="activate" handler="gc2n64_manager_show" swapped="no"/>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="menu_manage_x2gcwii">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="label" translatable="yes">Manage N64/Classic/SNES to GC/Wii adapter</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="gc2n64_manager_show" swapped="no"/>
                       </object>
@@ -1684,7 +1693,7 @@ configurable parameters.</property>
   </object>
   <object class="GtkWindow" id="win_gc2n64">
     <property name="can_focus">False</property>
-    <property name="title" translatable="yes">Gamecube to N64 adapter</property>
+    <property name="title" translatable="yes">GC/N64/Classic/SNES to N64/GC/Wii adapter</property>
     <property name="modal">True</property>
     <property name="transient_for">mainWindow</property>
     <signal name="show" handler="gc2n64_manager_on_show" swapped="no"/>
@@ -1718,7 +1727,7 @@ configurable parameters.</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
-                        <property name="top_attach">0</property>
+                        <property name="top_attach">1</property>
                       </packing>
                     </child>
                     <child>
@@ -1731,7 +1740,7 @@ configurable parameters.</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
-                        <property name="top_attach">1</property>
+                        <property name="top_attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -1743,7 +1752,7 @@ configurable parameters.</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
-                        <property name="top_attach">0</property>
+                        <property name="top_attach">1</property>
                       </packing>
                     </child>
                     <child>
@@ -1755,7 +1764,7 @@ configurable parameters.</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
-                        <property name="top_attach">1</property>
+                        <property name="top_attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -1767,7 +1776,7 @@ configurable parameters.</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
-                        <property name="top_attach">2</property>
+                        <property name="top_attach">3</property>
                       </packing>
                     </child>
                     <child>
@@ -1777,7 +1786,7 @@ configurable parameters.</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
-                        <property name="top_attach">2</property>
+                        <property name="top_attach">3</property>
                       </packing>
                     </child>
                     <child>
@@ -1789,7 +1798,7 @@ configurable parameters.</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
-                        <property name="top_attach">3</property>
+                        <property name="top_attach">4</property>
                       </packing>
                     </child>
                     <child>
@@ -1799,18 +1808,19 @@ configurable parameters.</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
-                        <property name="top_attach">3</property>
+                        <property name="top_attach">4</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">end</property>
                         <property name="label" translatable="yes">Gamecube controller:</property>
                       </object>
                       <packing>
                         <property name="left_attach">0</property>
-                        <property name="top_attach">4</property>
+                        <property name="top_attach">5</property>
                       </packing>
                     </child>
                     <child>
@@ -1820,7 +1830,30 @@ configurable parameters.</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
-                        <property name="top_attach">4</property>
+                        <property name="top_attach">5</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="lb_ad_typ">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="label" translatable="yes">Adapter type:</property>
+                        <property name="justify">right</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">0</property>
+                        <property name="top_attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="label_gc2n64_adapter_type">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                      </object>
+                      <packing>
+                        <property name="left_attach">1</property>
+                        <property name="top_attach">0</property>
                       </packing>
                     </child>
                   </object>
