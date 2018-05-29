@@ -170,7 +170,7 @@ int pollraw_randnet_keyboard(rnt_hdl_t hdl, int chn)
 				}
 			}
 			printf("\n");
-			printf("Status: %02x %s%s",
+			printf("Status: %02x %s%s\n",
 						status[6],
 						status[6] & 0x10 ? "Error ":"",
 						status[6] & 0x01 ? "Home key":"");
