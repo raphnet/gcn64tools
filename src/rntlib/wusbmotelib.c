@@ -289,3 +289,121 @@ int wusbmotelib_dumpMemory(rnt_hdl_t hdl, uint8_t chn, uint8_t *dstBuf, char ver
 	return 0;
 }
 
+int wusbmotelib_readRegs(rnt_hdl_t hdl, uint8_t chn, uint8_t start_reg, uint8_t *dstBuf, int n_regs)
+{
+	struct i2c_transaction txn = {
+		.chn = chn,
+		.wr_len = 1, .wr_data = &start_reg,
+		.rd_len = n_regs, .rd_data = dstBuf,
+		.addr = 0x52,
+	};
+	int res;
+
+	if (n_regs > 256 || n_regs < 0) {
+		return -1;
+	}
+
+	res = wusbmote_i2c_transaction(hdl, &txn);
+	if (res < 0) {
+		return res;
+	}
+
+	if (txn.result) {
+		return -1;
+	}
+
+	return 0;
+}
+
+int wusbmotelib_writeRegs(rnt_hdl_t hdl, uint8_t chn, uint8_t start_reg, const uint8_t *srcBuf, int n_regs)
+{
+	uint8_t tmpbuf[n_regs + 1];
+	struct i2c_transaction txn = {
+		.chn = chn,
+		.wr_len = 1 + n_regs, .wr_data = tmpbuf,
+		.rd_len = 0,
+		.addr = 0x52,
+	};
+	int res;
+
+	if (n_regs > 256 || n_regs < 0) {
+		return -1;
+	}
+
+	tmpbuf[0] = start_reg;
+	memcpy(tmpbuf + 1, srcBuf, n_regs);
+
+	res = wusbmote_i2c_transaction(hdl, &txn);
+	if (res < 0) {
+		return res;
+	}
+
+	if (txn.result) {
+		return -1;
+	}
+
+	return 0;
+}
+
+
+void wusbmotelib_bufferToClassicPadData(const uint8_t *buf, classic_pad_data *dst, uint16_t peripheral_id, uint8_t high_res_mode)
+{
+	char mask_rx = 0;
+
+	switch(peripheral_id) {
+		case ID_GH_GUITAR:
+			mask_rx = 1;
+			default:
+		case ID_CLASSIC: dst->pad_type = PAD_TYPE_CLASSIC; break;
+		case ID_CLASSIC_PRO: dst->pad_type = PAD_TYPE_CLASSIC_PRO; break;
+	}
+
+	if (high_res_mode) {
+		// High resolution mode used by the NES/SNES Classic editions
+		//
+		// Bit    7    6    5    4    3    2    1    0
+		// Byte
+		// 0      LX<7:0>
+		// 1      RX<7:0>
+		// 2      LY<7:0>
+		// 3      RY<7:0>
+		// 4      LT<7:0>
+		// 5      RT<7:0>
+		// 6      BDR  BDD  BLT  B-   BH   B+   BRT  1
+		// 7      BZL  BB   BY   BA   BX   BZR  BDL  BDU
+
+		dst->lx = buf[0] - 0x80;
+		dst->rx = buf[1] - 0x80;
+		dst->ly = buf[2] - 0x80;
+		dst->ry = buf[3] - 0x80;
+		dst->lt = buf[4];
+		dst->rt = buf[5];
+		dst->buttons = ~(buf[6] << 8 | buf[7]);
+		dst->high_resolution = 1;
+	}
+	else {
+		// Reference: http://wiibrew.org/wiki/Wiimote/Extension_Controllers/Classic_Controller
+		//
+		//     7        6     5    4    3     2     1     0
+		// 0   RX<4:3>        LX<5:0>
+		// 1   RX<2:1>        LY<5:0>
+		// 2   RX<0>    LT<4:3>    RY<4:0>
+		// 3   LT<2:0>             RT<4:0>
+		// 4   BDR      BDD   BLT  B-   BH    B+    BRT   1
+		// 5   BZL      BB    BY   BA   BX    BZR   BDL   BDU
+		//
+		dst->lx = (buf[0] & 0x3f) - 32;
+		dst->ly = (buf[1] & 0x3f) - 32;
+		dst->rx = (((buf[0] & 0xc0) >> 3) | ((buf[1] & 0xc0) >> 5) | (buf[2]>>7)) - 16;
+		dst->ry = (buf[2] & 0x1f) - 16;
+		dst->lt = ((buf[3]>>5) | ((buf[2] & 0x60) >> 2) );
+		dst->rt = buf[3]&0x1f;
+		dst->buttons = ~(buf[4] << 8 | buf[5]);
+
+		if (mask_rx) {
+			dst->rx = 0;
+		}
+		dst->high_resolution = 0;
+	}
+}
+

@@ -6,6 +6,7 @@
 #include "gcn64_protocol.h"
 #include "pollraw.h"
 #include "hexdump.h"
+#include "psxlib.h"
 
 int pollraw_gamecube(rnt_hdl_t hdl, int chn)
 {
@@ -179,7 +180,103 @@ int pollraw_randnet_keyboard(rnt_hdl_t hdl, int chn)
 	}
 
 	return 0;
+}
 
+int pollraw_psx(rnt_hdl_t hdl, int chn)
+{
+	uint8_t request[2] = { 0x01, 0x42 };
+	uint8_t answer[9];
+	int res;
+
+	printf("Polling PSX controller\n");
+	printf("CTRL+C to stop\n");
+
+	while(1)
+	{
+		memset(answer, 0, sizeof(answer));
+
+		res = psxlib_exchange(hdl, chn, request, sizeof(request), answer, sizeof(answer));
+		if (res <= 0) {
+			printf("Error: psxlib_exchange returned %d\n", res);
+			break;
+		}
+
+		printHexBuf(answer, res);
+		break;
+	}
+
+	return 0;
+}
+
+int pollraw_wii(rnt_hdl_t hdl, int chn)
+{
+	uint8_t extmem[256];
+	uint16_t ext_id;
+	uint8_t status[16], prev_status[16];
+	uint8_t high_res = 0;
+	int res;
+	classic_pad_data pad_data;
+
+	printf("Polling PSX controller\n");
+	printf("CTRL+C to stop\n");
+
+	printf("Suspending polling. Please use --resume_polling later.\n");
+	rnt_suspendPolling(hdl, 1);
+
+	wusbmotelib_disableEncryption(hdl, chn);
+	wusbmotelib_dumpMemory(hdl, chn, extmem, 1);
+
+	ext_id = extmem[0xFA] << 8 | extmem[0xFF];
+	switch (ext_id)
+	{
+		case ID_NUNCHUK: printf("Nunchuk detected\n"); break;
+		case ID_CLASSIC: printf("Classic Controller detected\n"); break;
+		case ID_CLASSIC_PRO: printf("Classic Controller Pro detected\n"); break;
+		default:
+			printf("Extension ID 0x%04x not implemented\n", ext_id); return 0;
+		break;
+	}
+
+	// Enable high-resolution mode
+	high_res = 1;
+	if (high_res)
+	{
+		uint8_t regval = 0x03;
+		printf("Enabling high resolution reports\n");
+		res = wusbmotelib_writeRegs(hdl, chn, 0xFE, &regval, 1);
+		if (res) {
+			printf("Error enabling high resolution reports\n");
+			return -1;
+		}
+	}
+
+	while(1)
+	{
+		res = wusbmotelib_readRegs(hdl, chn, 0, status, sizeof(status));
+		if (res < 0) {
+			fprintf(stderr, "error reading registers\n");
+			return -1;
+		}
+
+		// Only display changes
+		if (0 == memcmp(prev_status, status, sizeof(status)))
+			continue;
+		memcpy(prev_status, status, sizeof(status));
+
+		printHexBuf(status, sizeof(status));
+
+		switch (ext_id)
+		{
+			case ID_CLASSIC:
+			case ID_CLASSIC_PRO:
+				wusbmotelib_bufferToClassicPadData(status, &pad_data, ext_id, high_res);
+				printf("LX: %4d, LY: %4d, RX: %4d, RY: %4d, LT: %4d, RT: %4d\n",
+						pad_data.lx, pad_data.ly, pad_data.rx, pad_data.ry,
+						pad_data.lt, pad_data.rt);
+
+				break;
+		}
+	}
 
 	return 0;
 }

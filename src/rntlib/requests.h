@@ -26,6 +26,9 @@
 /* PC engine to USB specific */
 #define RQ_PCENGINE_RAW					0x83
 
+/* PSX to USB specific */
+#define RQ_PSX_RAW						0x84
+
 /* Get controller type values */
 // Legacy values (GC/N64 specific)
 #define CTL_TYPE_NONE	0

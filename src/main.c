@@ -136,6 +136,8 @@ static void printUsage(void)
 	printf("  --gc_pollraw                       Read and display raw values from a gamecube controller\n");
 	printf("  --gc_pollraw_keyboard              Read and display raw values from a gamecube keyboard\n");
 	printf("  --n64_pollraw_keyboard             Read and display raw values from a N64 keyboard (untested)\n");
+	printf("  --psx_pollraw                      Read and display raw values from a Playstation controller\n");
+	printf("  --wii_pollraw                      Read and display raw values from a Wii Classic Controller\n");
 	printf("  --usbtest                          Perform a test transfer between host and adapter\n");
 }
 
@@ -197,6 +199,8 @@ static void printUsage(void)
 #define OPT_USB_TEST					349
 #define OPT_GC_POLLRAW_KEYBOARD			350
 #define OPT_N64_POLLRAW_KEYBOARD		351
+#define OPT_PSX_POLLRAW					352
+#define OPT_WII_POLLRAW					353
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -214,9 +218,11 @@ struct option longopts[] = {
 	{ "gc_getorigins", 0, NULL, OPT_GC_GETORIGINS },
 	{ "gc_calibrate", 0, NULL, OPT_GC_CALIBRATE },
 	{ "gc_getstatus_rumble", 0, NULL, OPT_GC_GETSTATUS_RUMBLE },
+	{ "wii_pollraw", 0, NULL, OPT_WII_POLLRAW },
 	{ "gc_pollraw", 0, NULL, OPT_GC_POLLRAW },
 	{ "gc_pollraw_keyboard", 0, NULL, OPT_GC_POLLRAW_KEYBOARD },
 	{ "n64_pollraw_keyboard", 0, NULL, OPT_N64_POLLRAW_KEYBOARD },
+	{ "psx_pollraw", 0, NULL, OPT_PSX_POLLRAW },
 	{ "n64_getcaps", 0, NULL, OPT_N64_GETCAPS },
 	{ "gc_getid", 0, NULL, OPT_GC_GETID },
 	{ "n64_mempak_dump", 0, NULL, OPT_N64_MEMPAK_DUMP },
@@ -572,6 +578,10 @@ int main(int argc, char **argv)
 				}
 				break;
 
+			case OPT_WII_POLLRAW:
+				retval = pollraw_wii(hdl, channel);
+				break;
+
 			case OPT_GC_POLLRAW:
 				retval = pollraw_gamecube(hdl, channel);
 				break;
@@ -582,6 +592,10 @@ int main(int argc, char **argv)
 
 			case OPT_N64_POLLRAW_KEYBOARD:
 				retval = pollraw_randnet_keyboard(hdl, channel);
+				break;
+
+			case OPT_PSX_POLLRAW:
+				retval = pollraw_psx(hdl, channel);
 				break;
 
 			case OPT_GC_GETSTATUS_RUMBLE:
