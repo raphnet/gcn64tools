@@ -93,11 +93,14 @@ G_MODULE_EXPORT void gc2n64_manager_upgrade(GtkWidget *win, gpointer data)
 	GET_UI_ELEMENT(GtkWindow, win_gc2n64);
 	gint res;
 	char *filename = NULL, *basename = NULL;
+	const char *sig;
 
 	updatelog_init(app);
 	updatelog_append("GC2N64 firmware update clicked");
 
 	app->inhibit_periodic_updates = 1;
+
+	sig = x2gcn64_getAdapterSignature(app->inf.adapter_type);
 
 	dialog = gtk_file_chooser_dialog_new("Open .hex file",
 										win_gc2n64,
@@ -109,6 +112,10 @@ G_MODULE_EXPORT void gc2n64_manager_upgrade(GtkWidget *win, gpointer data)
 										NULL);
 
 	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), hexfilter);
+
+	if (sig) {
+		fwupd_firmwareFolderShortcutAndSet(GTK_FILE_CHOOSER(dialog), app, sig);
+	}
 
 	res = gtk_dialog_run (GTK_DIALOG(dialog));
 	if (res == GTK_RESPONSE_ACCEPT) {
@@ -124,7 +131,7 @@ G_MODULE_EXPORT void gc2n64_manager_upgrade(GtkWidget *win, gpointer data)
 		updatelog_appendln("Selected file: %s", filename);
 
 		//if (!check_ihex_for_signature(filename, "41d938a8-6f8a-11e5-a45e-001bfca3c593")) {
-		if (!check_ihex_for_signature(filename, x2gcn64_getAdapterSignature(app->inf.adapter_type))) {
+		if (!check_ihex_for_signature(filename, sig)) {
 			const char *errstr = "Signature not found - This file is invalid or not meant for this adapter";
 			errorPopup(app, errstr);
 			updatelog_appendln(errstr);

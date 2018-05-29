@@ -73,7 +73,7 @@ static void update_preview_cb(GtkFileChooser *chooser, gpointer data)
 	g_free(listfile);
 }
 
-static void firmwareFolderShortcutAndSet(GtkFileChooser *chooser, struct application *app)
+void fwupd_firmwareFolderShortcutAndSet(GtkFileChooser *chooser, struct application *app, const char *sig)
 {
 	const char *locations[] = {
 		"firmwares", // For windows installations
@@ -96,11 +96,17 @@ static void firmwareFolderShortcutAndSet(GtkFileChooser *chooser, struct applica
 		}
 	}
 
-	/* Get the adapter signature (compatible firmware are in a directory
-	 * with the same name) */
-	if (rnt_getSignature(app->current_adapter_handle, adap_sig, sizeof(adap_sig)))
-	{
-		return;
+	if (sig) {
+		/* Use signature received in parameter. (This is for updating an adapter through
+		 * a first (USB) adapter. */
+		strncpy(adap_sig, sig, sizeof(adap_sig)-1);
+	} else {
+		/* Get the USB adapter signature (compatible firmware are in a directory
+		 * with the same name) */
+		if (rnt_getSignature(app->current_adapter_handle, adap_sig, sizeof(adap_sig)))
+		{
+			return;
+		}
 	}
 
 	/* Build the complete path */
@@ -342,7 +348,7 @@ G_MODULE_EXPORT void recover_usbadapter_firmware(GtkWidget *w, gpointer data)
 
 	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), hexfilter);
 
-	firmwareFolderShortcutAndSet(GTK_FILE_CHOOSER(dialog), app);
+	fwupd_firmwareFolderShortcutAndSet(GTK_FILE_CHOOSER(dialog), app, NULL);
 
 	updatelog_appendln("Running file dialog...");
 	res = gtk_dialog_run (GTK_DIALOG(dialog));
@@ -464,7 +470,7 @@ G_MODULE_EXPORT void update_usbadapter_firmware(GtkWidget *w, gpointer data)
 
 	gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), hexfilter);
 
-	firmwareFolderShortcutAndSet(GTK_FILE_CHOOSER(dialog), app);
+	fwupd_firmwareFolderShortcutAndSet(GTK_FILE_CHOOSER(dialog), app, NULL);
 
 	updatelog_appendln("Running file dialog...");
 	res = gtk_dialog_run (GTK_DIALOG(dialog));

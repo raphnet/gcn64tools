@@ -5,4 +5,6 @@
 
 gboolean closeAdapter(gpointer data);
 
+void fwupd_firmwareFolderShortcutAndSet(GtkFileChooser *chooser, struct application *app, const char *sig);
+
 #endif
