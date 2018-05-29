@@ -129,7 +129,7 @@ int pollraw_randnet_keyboard(rnt_hdl_t hdl, int chn)
 	int res;
 	int i;
 
-	printf("Polling randnet keyboard (experimental, not tested).\n");
+	printf("Polling randnet keyboard...\n");
 	printf("CTRL+C to stop\n");
 	while(1)
 	{
@@ -139,9 +139,10 @@ int pollraw_randnet_keyboard(rnt_hdl_t hdl, int chn)
 			break;
 		}
 
-		// Thanks to https://sites.google.com/site/consoleprotocols/home/nintendo-joy-bus-documentation/randnet-keyboard
+		// Big thanks to fraser125 for figuring this out, sharing it and testing!
 		//
-		// Note: Untested
+		// https://sites.google.com/site/consoleprotocols/home/nintendo-joy-bus-documentation/randnet-keyboard
+		//
 
 		// Status
 		//       Bit
@@ -154,8 +155,8 @@ int pollraw_randnet_keyboard(rnt_hdl_t hdl, int chn)
 		//    5  Keycode 3 LSB                            |
 		//    6  ? | ? | ? | Error | ? | ? | ? | Home key |
 		//
-		// Up to 3 keys can be pressed. When inactive, the key
-		// CMD 0x1300 answer: 00 00 00 00 00 00 00
+		// Up to 3 keys can be pressed. When inactive, the keycodes
+		// are simply set to zero.
 		//
 
 		if (memcmp(prev_status, status, sizeof(status))) {

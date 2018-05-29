@@ -136,7 +136,7 @@ static void printUsage(void)
 	printf("  --i2c_detect                       Try reading one byte from each I2C address (For WUSBMote v2)\n");
 	printf("  --gc_pollraw                       Read and display raw values from a gamecube controller\n");
 	printf("  --gc_pollraw_keyboard              Read and display raw values from a gamecube keyboard\n");
-	printf("  --n64_pollraw_keyboard             Read and display raw values from a N64 keyboard (untested)\n");
+	printf("  --n64_pollraw_keyboard             Read and display raw values from a N64 keyboard\n");
 	printf("  --psx_pollraw                      Read and display raw values from a Playstation controller\n");
 	printf("  --wii_pollraw                      Read and display raw values from a Wii Classic Controller\n");
 	printf("  --usbtest                          Perform a test transfer between host and adapter\n");
