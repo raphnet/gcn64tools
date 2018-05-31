@@ -37,6 +37,7 @@ static void desensitize_adapter_widgets(struct application *app)
 		GET_ELEMENT(GtkWidget, menuitem_suspend_polling),
 		GET_ELEMENT(GtkWidget, menuitem_resume_polling),
 		GET_ELEMENT(GtkWidget, menu_manage_gc2n64),
+		GET_ELEMENT(GtkWidget, menu_manage_x2gcwii),
 		NULL
 	};
 	int i;
@@ -134,6 +135,7 @@ static gboolean periodic_updater(gpointer data)
 		gtk_label_set_text(label_controller_type, rnt_controllerName(app->controller_type));
 
 		setsensitive_n64_adapter_widgets(app, FALSE);
+		setsensitive_gc_adapter_widgets(app, FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(btn_rumble_test), FALSE);
 
 		switch (app->controller_type)
