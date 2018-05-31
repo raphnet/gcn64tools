@@ -1,0 +1,13 @@
+[x2gcwii.snes-2.1.hex]
+md5=7a9f39ae71bf8ae22d1179b4279c8d16
+version=2.1
+date=2018-05-31
+notes=- Fix GBI compatibility
+
+[x2gcwii.snes-2.0.hex]
+md5=a071e544b413bc6594bb1bd2814a675d
+version=2.0
+date=2018-01-21
+notes=- Initial release
+
+
