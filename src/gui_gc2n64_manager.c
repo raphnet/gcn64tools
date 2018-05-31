@@ -19,7 +19,7 @@ G_MODULE_EXPORT void gc2n64_manager_show(GtkWidget *win, gpointer data)
 	}
 
 	if (x2gcn64_adapter_echotest(app->current_adapter_handle, channel, 0)) {
-		errorPopup(app, "No gamecube to N64 adapter detected.\nEither too old (pre 2.0) or not connected the first port.");
+		errorPopup(app, "No adapter detected. Not connected the first port or too old.");
 		return;
 	}
 
