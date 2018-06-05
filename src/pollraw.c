@@ -18,6 +18,8 @@ int pollraw_gamecube(rnt_hdl_t hdl, int chn)
 	int unique_y_seen = 0;
 	uint8_t seen_y_values[256] = { };
 
+	printf("Suspending polling. Please use --resume_polling later.\n");
+	rnt_suspendPolling(hdl, 1);
 
 	printf("CTRL+C to stop\n");
 	while(1)
@@ -59,6 +61,9 @@ int pollraw_gamecube_keyboard(rnt_hdl_t hdl, int chn)
 	uint8_t lrc;
 	uint8_t prev_keys[3] = { };
 	uint8_t active_keys[256] = { };
+
+	printf("Suspending polling. Please use --resume_polling later.\n");
+	rnt_suspendPolling(hdl, 1);
 
 	printf("Polling gamecube keyboard.\n");
 	printf("CTRL+C to stop\n");
@@ -129,8 +134,11 @@ int pollraw_randnet_keyboard(rnt_hdl_t hdl, int chn)
 	int res;
 	int i;
 
+	printf("Suspending polling. Please use --resume_polling later.\n");
+	rnt_suspendPolling(hdl, 1);
 	printf("Polling randnet keyboard...\n");
 	printf("CTRL+C to stop\n");
+
 	while(1)
 	{
 		res = gcn64lib_rawSiCommand(hdl, chn, getstatus, sizeof(getstatus), status, sizeof(status));
@@ -188,6 +196,9 @@ int pollraw_psx(rnt_hdl_t hdl, int chn)
 	uint8_t request[2] = { 0x01, 0x42 };
 	uint8_t answer[9];
 	int res;
+
+	printf("Suspending polling. Please use --resume_polling later.\n");
+	rnt_suspendPolling(hdl, 1);
 
 	printf("Polling PSX controller\n");
 	printf("CTRL+C to stop\n");
