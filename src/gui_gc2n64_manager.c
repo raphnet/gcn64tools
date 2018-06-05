@@ -140,7 +140,10 @@ G_MODULE_EXPORT void gc2n64_manager_upgrade(GtkWidget *win, gpointer data)
 		}
 		updatelog_append("Signature OK\n");
 
+		rnt_suspendPolling(app->current_adapter_handle, 1);
 		res = update_progress_dialog_run(app, win_gc2n64, basename, gc2n64_updateFunc);
+		rnt_suspendPolling(app->current_adapter_handle, 0);
+
 		if (res == GTK_RESPONSE_OK) {
 			const char *msg = "Update succeeded.";
 			infoPopup(app, msg);
