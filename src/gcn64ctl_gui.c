@@ -683,7 +683,9 @@ G_MODULE_EXPORT void write_n64_pak(GtkWidget *wid, gpointer data)
 			gtk_label_set_text(mempak_op_label, "Writing memory pack...");
 			gtk_widget_show(GTK_WIDGET(mempak_io_dialog));
 
+			rnt_suspendPolling(app->current_adapter_handle, 1);
 			res = gcn64lib_mempak_upload(app->current_adapter_handle, 0, mpke_getCurrentMempak(app), mempak_io_progress_cb, app);
+			rnt_suspendPolling(app->current_adapter_handle, 0);
 			gtk_widget_hide(GTK_WIDGET(mempak_io_dialog));
 
 			if (res != 0) {
@@ -722,7 +724,9 @@ G_MODULE_EXPORT void read_n64_pak(GtkWidget *wid, gpointer data)
 	gtk_label_set_text(mempak_op_label, "Reading memory pack...");
 
 	app->stop_mempak_io = 0;
+	rnt_suspendPolling(app->current_adapter_handle, 1);
 	res = gcn64lib_mempak_download(app->current_adapter_handle, 0, &mpk, mempak_io_progress_cb, app);
+	rnt_suspendPolling(app->current_adapter_handle, 0);
 
 	gtk_widget_hide(GTK_WIDGET(mempak_io_dialog));
 	if (res != 0) {
