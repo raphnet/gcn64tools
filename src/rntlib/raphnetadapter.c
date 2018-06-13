@@ -70,6 +70,11 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x003E, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO } },
 	{ OUR_VENDOR_ID, 0x003F, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO } },
 
+	{ OUR_VENDOR_ID, 0x004A, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter
+	{ OUR_VENDOR_ID, 0x004B, 1, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter (2 player mode)
+	{ OUR_VENDOR_ID, 0x004C, 1, { 63, 3, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter (3 player mode)
+	{ OUR_VENDOR_ID, 0x004D, 1, { 63, 4, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter (4 player mode)
+
 	{ OUR_VENDOR_ID, 0x0050, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // PC Engine to USB v1.0.0
 	{ OUR_VENDOR_ID, 0x0051, 1, { 63, 5, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // PC Engine to USB v1.0.0 (5 player mode)
 	{ OUR_VENDOR_ID, 0x0052, 1, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // PC Engine to USB v1.0.0 (2 player mode)
@@ -734,6 +739,8 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_PSX_ANALOG: return "PSX Analog";
 		case CTL_TYPE_PSX_NEGCON: return "NEGCON";
 		case CTL_TYPE_PSX_MOUSE: return "PSX Mouse";
+		case CTL_TYPE_MD6: return "Megadrive 6 button controller";
+		case CTL_TYPE_SMS_PADDLE: return "SMS Paddle Control";
 		default:
 			return "Unknown";
 	}
