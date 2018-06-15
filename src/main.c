@@ -39,6 +39,7 @@
 #include "wusbmotelib.h"
 #include "pcelib.h"
 #include "pollraw.h"
+#include "psxlib.h"
 
 static void printUsage(void)
 {
@@ -127,6 +128,10 @@ static void printUsage(void)
 	printf("  --gc_to_n64_store_current_mapping slot    Store the current mapping to one of the D-Pad slots.\n");
 	printf("\n");
 
+	printf("PSX controller and memory card commands:\n");
+	printf("  --psx_mc_dump                      Dump a memory card (Use with --outfile to write to a file)\n");
+	printf("\n");
+
 	printf("Development/Experimental/Research commands: (use at your own risk)\n");
 	printf("  --si_8bit_scan                     Try all possible 1-byte commands, to see which one a controller responds to.\n");
 	printf("  --si_16bit_scan                    Try all possible 2-byte commands, to see which one a controller responds to.\n");
@@ -203,6 +208,7 @@ static void printUsage(void)
 #define OPT_PSX_POLLRAW					352
 #define OPT_WII_POLLRAW					353
 #define OPT_SITXRX						354
+#define OPT_PSX_MC_DUMP					355
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -268,6 +274,7 @@ struct option longopts[] = {
 	{ "noconfirm", 0, NULL, OPT_NO_CONFIRM },
 	{ "pce_rawtest", 0, NULL, OPT_PCE_RAWTEST },
 	{ "usbtest", 0, NULL, OPT_USB_TEST },
+	{ "psx_mc_dump", 0, NULL, OPT_PSX_MC_DUMP },
 	{ },
 };
 
@@ -963,6 +970,46 @@ int main(int argc, char **argv)
 						break;
 					}
 				} while (nonstop);
+				break;
+
+			case OPT_PSX_MC_DUMP:
+				{
+					struct psx_memorycard mc_data;
+					int res;
+
+					rnt_suspendPolling(hdl, 1);
+					res = psxlib_readMemoryCard(hdl, channel, &mc_data);
+					rnt_suspendPolling(hdl, 0);
+
+					switch (res)
+					{
+						case 0:
+							// Todo: filename-based format selection
+							psxlib_writeMemoryCardToFile(&mc_data, outfile, PSXLIB_FILE_FORMAT_RAW);
+							break;
+
+						case PSXLIB_ERR_IO_ERROR:
+							fprintf(stderr, "IO Error\n");
+							break;
+						case PSXLIB_ERR_NO_CARD_DETECTED:
+							fprintf(stderr, "No card detected\n");
+							break;
+						case PSXLIB_ERR_NO_COMMAND_ACK:
+							fprintf(stderr, "No command ACK\n");
+							break;
+						case PSXLIB_ERR_INVALID_SECTOR:
+							fprintf(stderr, "Invalid sector\n");
+							break;
+						case PSXLIB_ERR_BAD_CHECKSUM:
+							fprintf(stderr, "Bad checksum\n");
+							break;
+						default:
+						case PSXLIB_ERR_UNKNOWN:
+							fprintf(stderr, "Error\n");
+							break;
+					}
+
+				}
 				break;
 		}
 
