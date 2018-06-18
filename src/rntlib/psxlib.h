@@ -28,4 +28,11 @@ int psxlib_readMemoryCardSector(rnt_hdl_t hdl, uint8_t chn, uint16_t sector, uin
 #define PSXLIB_FILE_FORMAT_RAW	0 // 128kB headerless image
 int psxlib_writeMemoryCardToFile(const struct psx_memorycard *mc_data, const char *filename, int format);
 
+#define PSX_CTL_ID_NEGCON		0x5A23
+#define PSX_CTL_ID_DIGITAL		0x5A41
+#define PSX_CTL_ID_ANALOG_RED	0x5A73
+#define PSX_CTL_ID_CONFIG		0x5AF3
+
+const char *psxlib_idToString(uint16_t id);
+
 #endif // _psxlib_h__

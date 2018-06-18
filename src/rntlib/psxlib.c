@@ -219,3 +219,14 @@ int psxlib_writeMemoryCardToFile(const struct psx_memorycard *mc_data, const cha
 	return 0;
 }
 
+const char *psxlib_idToString(uint16_t id)
+{
+	switch(id)
+	{
+		case PSX_CTL_ID_NEGCON: return "Negcon";
+		case PSX_CTL_ID_DIGITAL: return "Digital pad";
+		case PSX_CTL_ID_ANALOG_RED: return "Analog pad (red)";
+		case PSX_CTL_ID_CONFIG: return "Config mode";
+	}
+	return "(unknown)";
+}
