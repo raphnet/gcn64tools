@@ -144,6 +144,7 @@ static void printUsage(void)
 	printf("  --n64_pollraw_keyboard             Read and display raw values from a N64 keyboard\n");
 	printf("  --psx_pollraw                      Read and display raw values from a Playstation controller\n");
 	printf("  --wii_pollraw                      Read and display raw values from a Wii Classic Controller\n");
+	printf("  --db9_pollraw                      Read and display raw values fomr a DB9 adapter\n");
 	printf("  --usbtest                          Perform a test transfer between host and adapter\n");
 }
 
@@ -209,6 +210,7 @@ static void printUsage(void)
 #define OPT_WII_POLLRAW					353
 #define OPT_SITXRX						354
 #define OPT_PSX_MC_DUMP					355
+#define OPT_DB9_POLLRAW					356
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -275,6 +277,7 @@ struct option longopts[] = {
 	{ "pce_rawtest", 0, NULL, OPT_PCE_RAWTEST },
 	{ "usbtest", 0, NULL, OPT_USB_TEST },
 	{ "psx_mc_dump", 0, NULL, OPT_PSX_MC_DUMP },
+	{ "db9_pollraw", 0, NULL, OPT_DB9_POLLRAW },
 	{ },
 };
 
@@ -586,6 +589,10 @@ int main(int argc, char **argv)
 					printf("GC Calibrate command answer[%d]: ", n);
 					printHexBuf(cmd, n);
 				}
+				break;
+
+			case OPT_DB9_POLLRAW:
+				retval = pollraw_db9(hdl, channel);
 				break;
 
 			case OPT_WII_POLLRAW:

@@ -29,6 +29,9 @@
 /* PSX to USB specific */
 #define RQ_PSX_RAW						0x84
 
+/* DB9 (Atari/SMS/Genesis) to USB specific */
+#define RQ_DB9_RAW						0x85
+
 /* Get controller type values */
 // Legacy values (GC/N64 specific)
 #define CTL_TYPE_NONE	0

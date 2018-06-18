@@ -7,6 +7,8 @@
 #include "pollraw.h"
 #include "hexdump.h"
 #include "psxlib.h"
+#include "db9lib.h"
+#include "sleep.h"
 
 int pollraw_gamecube(rnt_hdl_t hdl, int chn)
 {
@@ -292,3 +294,30 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 
 	return 0;
 }
+
+int pollraw_db9(rnt_hdl_t hdl, int chn)
+{
+	uint8_t buf[32];
+	int res;
+
+	printf("Polling DB9 controller\n");
+	printf("CTRL+C to stop\n");
+
+	printf("Suspending polling. Please use --resume_polling later.\n");
+	rnt_suspendPolling(hdl, 1);
+
+	while (1)
+	{
+		res = db9lib_getPollData(hdl, chn, buf, sizeof(buf));
+		if (res < 0) {
+			break;
+		}
+
+		printHexBuf(buf, res);
+
+		sleep(1);
+	}
+
+	return 0;
+}
+
