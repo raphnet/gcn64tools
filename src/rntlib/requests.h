@@ -28,6 +28,8 @@
 
 /* PSX to USB specific */
 #define RQ_PSX_RAW						0x84
+#define FLG_NO_DESELECT					0x01
+#define FLG_LATE_8TH					0x02
 
 /* DB9 (Atari/SMS/Genesis) to USB specific */
 #define RQ_DB9_RAW						0x85
@@ -105,6 +107,7 @@
 #define CFG_PARAM_ENABLE_NUNCHUK_X_ACCEL	0x28
 #define CFG_PARAM_ENABLE_NUNCHUK_Y_ACCEL	0x29
 #define CFG_PARAM_ENABLE_NUNCHUK_Z_ACCEL	0x2A
+#define CFG_PARAM_AUTO_ENABLE_ANALOG		0x2B // For PSX controllers
 
 #define CFG_PARAM_DPAD_AS_BUTTONS		0x30
 #define CFG_PARAM_DPAD_AS_AXES			0x31
