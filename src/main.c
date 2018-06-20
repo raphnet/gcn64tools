@@ -985,7 +985,7 @@ int main(int argc, char **argv)
 					int res;
 
 					rnt_suspendPolling(hdl, 1);
-					res = psxlib_readMemoryCard(hdl, channel, &mc_data);
+					res = psxlib_readMemoryCard(hdl, channel, &mc_data, NULL);
 					rnt_suspendPolling(hdl, 0);
 
 					switch (res)
