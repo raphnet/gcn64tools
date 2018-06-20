@@ -47,6 +47,21 @@ static void desensitize_adapter_widgets(struct application *app)
 	}
 }
 
+static void setvisible_psx_adapter_widgets(struct application *app, int visible)
+{
+	GtkWidget *widgets[] = {
+		GET_ELEMENT(GtkWidget, btn_write_psx_memcard),
+		GET_ELEMENT(GtkWidget, btn_read_psx_memcard),
+		NULL
+	};
+	int i;
+
+	for (i=0; widgets[i]; i++) {
+		gtk_widget_set_visible(widgets[i], visible);
+	}
+
+}
+
 static void setsensitive_n64_adapter_widgets(struct application *app, int sensitive)
 {
 	GtkWidget *widgets[] = {
@@ -352,6 +367,14 @@ void syncGuiToCurrentAdapter(struct application *app)
 
 	sprintf(ports_str, "%d", info->caps.n_channels);
 	gtk_label_set_text(label_n_ports, ports_str);
+
+	if (info->caps.ports & RNTF_PORT_PSX) {
+		printf("PSX!\n");
+		setvisible_psx_adapter_widgets(app, 1);
+	} else {
+		setvisible_psx_adapter_widgets(app, 0);
+	}
+
 
 	periodic_updater(app);
 }

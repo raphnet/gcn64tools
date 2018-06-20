@@ -1381,6 +1381,32 @@ configurable parameters.</property>
                               </packing>
                             </child>
                             <child>
+                              <object class="GtkButton" id="btn_write_psx_memcard">
+                                <property name="label" translatable="yes">Write PSX memory card</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <signal name="clicked" handler="write_psx_memcard" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">7</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_read_psx_memcard">
+                                <property name="label" translatable="yes">Read PSX memory card</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">True</property>
+                                <signal name="clicked" handler="read_psx_memcard" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">True</property>
+                                <property name="fill">True</property>
+                                <property name="position">8</property>
+                              </packing>
+                            </child>
+                            <child>
                               <object class="GtkButton" id="btn_reset_adapter">
                                 <property name="label" translatable="yes">Reset adapter</property>
                                 <property name="visible">True</property>
@@ -1392,7 +1418,7 @@ configurable parameters.</property>
                               <packing>
                                 <property name="expand">True</property>
                                 <property name="fill">True</property>
-                                <property name="position">7</property>
+                                <property name="position">9</property>
                               </packing>
                             </child>
                           </object>
@@ -2366,5 +2392,15 @@ configurable parameters.</property>
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkFileFilter" id="psxcard_raw_filter">
+    <patterns>
+      <pattern>*.mc</pattern>
+      <pattern>*.mcr</pattern>
+      <pattern>*.psm</pattern>
+      <pattern>*.ps</pattern>
+      <pattern>*.ddf</pattern>
+      <pattern>*.mcd</pattern>
+    </patterns>
   </object>
 </interface>
