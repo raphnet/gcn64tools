@@ -98,8 +98,10 @@ static struct supported_adapter supported_adapters[] = {
 
 	{ OUR_VENDOR_ID, 0x0043, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // Saturn to USB adapter v2.0 (w/advXarch)
 
-	{ OUR_VENDOR_ID, 0x0044, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // PS1/PS2 controller to USB adapter (w/advXarch)
-	{ OUR_VENDOR_ID, 0x0045, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES } }, // PS1/PS2 controller to USB adapter (w/advXarch)
+	{ OUR_VENDOR_ID, 0x0044, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES, 0, RNTF_PORT_PSX } }, // PS1/PS2 controller to USB adapter (w/advXarch)
+	{ OUR_VENDOR_ID, 0x0045, 1, { 63, 2, 0, RNTF_DYNAMIC_FEATURES, 0, RNTF_PORT_PSX } }, // PS1/PS2 controller to USB adapter (2-player mode)
+	{ OUR_VENDOR_ID, 0x0046, 1, { 63, 3, 0, RNTF_DYNAMIC_FEATURES, 0, RNTF_PORT_PSX } }, // PS1/PS2 controller to USB adapter (3-player mode)
+	{ OUR_VENDOR_ID, 0x0047, 1, { 63, 4, 0, RNTF_DYNAMIC_FEATURES, 0, RNTF_PORT_PSX } }, // PS1/PS2 controller to USB adapter (4-player mode)
 
 	// Legacy devices (vusb, non-upgradeable and typically without configurable features)
 	{ OUR_VENDOR_ID, 0x0001, -1 }, // GCN64->USB v2.2

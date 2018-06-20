@@ -31,6 +31,15 @@
 // Flags obtainable through RQ_RNT_GET_SUPPORTED_CFG_PARAMS and company
 #define RNTF_DYNAMIC_FEATURES	0x80000000
 
+#define RNTF_PORT_NES		0x0001
+#define RNTF_PORT_SNES		0x0002
+#define RNTF_PORT_N64		0x0004
+#define RNTF_PORT_GAMECUBE	0x0008
+#define RNTF_PORT_WII		0x0010
+#define RNTF_PORT_PCE		0x0020
+#define RNTF_PORT_MD		0x0040 // megadrive
+#define RNTF_PORT_PSX		0x0080
+
 struct rnt_adap_caps {
 	int rpsize; // report size for adapter IO. (Set to non-zero to override default
 	int n_channels; // Number of ports. Defaults to 1 (if set to zero)
@@ -42,6 +51,11 @@ struct rnt_adap_caps {
 
 	// when non-zero, GUI imposes a 1ms minimum
 	int min_poll_interval;
+
+	// Bitfield indicating the type of physical ports (eg: PSX)
+	// (combined from RNTF_PORT_*). Used to know what kind of controller
+	// a given adapter may be able to use.
+	uint16_t ports;
 };
 
 struct rnt_dyn_features {
