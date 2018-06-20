@@ -130,6 +130,7 @@ static void printUsage(void)
 
 	printf("PSX controller and memory card commands:\n");
 	printf("  --psx_mc_dump                      Dump a memory card (Use with --outfile to write to a file)\n");
+	printf("  --psx_mc_write file                Write a file to a memory card\n");
 	printf("\n");
 
 	printf("Development/Experimental/Research commands: (use at your own risk)\n");
@@ -211,6 +212,7 @@ static void printUsage(void)
 #define OPT_SITXRX						354
 #define OPT_PSX_MC_DUMP					355
 #define OPT_DB9_POLLRAW					356
+#define OPT_PSX_MC_WRITE				357
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -277,6 +279,7 @@ struct option longopts[] = {
 	{ "pce_rawtest", 0, NULL, OPT_PCE_RAWTEST },
 	{ "usbtest", 0, NULL, OPT_USB_TEST },
 	{ "psx_mc_dump", 0, NULL, OPT_PSX_MC_DUMP },
+	{ "psx_mc_write", required_argument, NULL, OPT_PSX_MC_WRITE },
 	{ "db9_pollraw", 0, NULL, OPT_DB9_POLLRAW },
 	{ },
 };
@@ -988,34 +991,35 @@ int main(int argc, char **argv)
 					res = psxlib_readMemoryCard(hdl, channel, &mc_data, NULL);
 					rnt_suspendPolling(hdl, 0);
 
-					switch (res)
-					{
-						case 0:
-							// Todo: filename-based format selection
-							psxlib_writeMemoryCardToFile(&mc_data, outfile, PSXLIB_FILE_FORMAT_RAW);
-							break;
-
-						case PSXLIB_ERR_IO_ERROR:
-							fprintf(stderr, "IO Error\n");
-							break;
-						case PSXLIB_ERR_NO_CARD_DETECTED:
-							fprintf(stderr, "No card detected\n");
-							break;
-						case PSXLIB_ERR_NO_COMMAND_ACK:
-							fprintf(stderr, "No command ACK\n");
-							break;
-						case PSXLIB_ERR_INVALID_SECTOR:
-							fprintf(stderr, "Invalid sector\n");
-							break;
-						case PSXLIB_ERR_BAD_CHECKSUM:
-							fprintf(stderr, "Bad checksum\n");
-							break;
-						default:
-						case PSXLIB_ERR_UNKNOWN:
-							fprintf(stderr, "Error\n");
-							break;
+					if (res == 0) {
+						// Todo: filename-based format selection
+						psxlib_writeMemoryCardToFile(&mc_data, outfile, PSXLIB_FILE_FORMAT_RAW);
+					}
+					else {
+						fprintf(stderr, "%s\n", psxlib_getErrorString(res));
 					}
 
+				}
+				break;
+
+			case OPT_PSX_MC_WRITE:
+				{
+					struct psx_memorycard mc_data;
+
+					retval = psxlib_loadMemoryCardFromFile(optarg, PSXLIB_FILE_FORMAT_AUTO, &mc_data);
+					if (retval < 0) {
+						fprintf(stderr, "%s\n", psxlib_getErrorString(retval));
+						break;
+					}
+
+					rnt_suspendPolling(hdl, 1);
+					retval = psxlib_writeMemoryCard(hdl, channel, &mc_data, NULL);
+					rnt_suspendPolling(hdl, 0);
+
+					if (retval < 0) {
+						fprintf(stderr, "%s\n", psxlib_getErrorString(retval));
+						break;
+					}
 				}
 				break;
 		}

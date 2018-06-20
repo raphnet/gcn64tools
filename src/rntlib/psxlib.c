@@ -5,7 +5,7 @@
 #include "requests.h"
 #include "hexdump.h"
 
-#undef DEBUG_EXCHANGES
+//#define DEBUG_EXCHANGES
 
 int psxlib_exchange(rnt_hdl_t hdl, unsigned char channel, unsigned char *tx, unsigned char tx_len, unsigned char *rx, unsigned char max_rx)
 {
@@ -95,6 +95,92 @@ int psxlib_readMemoryCard(rnt_hdl_t hdl, uint8_t chn, struct psx_memorycard *dst
 	return 0;
 }
 
+int psxlib_writeMemoryCard(rnt_hdl_t hdl, uint8_t chn, const struct psx_memorycard *dst, uiio *u)
+{
+	uint16_t sector;
+	int res;
+
+	u = getUIIO(u);
+
+	u->cur_progress = 0;
+	u->max_progress = PSXLIB_MC_N_SECTORS;
+	u->progress_type = PROGRESS_TYPE_ADDRESS;
+	u->caption = "Writing to memory card...";
+	u->progressStart(u);
+
+	for (sector = 0; sector < PSXLIB_MC_N_SECTORS; sector++) {
+		res = psxlib_writeMemoryCardSector(hdl, chn, sector, dst->contents + sector * PSXLIB_MC_SECTOR_SIZE);
+		if (res) {
+			u->progressEnd(u, "Error");
+			return res;
+		}
+
+		u->cur_progress = sector;
+		u->update(u);
+	}
+
+	u->progressEnd(u, "Done");
+
+	return 0;
+}
+
+int psxlib_writeMemoryCardSector(rnt_hdl_t hdl, uint8_t chn, uint16_t sector, const uint8_t data[128])
+{
+	uint8_t request[128+10] = {
+		0x81, 'W', 0x00, 0x00, sector >> 8, sector & 0xff
+	};
+	uint8_t inbuf[128+10];
+	uint8_t flgchn;
+	int res;
+
+	memcpy(request + 6, data, 128);
+
+	// Xor of sector address and data bytes
+	request[134] = xorbuf(request + 4, 2+128);
+
+	//printf("Out: "); printHexBuf(request, sizeof(request));
+
+	flgchn = chn | (FLG_NO_DESELECT << 4);
+	res = psxlib_exchange(hdl, flgchn, request + 0, 50, inbuf + 0, 50);
+	res = psxlib_exchange(hdl, flgchn, request + 50, 50, inbuf + 60, 50);
+
+	flgchn = chn | (FLG_POST_DELAY << 4);
+	res = psxlib_exchange(hdl, flgchn, request + 50 + 50, 38, inbuf + 50 + 50, 38);
+
+	//printf("In: "); printHexBuf(inbuf, sizeof(inbuf));
+
+	// Now check if it worked.
+
+	// Memory card ID?
+	if (inbuf[2] != 0x5A) {
+		return PSXLIB_ERR_NO_CARD_DETECTED;
+	}
+	if (inbuf[3] != 0x5D) {
+		return PSXLIB_ERR_NO_CARD_DETECTED;
+	}
+
+	// Acknowledge?
+	if (inbuf[135] != 0x5C) {
+		return PSXLIB_ERR_NO_COMMAND_ACK;
+	}
+	if (inbuf[136] != 0x5D) {
+		return PSXLIB_ERR_NO_COMMAND_ACK;
+	}
+
+	// Examine the end byte
+	switch(inbuf[137])
+	{
+		case 0x4E: return PSXLIB_ERR_BAD_CHECKSUM;
+		case 0xFF: return PSXLIB_ERR_INVALID_SECTOR;
+		default: return PSXLIB_ERR_UNKNOWN;
+
+		// OK
+		case 0x47: return 0;
+	}
+
+	return 0;
+}
+
 int psxlib_readMemoryCardSector(rnt_hdl_t hdl, uint8_t chn, uint16_t sector, uint8_t dst[128])
 {
 	uint8_t request[6] = {
@@ -174,7 +260,6 @@ int psxlib_readMemoryCardSector(rnt_hdl_t hdl, uint8_t chn, uint16_t sector, uin
 	}
 	while (todo > 0);
 
-
 	/* Now a few checks */
 
 	// Check for memory card ID
@@ -240,6 +325,39 @@ int psxlib_writeMemoryCardToFile(const struct psx_memorycard *mc_data, const cha
 	return 0;
 }
 
+int psxlib_loadMemoryCardFromFile(const char *filename, int format, struct psx_memorycard *dst_mc_data)
+{
+	FILE *fptr;
+	long filesize;
+
+	if (!dst_mc_data || !filename) {
+		return PSXLIB_ERR_BAD_PARAM;
+	}
+
+	fptr = fopen(filename, "rb");
+	if (!fptr) {
+		return PSXLIB_ERR_FILE_NOT_FOUND;
+	}
+
+	fseek(fptr, 0, SEEK_END);
+	filesize = ftell(fptr);
+	fseek(fptr, 0, SEEK_SET);
+
+	if (filesize != PSXLIB_MC_TOTAL_SIZE) {
+		fclose(fptr);
+		return PSXLIB_ERR_FILE_FORMAT_NOT_SUPPORTED;
+	}
+
+	if (1 != fread(dst_mc_data->contents, PSXLIB_MC_TOTAL_SIZE, 1, fptr)) {
+		fclose(fptr);
+		return PSXLIB_ERR_FILE_READ_ERROR;
+	}
+
+	fclose(fptr);
+
+	return 0;
+}
+
 const char *psxlib_idToString(uint16_t id)
 {
 	switch(id)
@@ -250,6 +368,27 @@ const char *psxlib_idToString(uint16_t id)
 		case PSX_CTL_ID_CONFIG: return "Config mode";
 	}
 	return "(unknown)";
+}
+
+const char *psxlib_getErrorString(int code)
+{
+	if (code >=0)
+		return "OK";
+
+	switch (code)
+	{
+		case PSXLIB_ERR_IO_ERROR: return "IO Error";
+		case PSXLIB_ERR_NO_CARD_DETECTED: return "No card detected";
+		case PSXLIB_ERR_NO_COMMAND_ACK: return "No command ACK";
+		case PSXLIB_ERR_INVALID_SECTOR: return "Invalid sector";
+		case PSXLIB_ERR_BAD_CHECKSUM: return "Bad checksum";
+		case PSXLIB_ERR_INVALID_DATA: return "Invalid data";
+		case PSXLIB_ERR_FILE_NOT_FOUND: return "File not found / no access";
+		case PSXLIB_ERR_BUFFER_TOO_SMALL: return "Buffer too small";
+		case PSXLIB_ERR_FILE_FORMAT_NOT_SUPPORTED: return "File format not supported";
+	}
+
+	return "(unknown - internal error)";
 }
 
 /** \brief Read controller button/axis status
