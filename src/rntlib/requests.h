@@ -30,6 +30,7 @@
 #define RQ_PSX_RAW						0x84
 #define FLG_NO_DESELECT					0x01
 #define FLG_LATE_8TH					0x02
+#define FLG_POST_DELAY                  0x04
 
 /* DB9 (Atari/SMS/Genesis) to USB specific */
 #define RQ_DB9_RAW						0x85
