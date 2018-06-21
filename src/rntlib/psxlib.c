@@ -87,7 +87,10 @@ int psxlib_readMemoryCard(rnt_hdl_t hdl, uint8_t chn, struct psx_memorycard *dst
 		}
 
 		u->cur_progress = sector;
-		u->update(u);
+		if (u->update(u)) {
+			u->progressEnd(u, "Aborted");
+			return PSXLIB_ERR_USER_CANCELLED;
+		}
 	}
 
 	u->progressEnd(u, "Done");
@@ -116,7 +119,13 @@ int psxlib_writeMemoryCard(rnt_hdl_t hdl, uint8_t chn, const struct psx_memoryca
 		}
 
 		u->cur_progress = sector;
-		u->update(u);
+		if (u->update(u)) {
+			res = u->ask(UIIO_NOYES, "If you interrupt the transfer, some or all saves on your memory card will be corrupted.\n\nReally stop?");
+			if (res == UIIO_YES) {
+				u->progressEnd(u, "Aborted");
+				return PSXLIB_ERR_USER_CANCELLED;
+			}
+		}
 	}
 
 	u->progressEnd(u, "Done");
@@ -386,6 +395,7 @@ const char *psxlib_getErrorString(int code)
 		case PSXLIB_ERR_FILE_NOT_FOUND: return "File not found / no access";
 		case PSXLIB_ERR_BUFFER_TOO_SMALL: return "Buffer too small";
 		case PSXLIB_ERR_FILE_FORMAT_NOT_SUPPORTED: return "File format not supported";
+		case PSXLIB_ERR_USER_CANCELLED: return "Cancelled";
 	}
 
 	return "(unknown - internal error)";

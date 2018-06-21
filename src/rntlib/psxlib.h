@@ -14,6 +14,7 @@
 #define PSXLIB_ERR_FILE_NOT_FOUND	-8
 #define PSXLIB_ERR_FILE_FORMAT_NOT_SUPPORTED	-9
 #define PSXLIB_ERR_FILE_READ_ERROR	-10
+#define PSXLIB_ERR_USER_CANCELLED	-11
 
 #define PSXLIB_ERR_BUFFER_TOO_SMALL	-100
 #define PSXLIB_ERR_BAD_PARAM		-101
@@ -37,7 +38,7 @@ int psxlib_enableAnalog(rnt_hdl_t hdl, uint8_t chn, uint8_t enable);
 
 int psxlib_readMemoryCard(rnt_hdl_t hdl, uint8_t chn, struct psx_memorycard *dst, uiio *u);
 int psxlib_readMemoryCardSector(rnt_hdl_t hdl, uint8_t chn, uint16_t sector, uint8_t dst[128]);
-int psxlib_writeMemoryCard(rnt_hdl_t hdl, uint8_t chn, const struct psx_memorycard *dst, uiio *u);
+int psxlib_writeMemoryCard(rnt_hdl_t hdl, uint8_t chn, const struct psx_memorycard *src, uiio *u);
 int psxlib_writeMemoryCardSector(rnt_hdl_t hdl, uint8_t chn, uint16_t sector, const uint8_t data[128]);
 
 #define PSXLIB_FILE_FORMAT_AUTO	-1
