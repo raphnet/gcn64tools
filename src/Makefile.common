@@ -1,8 +1,8 @@
 include version.inc
 VERSION_STR=\"$(VERSION)\"
 
-CFLAGS=-Wall -g --std=gnu99 -DVERSION_STR=$(VERSION_STR) -I. -Irntlib $(HIDAPI_CFLAGS) $(ZLIB_CFLAGS) $(PLATFORM_CFLAGS)
-LDFLAGS=-g $(HIDAPI_LDFLAGS) $(ZLIB_LDFLAGS)
+CFLAGS=-Wall --std=gnu99 -DVERSION_STR=$(VERSION_STR) -I. -Irntlib $(HIDAPI_CFLAGS) $(ZLIB_CFLAGS) $(PLATFORM_CFLAGS) -O3
+LDFLAGS=$(HIDAPI_LDFLAGS) $(ZLIB_LDFLAGS)
 
 
 PROGS=gcn64ctl mempak_ls mempak_format mempak_extract_note mempak_insert_note mempak_rm mempak_convert gcn64ctl_gui
