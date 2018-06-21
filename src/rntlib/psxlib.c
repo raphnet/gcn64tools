@@ -445,7 +445,7 @@ int psxlib_pollStatus(rnt_hdl_t hdl, uint8_t chn, uint8_t port, uint8_t extra1, 
 		return PSXLIB_ERR_IO_ERROR;
 	}
 	if (res >= 3) {
-		id = answer[1] | answer[2]<<8;
+		id = answer[1]; // | answer[2]<<8;
 	} else {
 		return PSXLIB_ERR_INVALID_DATA;
 	}

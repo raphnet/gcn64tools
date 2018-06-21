@@ -51,11 +51,11 @@ int psxlib_writeMemoryCardSector(rnt_hdl_t hdl, uint8_t chn, uint16_t sector, co
 int psxlib_loadMemoryCardFromFile(const char *filename, int format, struct psx_memorycard *dst_mc_data);
 int psxlib_writeMemoryCardToFile(const struct psx_memorycard *mc_data, const char *filename, int format);
 
-#define PSX_CTL_ID_NONE			0xFFFF
-#define PSX_CTL_ID_NEGCON		0x5A23
-#define PSX_CTL_ID_DIGITAL		0x5A41
-#define PSX_CTL_ID_ANALOG_RED	0x5A73
-#define PSX_CTL_ID_CONFIG		0x5AF3
+#define PSX_CTL_ID_NONE			0xFF
+#define PSX_CTL_ID_NEGCON		0x23
+#define PSX_CTL_ID_DIGITAL		0x41
+#define PSX_CTL_ID_ANALOG_RED	0x73
+#define PSX_CTL_ID_CONFIG		0xF3
 
 const char *psxlib_idToString(uint16_t id);
 const char *psxlib_getErrorString(int code);
