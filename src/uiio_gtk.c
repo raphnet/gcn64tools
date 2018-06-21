@@ -146,6 +146,7 @@ static int progressUpdate(uiio *uiio)
 	gtk_progress_bar_set_text(GTK_PROGRESS_BAR(g_progressBar), uiio->caption);
 
 	if (uiio->progress_status == UIIO_PROGRESS_CANCELLED) {
+		uiio->progress_status = UIIO_PROGRESS_STARTED;
 		return 1;
 	}
 
