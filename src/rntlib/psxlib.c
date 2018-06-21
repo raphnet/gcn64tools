@@ -398,6 +398,7 @@ const char *psxlib_idToString(uint16_t id)
 		case PSX_CTL_ID_DIGITAL: return "Digital pad";
 		case PSX_CTL_ID_ANALOG_RED: return "Analog pad (red)";
 		case PSX_CTL_ID_CONFIG: return "Config mode";
+		case PSX_CTL_ID_NONE: return "No controller";
 	}
 	return "(unknown)";
 }
