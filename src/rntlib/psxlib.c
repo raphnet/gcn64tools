@@ -151,10 +151,33 @@ int psxlib_writeMemoryCardSector(rnt_hdl_t hdl, uint8_t chn, uint16_t sector, co
 
 	flgchn = chn | (FLG_NO_DESELECT << 4);
 	res = psxlib_exchange(hdl, flgchn, request + 0, 50, inbuf + 0, 50);
+	if (res < 0) {
+		return PSXLIB_ERR_IO_ERROR;
+	}
+	if (res != 50) {
+		printf("Incorrect length. Expected %d, received %d\n", 50, res);
+		return PSXLIB_ERR_IO_ERROR;
+	}
+
 	res = psxlib_exchange(hdl, flgchn, request + 50, 50, inbuf + 60, 50);
+	if (res < 0) {
+		return PSXLIB_ERR_IO_ERROR;
+	}
+	if (res != 50) {
+		printf("Incorrect length. Expected %d, received %d\n", 50, res);
+		return PSXLIB_ERR_IO_ERROR;
+	}
 
 	flgchn = chn | (FLG_POST_DELAY << 4);
 	res = psxlib_exchange(hdl, flgchn, request + 50 + 50, 38, inbuf + 50 + 50, 38);
+	if (res < 0) {
+		return PSXLIB_ERR_IO_ERROR;
+	}
+	if (res != 38) {
+		printf("Incorrect length. Expected %d, received %d\n", 38, res);
+		return PSXLIB_ERR_IO_ERROR;
+	}
+
 
 	//printf("In: "); printHexBuf(inbuf, sizeof(inbuf));
 
