@@ -1,1 +1,1 @@
-VERSION=2.1.6-dev
+VERSION=2.1.6
