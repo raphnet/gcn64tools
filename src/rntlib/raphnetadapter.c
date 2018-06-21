@@ -289,7 +289,7 @@ static int rnt_featToCaps(const struct rnt_dyn_features *dyn, struct rnt_adap_ca
 
 rnt_hdl_t rnt_openDevice(struct rnt_adap_info *dev)
 {
-	hid_device *hdev;
+	hid_device *hdev = NULL;
 	rnt_hdl_t hdl;
 	char version[64];
 
@@ -337,7 +337,9 @@ rnt_hdl_t rnt_openDevice(struct rnt_adap_info *dev)
 
 		if (rnt_getSupportedFeatures(hdl, &feats) < 0) {
 			fprintf(stderr, "Failed to query features\n");
-			hid_close(hdev);
+			if (hdev) {
+				hid_close(hdev);
+			}
 			free(hdl);
 			return NULL;
 		}

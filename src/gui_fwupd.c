@@ -80,7 +80,7 @@ void fwupd_firmwareFolderShortcutAndSet(GtkFileChooser *chooser, struct applicat
 		"../firmwares", // For linux compiled and run-in-place build
 		NULL
 	};
-	const char *basepath;
+	const char *basepath = NULL;
 	char adap_sig[64];
 	int i;
 	gchar *firmware_directory;
@@ -94,6 +94,11 @@ void fwupd_firmwareFolderShortcutAndSet(GtkFileChooser *chooser, struct applicat
 			basepath = locations[i];
 			break;
 		}
+	}
+
+	// None of the base directories were found. Give up.
+	if (!basepath) {
+		return;
 	}
 
 	if (sig) {
@@ -152,7 +157,7 @@ gpointer gcn64usb_updateFunc(gpointer data)
 	struct application *app = data;
 	int res;
 	int retries = 10;
-	int n_adapters_before;
+	int n_adapters_before = 0;
 	const char *mcu = "atmega32u2";
 	const char *xtra = "";
 	char cmdstr[1024];

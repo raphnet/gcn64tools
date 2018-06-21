@@ -7,7 +7,7 @@
 static int uiio_std_ask(int type, const char *fmt, ...)
 {
 	va_list ap;
-	int c, def;
+	int c, def = UIIO_NO;
 	char buf[8];
 
 	printf("\033[33;1mWARNING:\033[0m ");

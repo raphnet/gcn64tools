@@ -11,7 +11,7 @@ int psxlib_exchange(rnt_hdl_t hdl, unsigned char channel, unsigned char *tx, uns
 {
 	unsigned char cmd[4 + tx_len];
 	unsigned char rep[2 + 64];
-	int cmdlen, rx_len, n;
+	int cmdlen = 0, rx_len, n;
 
 	if (!hdl) {
 		return -1;
@@ -59,7 +59,7 @@ int psxlib_exchange(rnt_hdl_t hdl, unsigned char channel, unsigned char *tx, uns
 
 static uint8_t xorbuf(const uint8_t *buf, int len)
 {
-	uint8_t r;
+	uint8_t r = 0;
 	while (len--) {
 		r ^= *buf++;
 	}
