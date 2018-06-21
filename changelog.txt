@@ -1,6 +1,8 @@
-=== Version 2.1.6 (work in progress) ===
+=== Version 2.1.6 ===
  - Add Saturn to USB v2 adapter support
  - Add PSX to USB adapter support
+ - Support PSX memory card read/write through multitap (port 1)
+ - Add DB9 to USB adapter support
  - Add support for updating SNES and Classic controller to GC/Wii adapters
  - Add firmware update v1.1 for Classic controller to GC/Wii adapter
  - Add firmware update v2.1 for SNES controller to GC/Wii adapter
@@ -9,6 +11,8 @@
  - Command-line: Add Playstation controller raw poll test --psx_pollraw
  - Command-line: Add --si_txrx to send arbitrary byte sequences to a GC/N64
    controller/peripheral. (for research)
+ - Command-line: Add --n64_crcd and --n64_crca to calculate CRCs (for
+ research)
 
 === Version 2.1.5 ===
  - Add support for new NES to USB adapters (V2)
