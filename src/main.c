@@ -787,6 +787,11 @@ int main(int argc, char **argv)
 					}
 
 					txlen = strlen(optarg)/2;
+					if (txlen > sizeof(txbuf)) {
+						fprintf(stderr, "Too many bytes. Max %d\n", (int)sizeof(txbuf));
+						return -1;
+					}
+
 					for (i=0; i<txlen; i++) {
 						sscanf(optarg + (i*2), "%02x", &v);
 						txbuf[i] = v;
