@@ -1,10 +1,12 @@
-# Gamecube/N64 to USB adapter management tools
+# Raphnet adapter management tools
 
 ## Introduction
 
-This is the source code for a set of tools used to manage (configure, update the firmware, etc) raphnet V3 Gamecube/N64 controller to USB adapters.
+This is the source code for a set of tools used to manage (configure, update the firmware, etc) raphnet USB controller adapters.
 
 Project homepage: [Tools for the 3rd generation of raphnet GC/N64 to USB adapters](http://www.raphnet.net/programmation/gcn64tools/index_en.php)
+
+This project began as a tool to configure GC/N64 to USB adapters, but it has evolved to support all recent raphnet USB adapter products.
 
 ## License
 
@@ -17,7 +19,7 @@ The project is released under the General Public License version 3.
 
 ## Compiling the tools
 
-In the tool/ directory, just type make.
+In the src/ directory, just type make.
 
 There are a few dependencies:
  - libhidapi-dev
@@ -46,3 +48,7 @@ scripts/10-raphnet.rules
 For information on how to actually /use/ the tools, try --help. Ex:
 
 $ ./gcn64ctl --help
+
+To open the GUI:
+
+$ ./gcn64ctl_gui
