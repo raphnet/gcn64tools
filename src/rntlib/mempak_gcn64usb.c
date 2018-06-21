@@ -68,25 +68,28 @@ uint16_t pak_address_crc( uint16_t address )
     return address | crc;
 }
 
-/* __calc_data_crc is from libdragon which is public domain. */
+/* adapted from __calc_data_crc is from libdragon which is public domain. */
 
 /**
- * @brief Calculate the 8 bit CRC over a 32-byte block of data
+ * @brief Calculate the 8 bit CRC over a n-byte block of data
  *
  * This function calculates the 8 bit CRC appropriate for checking a 32-byte
  * block of data intended for or retrieved from a mempak.
  *
  * @param[in] data
- *            Pointer to 32 bytes of data to run the CRC over
+ *            Pointer to bytes of data to run the CRC over
+ *
+ * @param[in] n
+ *            Number of bytes of data to run the CRC over
  *
  * @return The calculated 8 bit CRC over the data
  */
-static uint8_t __calc_data_crc( const uint8_t *data )
+uint8_t pak_data_crc( const uint8_t *data, int n )
 {
     uint8_t ret = 0;
 	int i,j;
 
-    for( i = 0; i <= 32; i++ )
+    for( i = 0; i <= n; i++ )
     {
         for( j = 7; j >= 0; j-- )
         {
@@ -99,7 +102,7 @@ static uint8_t __calc_data_crc( const uint8_t *data )
 
             ret <<= 1;
 
-            if( i < 32 )
+            if( i < n )
             {
                 if( data[i] & (0x01 << j) )
                 {
@@ -136,7 +139,7 @@ int gcn64lib_mempak_readBlock(rnt_hdl_t hdl, unsigned char channel, unsigned sho
 
 	memcpy(dst, cmd, 0x20);
 
-	crc = __calc_data_crc(dst);
+	crc = pak_data_crc(dst, 32);
 	if (crc != cmd[32]) {
 		fprintf(stderr, "Bad CRC reading address 0x%04x. Expected 0x%02x, got 0x%02x\n", addr, crc, cmd[32]);
 		return -2;
@@ -239,7 +242,7 @@ int gcn64lib_mempak_writeBlock(rnt_hdl_t hdl, unsigned char channel, unsigned sh
 		return res;
 	}
 
-	data_crc = __calc_data_crc(data);
+	data_crc = pak_data_crc(data, 32);
 
 	if (res != data_crc) {
 		//fprintf(stderr, "CRC error\n");
