@@ -137,6 +137,8 @@ static void printUsage(void)
 	printf("  --si_8bit_scan                     Try all possible 1-byte commands, to see which one a controller responds to.\n");
 	printf("  --si_16bit_scan                    Try all possible 2-byte commands, to see which one a controller responds to.\n");
 	printf("  --si_txrx hexbytes                 Send specified bytes and maybe receive something. Ex: --si_txrx 400000 (read GC controller)\n");
+	printf("  --n64_crca address                 Calculate the CRC for a N64 PAK address\n");
+	printf("  --n64_crcd hexbytes                Calculate the CRC for a block of N64 PAK data (normally 32 bytes)\n");
 	printf("  --n64_mempak_stresstest            Perform a set of controller pak tests (WARNING: Erases the pack with random data)\n");
 	printf("  --n64_mempak_fill_with_ff          Fill a controller pak with 0xFF (WARNING: Erases your data)\n");
 	printf("  --i2c_detect                       Try reading one byte from each I2C address (For WUSBMote v2)\n");
@@ -213,6 +215,8 @@ static void printUsage(void)
 #define OPT_PSX_MC_DUMP					355
 #define OPT_DB9_POLLRAW					356
 #define OPT_PSX_MC_WRITE				357
+#define OPT_N64_CRCA					358
+#define OPT_N64_CRCD					359
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -281,6 +285,8 @@ struct option longopts[] = {
 	{ "psx_mc_dump", 0, NULL, OPT_PSX_MC_DUMP },
 	{ "psx_mc_write", required_argument, NULL, OPT_PSX_MC_WRITE },
 	{ "db9_pollraw", 0, NULL, OPT_DB9_POLLRAW },
+	{ "n64_crca", required_argument, NULL, OPT_N64_CRCA },
+	{ "n64_crcd", required_argument, NULL, OPT_N64_CRCD },
 	{ },
 };
 
@@ -382,6 +388,60 @@ int main(int argc, char **argv)
 			case '?':
 				fprintf(stderr, "Unrecognized argument. Try -h\n");
 				return -1;
+
+			case OPT_N64_CRCA:
+				{
+					long addr;
+					char *e;
+
+					addr = strtol(optarg, &e, 0);
+					if (e==optarg) {
+						fprintf(stderr, "Invalid address\n");
+						return 1;
+					}
+					if (addr < 0 || addr > 0xffff) {
+						fprintf(stderr, "Address out of range\n");
+						return 1;
+					}
+
+					printf("Computing pak address crc for 0x%04x\n", (uint16_t)addr);
+					printf("CRCA: 0x%04x\n", pak_address_crc(addr));
+					return 0;
+				}
+				break;
+
+			case OPT_N64_CRCD:
+				{
+					uint8_t inbuf[64];
+					int inlen;
+					int v, i;
+					uint8_t crc;
+
+					if (strlen(optarg) % 2) {
+						fprintf(stderr, "Error: An even number of nibbles must be specified, and no space between bytes. Ex: 1301 not 13 01\n");
+						return -1;
+					}
+
+					inlen = strlen(optarg)/2;
+					if (inlen > sizeof(inbuf)) {
+						fprintf(stderr, "Error: Too many bytes. Max %d\n", (int)sizeof(inbuf));
+						return -1;
+					}
+
+					for (i=0; i<inlen; i++) {
+						sscanf(optarg + (i*2), "%02x", &v);
+						inbuf[i] = v;
+					}
+
+					printf("Computing pak data CRC[%d] : ", inlen);
+					printHexBuf(inbuf, inlen);
+
+					crc = pak_data_crc(inbuf, inlen);
+
+					printf("CRCD: 0x%02x\n", crc);
+					return 0;
+				}
+				break;
 		}
 	}
 
