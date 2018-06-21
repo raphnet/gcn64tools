@@ -195,9 +195,10 @@ int pollraw_randnet_keyboard(rnt_hdl_t hdl, int chn)
 
 int pollraw_psx(rnt_hdl_t hdl, int chn)
 {
-	uint8_t request[2] = { 0x01, 0x42 };
 	uint8_t answer[9];
+	uint16_t id;
 	int res;
+	uint8_t incfg;
 
 	printf("Suspending polling. Please use --resume_polling later.\n");
 	rnt_suspendPolling(hdl, 1);
@@ -205,18 +206,58 @@ int pollraw_psx(rnt_hdl_t hdl, int chn)
 	printf("Polling PSX controller\n");
 	printf("CTRL+C to stop\n");
 
+	res = psxlib_pollStatus(hdl, chn, PSXLIB_PORT_1, 0, 0, &id, answer, sizeof(answer));
+	if (res <= 0) {
+		printf("Error: psxlib_pollStatus returned %d\n", res);
+		return -1;
+	}
+	printHexBuf(answer, res);
+
+	printf("ID = 0x%04x : %s\n", id, psxlib_idToString(id));
+
+	printf("Trying to enter configuration mode...\n");
+	res = psxlib_enterConfigurationMode(hdl, chn, PSXLIB_PORT_1, 1, &incfg);
+	if (res < 0) {
+		printf("Error: psxlib_enterConfigurationMode returned %d\n", res);
+		return -1;
+	}
+
+	if (!incfg) {
+		printf("Not in configuration mode (real digital pad?)\n");
+	} else {
+		printf("In configuration mode\n");
+
+		printf("Enabling analog mode\n");
+		psxlib_enableAnalog(hdl, chn, PSXLIB_PORT_1, 1);
+
+		printf("Unlocking rumble\n");
+		psxlib_unlockRumble(hdl, chn, PSXLIB_PORT_1);
+
+		printf("Exiting configuration mode\n");
+		// Exit configuration mode
+		psxlib_enterConfigurationMode(hdl, chn, PSXLIB_PORT_1, 0, &incfg);
+	}
+
 	while(1)
 	{
+		int i;
+
 		memset(answer, 0, sizeof(answer));
 
-		res = psxlib_exchange(hdl, chn, request, sizeof(request), answer, sizeof(answer));
-		if (res <= 0) {
-			printf("Error: psxlib_exchange returned %d\n", res);
-			break;
-		}
+		for (i=PSXLIB_PORT_1; i<=PSXLIB_PORT_4; i++) {
 
-		printHexBuf(answer, res);
-		break;
+			res = psxlib_pollStatus(hdl, chn, i, 0x00, 0x00, &id, answer, sizeof(answer));
+			if (res <= 0) {
+				printf("Error: psxlib_pollStatus returned %d\n", res);
+				return -1;
+			}
+
+			printf("Port %d : ID = 0x%04x : %s : ", i+1, id, psxlib_idToString(id));
+			printHexBuf(answer, res);
+		}
+		printf("-------------------\n");
+
+		sleep(1);
 	}
 
 	return 0;
