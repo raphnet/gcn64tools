@@ -31,10 +31,15 @@ struct psx_memorycard {
 
 int psxlib_exchange(rnt_hdl_t hdl, unsigned char channel, unsigned char *tx, unsigned char tx_len, unsigned char *rx, unsigned char max_rx);
 
-int psxlib_pollStatus(rnt_hdl_t hdl, uint8_t chn, uint8_t extra1, uint8_t extra2, uint16_t *dst_id, uint8_t *dst_data, int datatmaxlen);
-int psxlib_enterConfigurationMode(rnt_hdl_t hdl, uint8_t chn, uint8_t enter, uint8_t *entered);
-int psxlib_unlockRumble(rnt_hdl_t hdl, uint8_t chn);
-int psxlib_enableAnalog(rnt_hdl_t hdl, uint8_t chn, uint8_t enable);
+#define PSXLIB_PORT_1 0
+#define PSXLIB_PORT_2 1
+#define PSXLIB_PORT_3 2
+#define PSXLIB_PORT_4 3
+
+int psxlib_pollStatus(rnt_hdl_t hdl, uint8_t chn, uint8_t port, uint8_t extra1, uint8_t extra2, uint16_t *dst_id, uint8_t *dst_data, int datatmaxlen);
+int psxlib_enterConfigurationMode(rnt_hdl_t hdl, uint8_t chn, uint8_t port, uint8_t enter, uint8_t *entered);
+int psxlib_unlockRumble(rnt_hdl_t hdl, uint8_t chn, uint8_t port);
+int psxlib_enableAnalog(rnt_hdl_t hdl, uint8_t chn, uint8_t port, uint8_t enable);
 
 int psxlib_readMemoryCard(rnt_hdl_t hdl, uint8_t chn, struct psx_memorycard *dst, uiio *u);
 int psxlib_readMemoryCardSector(rnt_hdl_t hdl, uint8_t chn, uint16_t sector, uint8_t dst[128]);

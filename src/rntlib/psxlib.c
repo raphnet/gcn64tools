@@ -427,13 +427,14 @@ const char *psxlib_getErrorString(int code)
 /** \brief Read controller button/axis status
  *
  * \param hdl The adapter handle
- * \param chn The channel
+ * \param chn The channel (adapter ports)
+ * \param port The port number (in multitap)
  * \param dst_ud Pointer to an uint16_t to hold the controller ID received. May be NULL.
  * \param dst_data Pointer to buffer for status data (what comes after the ID). May be NULL.
  */
-int psxlib_pollStatus(rnt_hdl_t hdl, uint8_t chn, uint8_t extra1, uint8_t extra2, uint16_t *dst_id, uint8_t *dst_data, int datatmaxlen)
+int psxlib_pollStatus(rnt_hdl_t hdl, uint8_t chn, uint8_t port, uint8_t extra1, uint8_t extra2, uint16_t *dst_id, uint8_t *dst_data, int datatmaxlen)
 {
-	uint8_t cmd_poll[] = { 0x01, 0x42, 0x00, extra1, extra2 };
+	uint8_t cmd_poll[] = { 0x01+port, 0x42, 0x00, extra1, extra2 };
 	uint8_t answer[9];
 	uint16_t id;
 	int res;
@@ -463,9 +464,9 @@ int psxlib_pollStatus(rnt_hdl_t hdl, uint8_t chn, uint8_t extra1, uint8_t extra2
 	return res - 3;
 }
 
-int psxlib_enterConfigurationMode(rnt_hdl_t hdl, uint8_t chn, uint8_t enter, uint8_t *in_cfg)
+int psxlib_enterConfigurationMode(rnt_hdl_t hdl, uint8_t chn, uint8_t port, uint8_t enter, uint8_t *in_cfg)
 {
-	uint8_t cmd_enter_config[9] = { 0x01, 0x43, 0x00, enter ? 0x01 : 0x00 };
+	uint8_t cmd_enter_config[9] = { 0x01 + port, 0x43, 0x00, enter ? 0x01 : 0x00 };
 	uint8_t answer[9];
 	uint16_t id;
 	int res;
@@ -476,7 +477,7 @@ int psxlib_enterConfigurationMode(rnt_hdl_t hdl, uint8_t chn, uint8_t enter, uin
 	}
 
 	// Check if it worked (ID must change)
-	res = psxlib_pollStatus(hdl, chn, 0, 0, &id, NULL, 0);
+	res = psxlib_pollStatus(hdl, chn, PSXLIB_PORT_1, 0, 0, &id, NULL, 0);
 	if (res < 0) {
 		return -1;
 	}
@@ -491,9 +492,9 @@ int psxlib_enterConfigurationMode(rnt_hdl_t hdl, uint8_t chn, uint8_t enter, uin
 /** Enable/Disable analog mode (and the LED)
  * \param Enter analog mode if non-zero
  */
-int psxlib_enableAnalog(rnt_hdl_t hdl, uint8_t chn, uint8_t enable)
+int psxlib_enableAnalog(rnt_hdl_t hdl, uint8_t chn, uint8_t port, uint8_t enable)
 {
-	uint8_t cmd_enter_analog[] = { 0x01, 0x44, 0x00, enable ? 0x01 : 0x00, 0x02 };
+	uint8_t cmd_enter_analog[] = { 0x01 + port, 0x44, 0x00, enable ? 0x01 : 0x00, 0x02 };
 	uint8_t answer[9];
 	int res;
 
@@ -501,9 +502,9 @@ int psxlib_enableAnalog(rnt_hdl_t hdl, uint8_t chn, uint8_t enable)
 	return res;
 }
 
-int psxlib_unlockRumble(rnt_hdl_t hdl, uint8_t chn)
+int psxlib_unlockRumble(rnt_hdl_t hdl, uint8_t chn, uint8_t port)
 {
-	uint8_t cmd_unlock_rumble[] = { 0x01, 0x4D, 0x00,
+	uint8_t cmd_unlock_rumble[] = { 0x01 + port, 0x4D, 0x00,
 			0x00, 0x01, 0xff, 0xff, 0xff, 0xff
 	};
 	uint8_t answer[9];
