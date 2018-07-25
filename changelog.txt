@@ -1,3 +1,8 @@
+=== Version 2.1.7 ===
+ - New firmware (v1.0.1) for the PSX to USB adapter
+ - Add a workaround for PSX adapter version 1.0.0 which used an incorrect
+ signature.
+
 === Version 2.1.6 ===
  - Add Saturn to USB v2 adapter support
  - Add PSX to USB adapter support
