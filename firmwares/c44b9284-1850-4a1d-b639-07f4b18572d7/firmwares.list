@@ -1,0 +1,6 @@
+[psx2usb-1.0.1.hex]
+md5=d9dadec554152974bdca4fc06a7a6a78
+version=1.0.1
+date=2018-07-25
+notes=- Correct an issue where programming the wrong firmware was possible.
+
