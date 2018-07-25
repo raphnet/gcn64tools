@@ -40,6 +40,20 @@
 #define RNTF_PORT_MD		0x0040 // megadrive
 #define RNTF_PORT_PSX		0x0080
 
+struct rnt_dyn_features {
+	/* The requests/commands (eg: RQ_RNT_RESET_FIRMWARE) the adapter supports */
+	int n_supported_requests;
+	uint8_t supported_requests[256];
+
+	/* The modes that can be passed to CFG_PARAM_MODE */
+	int n_supported_modes;
+	uint8_t supported_modes[256];
+
+	/* Which of CFG_PARAM_* have an effect */
+	int n_supported_cfg_params;
+	uint8_t supported_cfg_params[256];
+};
+
 struct rnt_adap_caps {
 	int rpsize; // report size for adapter IO. (Set to non-zero to override default
 	int n_channels; // Number of ports. Defaults to 1 (if set to zero)
@@ -56,21 +70,11 @@ struct rnt_adap_caps {
 	// (combined from RNTF_PORT_*). Used to know what kind of controller
 	// a given adapter may be able to use.
 	uint16_t ports;
+
+	// Only use when RNTF_DYNAMIC_FEATURES is set in features
+	struct rnt_dyn_features dyn_features;
 };
 
-struct rnt_dyn_features {
-	/* The requests/commands (eg: RQ_RNT_RESET_FIRMWARE) the adapter supports */
-	int n_supported_requests;
-	uint8_t supported_requests[256];
-
-	/* The modes that can be passed to CFG_PARAM_MODE */
-	int n_supported_modes;
-	uint8_t supported_modes[256];
-
-	/* Which of CFG_PARAM_* have an effect */
-	int n_supported_cfg_params;
-	uint8_t supported_cfg_params[256];
-};
 
 struct rnt_adap_info {
 	wchar_t str_prodname[PRODNAME_MAXCHARS];
@@ -130,6 +134,7 @@ const char *rnt_controllerName(int type);
 int rnt_bootloader(rnt_hdl_t hdl);
 int rnt_reset(rnt_hdl_t hdl);
 int rnt_getSupportedFeatures(rnt_hdl_t hdl, struct rnt_dyn_features *dst_dynfeat);
+int rnt_getInfo(rnt_hdl_t hdl, struct rnt_adap_info *info);
 
 
 #endif // _raphnetadapter_h__

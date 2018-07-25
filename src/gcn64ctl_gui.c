@@ -613,7 +613,9 @@ G_MODULE_EXPORT void adapterSelected(GtkComboBox *cb, gpointer data)
 			return;
 		}
 
-		memcpy(&app->current_adapter_info, info, sizeof(struct rnt_adap_info));
+		// Copy info from using the open adapter handle (it has more data that
+		// was only fetched after opening)
+		rnt_getInfo(app->current_adapter_handle, &app->current_adapter_info);
 
 		syncGuiToCurrentAdapter(app);
 		gtk_widget_set_sensitive(adapter_details, TRUE);

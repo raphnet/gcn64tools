@@ -29,6 +29,8 @@
 
 static int dusbr_verbose = 0;
 
+static int rnt_readSupportedFeatures(rnt_hdl_t hdl, struct rnt_dyn_features *dst_dynfeat);
+
 #define IS_VERBOSE()	(dusbr_verbose)
 
 struct supported_adapter {
@@ -337,7 +339,7 @@ rnt_hdl_t rnt_openDevice(const struct rnt_adap_info *dev)
 	if (dev->caps.features & RNTF_DYNAMIC_FEATURES) {
 		struct rnt_dyn_features feats;
 
-		if (rnt_getSupportedFeatures(hdl, &feats) < 0) {
+		if (rnt_readSupportedFeatures(hdl, &feats) < 0) {
 			fprintf(stderr, "Failed to query features\n");
 			if (hdev) {
 				hid_close(hdev);
@@ -354,6 +356,7 @@ rnt_hdl_t rnt_openDevice(const struct rnt_adap_info *dev)
 		printHexBuf(feats.supported_cfg_params, feats.n_supported_cfg_params);
 #endif
 		rnt_featToCaps(&feats, &hdl->info.caps);
+		memcpy(&hdl->info.caps.dyn_features, &feats, sizeof(struct rnt_dyn_features));
 	}
 
 	// Fixme: This will eventually match something else (i.e not gcn64-usb) by mistake..
@@ -809,7 +812,25 @@ int rnt_reset(rnt_hdl_t hdl)
 	return 0;
 }
 
+int rnt_getInfo(rnt_hdl_t hdl, struct rnt_adap_info *info)
+{
+	if (hdl && info) {
+		memcpy(info, &hdl->info, sizeof(struct rnt_adap_info));
+		return 0;
+	}
+	return -1;
+}
+
 int rnt_getSupportedFeatures(rnt_hdl_t hdl, struct rnt_dyn_features *dst_dynfeat)
+{
+	if (hdl && dst_dynfeat) {
+		memcpy(dst_dynfeat, &hdl->info.caps.dyn_features, sizeof(struct rnt_dyn_features));
+		return 0;
+	}
+	return -1;
+}
+
+static int rnt_readSupportedFeatures(rnt_hdl_t hdl, struct rnt_dyn_features *dst_dynfeat)
 {
 	unsigned char cmd[64];
 	int n, i;
