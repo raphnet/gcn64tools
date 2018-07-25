@@ -173,7 +173,7 @@ int gcn64lib_blockIO(rnt_hdl_t hdl, struct blockio_op *iops, int n_iops)
 	if (!hdl)
 		return -1;
 
-	if (!(hdl->caps.features & RNTF_BLOCK_IO)) {
+	if (!(hdl->info.caps.features & RNTF_BLOCK_IO)) {
 		return gcn64lib_blockIO_compat(hdl, iops, n_iops);
 	}
 	else {

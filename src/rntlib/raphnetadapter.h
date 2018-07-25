@@ -98,7 +98,7 @@ void rnt_freeListCtx(struct rnt_adap_list_ctx *ctx);
 struct rnt_adap_info *rnt_listDevices(struct rnt_adap_info *info, struct rnt_adap_list_ctx *ctx);
 int rnt_countDevices(void);
 
-rnt_hdl_t rnt_openDevice(struct rnt_adap_info *dev);
+rnt_hdl_t rnt_openDevice(const struct rnt_adap_info *dev);
 
 #define GCN64_FLG_OPEN_BY_SERIAL	1	/** Serial must match */
 #define GCN64_FLG_OPEN_BY_PATH		2	/** Path must match */

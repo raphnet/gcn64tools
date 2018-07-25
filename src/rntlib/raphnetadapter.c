@@ -287,7 +287,7 @@ struct rnt_adap_info *rnt_listDevices(struct rnt_adap_info *info, struct rnt_ada
 
 static int rnt_featToCaps(const struct rnt_dyn_features *dyn, struct rnt_adap_caps *caps);
 
-rnt_hdl_t rnt_openDevice(struct rnt_adap_info *dev)
+rnt_hdl_t rnt_openDevice(const struct rnt_adap_info *dev)
 {
 	hid_device *hdev = NULL;
 	rnt_hdl_t hdl;
@@ -301,6 +301,8 @@ rnt_hdl_t rnt_openDevice(struct rnt_adap_info *dev)
 		perror("malloc");
 		return NULL;
 	}
+
+	memcpy(&hdl->info, dev, sizeof(struct rnt_adap_info));
 
 	// Legacy devices (raphnet products based on V-USB) do not have
 	// an hid data interface. Those adapters cannot be managed/configures.
@@ -351,7 +353,7 @@ rnt_hdl_t rnt_openDevice(struct rnt_adap_info *dev)
 		printf("Supported configuration parameters: ");
 		printHexBuf(feats.supported_cfg_params, feats.n_supported_cfg_params);
 #endif
-		rnt_featToCaps(&feats, &dev->caps);
+		rnt_featToCaps(&feats, &hdl->info.caps);
 	}
 
 	// Fixme: This will eventually match something else (i.e not gcn64-usb) by mistake..
@@ -360,12 +362,10 @@ rnt_hdl_t rnt_openDevice(struct rnt_adap_info *dev)
 
 		if (3 == sscanf(version, "%d.%d.%d", &a, &b, &c)) {
 			if ((a >= 3) && (b >= 4) && (c > 0)) {
-				dev->caps.features |= RNTF_TRIGGER_AS_BUTTONS;
+				hdl->info.caps.features |= RNTF_TRIGGER_AS_BUTTONS;
 			}
 		}
 	}
-
-	memcpy(&hdl->caps, &dev->caps, sizeof(hdl->caps));
 
 	return hdl;
 }

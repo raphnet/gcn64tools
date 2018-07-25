@@ -11,7 +11,7 @@ struct rnt_adap_list_ctx {
 typedef struct _rnt_hdl_t {
 	hid_device *hdev;
 	int report_size;
-	struct rnt_adap_caps caps;
+	struct rnt_adap_info info;
 	// Version info for legacy devices
 	uint8_t version_major, version_minor;
 } *rnt_hdl_t;
