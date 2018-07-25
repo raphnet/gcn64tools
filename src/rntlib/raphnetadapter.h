@@ -122,6 +122,7 @@ int rnt_suspendPolling(rnt_hdl_t hdl, unsigned char suspend);
 int rnt_setConfig(rnt_hdl_t hdl, unsigned char param, unsigned char *data, unsigned char len);
 int rnt_getConfig(rnt_hdl_t hdl, unsigned char param, unsigned char *rx, unsigned char rx_max);
 int rnt_getVersion(rnt_hdl_t hdl, char *dst, int dstmax);
+int rnt_getSignatureCompat(rnt_hdl_t hdl, char *dst, int dstmax);
 int rnt_getSignature(rnt_hdl_t hdl, char *dst, int dstmax);
 int rnt_forceVibration(rnt_hdl_t hdl, unsigned char channel, unsigned char vibrate);
 int rnt_getControllerType(rnt_hdl_t hdl, int chn);

@@ -108,7 +108,7 @@ void fwupd_firmwareFolderShortcutAndSet(GtkFileChooser *chooser, struct applicat
 	} else {
 		/* Get the USB adapter signature (compatible firmware are in a directory
 		 * with the same name) */
-		if (rnt_getSignature(app->current_adapter_handle, adap_sig, sizeof(adap_sig)))
+		if (rnt_getSignatureCompat(app->current_adapter_handle, adap_sig, sizeof(adap_sig)))
 		{
 			return;
 		}
@@ -448,7 +448,7 @@ G_MODULE_EXPORT void update_usbadapter_firmware(GtkWidget *w, gpointer data)
 
 	app->recovery_mode = 0;
 
-	if (rnt_getSignature(app->current_adapter_handle, adap_sig, sizeof(adap_sig))) {
+	if (rnt_getSignatureCompat(app->current_adapter_handle, adap_sig, sizeof(adap_sig))) {
 		char *errmsg = "Could not read adapter signature - This file may not be meant for it (Bricking hazard!)";
 		errorPopup(app, errmsg);
 		updatelog_appendln(errmsg);

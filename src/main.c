@@ -1008,7 +1008,7 @@ int main(int argc, char **argv)
 				{
 					char sig[64];
 
-					if (0 == rnt_getSignature(hdl, sig, sizeof(sig))) {
+					if (0 == rnt_getSignatureCompat(hdl, sig, sizeof(sig))) {
 						printf("Signature: %s\n", sig);
 					}
 				}

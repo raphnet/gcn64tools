@@ -669,6 +669,31 @@ int rnt_getSignature(rnt_hdl_t hdl, char *dst, int dstmax)
 	return 0;
 }
 
+int rnt_getSignatureCompat(rnt_hdl_t hdl, char *dst, int dstmax)
+{
+	int res;
+
+	res = rnt_getSignature(hdl, dst, dstmax);
+	if (res != 0) {
+		return res;
+	}
+
+	/* The first units of PSX to USB adapters that were shipped had the wrong
+	 * signature in their firmware (the one from the SNES adapter was used). Detect
+	 * those using the VID/PID and SNES signature and return the correct signature
+	 * instead. */
+	if (hdl->info.usb_vid == 0x289b) {
+		if ((hdl->info.usb_pid >= 0x0044) && (hdl->info.usb_pid <= 0x0047)) {
+			if (strcmp(dst, "1f67edc6-ab99-11e7-90ab-001bfca3c593") == 0) {
+				strncpy(dst, "c44b9284-1850-4a1d-b639-07f4b18572d7", dstmax);
+				fprintf(stderr, "PSX to USB signature correction enabled\n");
+			}
+		}
+	}
+
+	return 0;
+}
+
 int rnt_forceVibration(rnt_hdl_t hdl, unsigned char channel, unsigned char vibrate)
 {
 	unsigned char cmd[3];

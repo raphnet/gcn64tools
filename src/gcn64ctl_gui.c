@@ -296,7 +296,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 		gtk_widget_hide(GET_ELEMENT(GtkWidget, lbl_no_configurable_params));
 	}
 
-	if (rnt_getSignature(app->current_adapter_handle, adap_sig, sizeof(adap_sig))) {
+	if (rnt_getSignatureCompat(app->current_adapter_handle, adap_sig, sizeof(adap_sig))) {
 	} else {
 		printf("Adapter signature: %s\n", adap_sig);
 	}
