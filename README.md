@@ -28,6 +28,9 @@ There are a few dependencies:
  - libgtk-3-dev (for the gui only)
  - libxml2-utils (for the gui)
 
+The gui also has run-time dependencies:
+ - dfu-programmer (for firmware updates)
+
 Provided you have all the dependencies installed, under Linux at least, it should
 compile without errors. For other environments such has MinGW, there are provisions
 in the makefile to auto-detect and tweak the build accordingly, but it if fails, be
