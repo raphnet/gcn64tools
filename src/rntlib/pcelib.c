@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 #include "pcelib.h"
 #include "requests.h"
 #include "hexdump.h"
