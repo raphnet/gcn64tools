@@ -98,7 +98,8 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0041, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // NES to USB adpater v2.0 (w/advXarch)
 	{ OUR_VENDOR_ID, 0x0042, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES } }, // Dual NES to USB adpater v2.0 (w/advXarch)
 
-	{ OUR_VENDOR_ID, 0x0043, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // Saturn to USB adapter v2.0 (w/advXarch)
+	{ OUR_VENDOR_ID, 0x0043, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Saturn to USB adapter v2.0 (w/advXarch)
+	{ OUR_VENDOR_ID, 0x0055, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Saturn to USB adapter v2.0 (w/advXarch) - mouse mode
 
 	{ OUR_VENDOR_ID, 0x0044, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE, 3, RNTF_PORT_PSX } }, // PS1/PS2 controller to USB adapter (w/advXarch)
 	{ OUR_VENDOR_ID, 0x0045, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE, 4, RNTF_PORT_PSX } }, // PS1/PS2 controller to USB adapter (2-player mode)
