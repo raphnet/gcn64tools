@@ -1,3 +1,9 @@
+[gcn64usb-3.5.1.hex]
+md5=9104d56c74a6764094906e8dcd9c74fd
+version=3.5.1
+date=2018-04-10
+notes=- Fix never-stopping vibration issues (Dolphin)
+
 [gcn64usb-3.5.0.hex]
 md5=de82c8c5ffb47e24adbf46acef987d14
 version=3.5.0
