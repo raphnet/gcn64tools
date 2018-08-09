@@ -1,3 +1,7 @@
+=== Version 2.1.8 ===
+ - Add support for Saturn to USB adapter in mouse mode
+ - Add Gamecube/N64 to USB firmware version 3.5.1
+
 === Version 2.1.7 ===
  - New firmware (v1.0.1) for the PSX to USB adapter
  - Add a workaround for PSX adapter version 1.0.0 which used an incorrect
