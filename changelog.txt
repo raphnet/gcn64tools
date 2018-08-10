@@ -1,3 +1,8 @@
+=== Version x.x.x ===
+ - Add SNES to USB adapter firmware version 2.2.0:
+   - Add mouse support
+ - Add support for SNES to USB adapter in mouse mode
+
 === Version 2.1.8 ===
  - Add support for Saturn to USB adapter in mouse mode
  - Add Gamecube/N64 to USB firmware version 3.5.1
