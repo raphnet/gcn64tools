@@ -106,6 +106,10 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0046, 3, { 63, 3, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE, 5, RNTF_PORT_PSX } }, // PS1/PS2 controller to USB adapter (3-player mode)
 	{ OUR_VENDOR_ID, 0x0047, 1, { 63, 4, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE, 6, RNTF_PORT_PSX } }, // PS1/PS2 controller to USB adapter (4-player mode)
 
+	{ OUR_VENDOR_ID, 0x0056, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // SNES to USB adapter v2.1 (w/advXarch)
+	{ OUR_VENDOR_ID, 0x0057, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES } }, // Dual SNES to USB adapter v2.1 (w/advXarch)
+	{ OUR_VENDOR_ID, 0x0058, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // SNES mouse to USB adapter v2.2
+
 	// Legacy devices (vusb, non-upgradeable and typically without configurable features)
 	{ OUR_VENDOR_ID, 0x0001, -1 }, // GCN64->USB v2.2
 	{ OUR_VENDOR_ID, 0x0003, -1, { 0, 4 } }, // 4nes4snes 1.4.2, 1.5
@@ -907,6 +911,7 @@ static int rnt_featToCaps(const struct rnt_dyn_features *dyn, struct rnt_adap_ca
 		{	RNTF_NUNCHUK_ACC_ENABLE,	CFG_PARAM_ENABLE_NUNCHUK_Z_ACCEL	},
 		{	RNTF_DISABLE_ANALOG_TRIGGERS,	CFG_PARAM_DISABLE_ANALOG_TRIGGERS	},
 		{	RNTF_AUTO_ENABLE_ANALOG,	CFG_PARAM_AUTO_ENABLE_ANALOG	},
+		{	RNTF_SNES_MOUSE,		CFG_PARAM_SNES_MOUSE_SPEED },
 
 		{	}
 	};
