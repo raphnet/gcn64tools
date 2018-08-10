@@ -1,3 +1,9 @@
+[snes2usb_v2-2.2.0.hex]
+md5=b2c0cbab8b987ed41317ec9b81b19c87
+version=2.2.0
+date=2018-08-10
+notes=- Add mouse support
+
 [snes2usb_v2-2.1.0.hex]
 md5=13c4438c021c2cfb8b5336d22942856f
 version=2.1.0
