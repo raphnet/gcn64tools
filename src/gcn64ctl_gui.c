@@ -193,6 +193,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 		{ 0, GET_ELEMENT(GtkWidget, lbl_controller_type), RNTF_CONTROLLER_TYPE, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, label_controller_type), RNTF_CONTROLLER_TYPE, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, frame_adapter_mode), RNTF_ADAPTER_MODE, TRUE },
+		{ 0, GET_ELEMENT(GtkWidget, box_snes_mouse_speed), RNTF_SNES_MOUSE, TRUE },
 
 		{ CFG_PARAM_FULL_SLIDERS, GET_ELEMENT(GtkWidget, chkbtn_gc_full_sliders), RNTF_GC_FULL_SLIDERS, TRUE },
 		{ CFG_PARAM_INVERT_TRIG, GET_ELEMENT(GtkWidget, chkbtn_gc_invert_trig), RNTF_GC_INVERT_TRIG, TRUE },
@@ -215,6 +216,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 	GET_UI_ELEMENT(GtkLabel, label_device_path);
 	GET_UI_ELEMENT(GtkLabel, label_n_ports);
 	GET_UI_ELEMENT(GtkSpinButton, pollInterval0);
+	GET_UI_ELEMENT(GtkSpinButton, snesMouseSpeed);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_1p_joystick_mode);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_2p_joystick_mode);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_3p_joystick_mode);
@@ -309,6 +311,15 @@ void syncGuiToCurrentAdapter(struct application *app)
 		}
 	}
 
+	if (app->current_adapter_info.caps.features & RNTF_SNES_MOUSE) {
+		n = rnt_getConfig(app->current_adapter_handle, CFG_PARAM_SNES_MOUSE_SPEED, buf, sizeof(buf));
+		if (n == 1) {
+			printf("snes mouse speed: %d\n", buf[0]);
+			gtk_spin_button_set_value(snesMouseSpeed, (gdouble)buf[0]);
+		}
+	}
+
+
 	if (app->current_adapter_info.caps.min_poll_interval) {
 		gtk_spin_button_set_range(pollInterval0, (gdouble)app->current_adapter_info.caps.min_poll_interval, 40);
 	} else {
@@ -377,6 +388,26 @@ void syncGuiToCurrentAdapter(struct application *app)
 
 
 	periodic_updater(app);
+}
+
+G_MODULE_EXPORT void snesMouseSpeedChanged(GtkWidget *win, gpointer data)
+{
+	struct application *app = data;
+	GET_UI_ELEMENT(GtkSpinButton, snesMouseSpeed);
+	gdouble value;
+	int n;
+	unsigned char buf;
+
+	value = gtk_spin_button_get_value(snesMouseSpeed);
+	printf("Value: %d\n", (int)value);
+	buf = (int)value;
+
+	n = rnt_setConfig(app->current_adapter_handle, CFG_PARAM_SNES_MOUSE_SPEED, &buf, 1);
+	if (n != 0) {
+		errorPopup(app, "Error setting configuration");
+		deselect_adapter(app);
+		rebuild_device_list_store(data, NULL);
+	}
 }
 
 G_MODULE_EXPORT void pollIntervalChanged(GtkWidget *win, gpointer data)
