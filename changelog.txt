@@ -1,4 +1,5 @@
-=== Version x.x.x ===
+=== Version 2.1.9 ===
+ - N64 controller pak editor: Fix japanese note name display, fix a crash
  - Add SNES to USB adapter firmware version 2.2.0:
    - Add mouse support
  - Add support for SNES to USB adapter in mouse mode
