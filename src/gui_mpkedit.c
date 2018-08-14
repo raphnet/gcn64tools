@@ -106,18 +106,17 @@ void mpke_syncTitle(struct application *app)
 	}
 }
 
-void mpke_updateFilename(struct application *app, char *filename)
+void mpke_updateFilename(struct application *app, const char *filename)
 {
 	if (app->mpke->filename) {
-		// The filename always comes from gtk_file_chooser_get_filename
 		g_free(app->mpke->filename);
 	}
 
-	app->mpke->filename = filename;
+	app->mpke->filename = g_strdup(filename);
 	mpke_syncTitle(app);
 }
 
-void mpke_replaceMpk(struct application *app, mempak_structure_t *mpk, char *filename)
+void mpke_replaceMpk(struct application *app, mempak_structure_t *mpk, const char *filename)
 {
 
 	if (app->mpke->mpk) {
@@ -127,6 +126,7 @@ void mpke_replaceMpk(struct application *app, mempak_structure_t *mpk, char *fil
 	app->mpke->mpk = mpk;
 
 	mpke_syncModel(app);
+
 	mpke_updateFilename(app, filename);
 }
 
