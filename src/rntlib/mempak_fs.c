@@ -4,7 +4,13 @@
  * @ingroup mempak
  */
 #include <string.h>
+#include <stdio.h>
+#include <wchar.h>
 #include "mempak.h"
+
+#ifndef ARRAY_SIZE
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
+#endif
 
 /**
  * @defgroup mempak Mempak Filesystem Routines
@@ -43,6 +49,31 @@
 /** @brief Last valid block that can contain user data */
 #define BLOCK_VALID_LAST    0x7F
 /** @} */
+
+static void ucs2_to_utf8(wchar_t *src, int len, char *dst)
+{
+	int c;
+
+	while (len--) {
+		c = *src++;
+
+		if (c < 128) {
+			*dst++ = c;
+		} else if (c < 0x0800) {
+			*dst++ = (0xc0 | ((c>>6) & 0x1f));
+			*dst++ = (0x80 | (c & 0x3f));
+		} else if (c < 0x10000) {
+			*dst++ = (0xE0 | ((c>>12) & 0x0f));
+			*dst++ = (0x80 | ((c>>6) & 0x3f));
+			*dst++ = (0x80 | (c & 0x3f));
+		} else {
+			*dst++ = (0xF0 | ((c>>18) & 0x07));
+			*dst++ = (0x80 | ((c>>12) & 0x3f));
+			*dst++ = (0x80 | ((c>>6) & 0x3f));
+			*dst++ = (0x80 | (c & 0x3f));
+		}
+	}
+}
 
 /**
  * @brief Read a sector from a mempak
@@ -184,6 +215,7 @@ static int __validate_toc( uint8_t *sector )
     return -1;
 }
 
+#if 0
 /**
  * @brief Convert a N64 mempak character to ASCII
  *
@@ -246,7 +278,75 @@ static char __n64_to_ascii( char c )
     /* Default to space for unprintables */
     return ' ';
 }
+#endif
 
+static const wchar_t n64codepoints[] = {
+	// 15: " "
+	' ','0','1','2','3','4','5','6','7','8','9',
+	'A','B','C','D','E','F','G','H','I','J','K',
+	'L','M','N','O','P','Q','R','S','T','U','V',
+	'W','X','Y','Z','!','"','#','`','*','+',',','-',
+	'.','/',':','=','?','@',
+	// 。゛゜ァィゥェォ
+	0x3002,0x212B,0x212C,0x30A1,0x30A3,0x30A5,0x30A7,0x30A9,
+	// ッャュョ
+	0x30C3,0x30E3,0x30E5,0x30E7,
+	// ヲンアイウエオ
+	0x30F2,0x30F3,0x30A2,0x30A4,0x30A6,0x30A8,0x30AA,
+	// カキクケコ
+	0x30AB,0x30AD,0x30AF,0x30B1,0x30B3,
+	// サシスセソ
+	0x30B5,0x30B7,0x30B9,0x30BB,0x30BD,
+	// タチツテト
+	0x30BF,0x30C1,0x30C4,0x30C6,0x30C8,
+	// ナニヌネノ
+	0x30CA,0x30CB,0x30CC,0x30CD,0x30CE,
+	// ハヒフヘホ
+	0x30CF,0x30D2,0x30D5,0x30D8,0x30DB,
+	// マミムメモ
+	0x30DE,0x30DF,0x30E0,0x30E1,0x30E2,
+	// ヤユヨ
+	0x30E4,0x30E6,0x30E8,
+	// ラリルレロ
+	0x30E9,0x30EA,0x30EB,0x30EC,0x30ED,
+	// ワ
+	0x30EF,
+	// ガギグゲゴ
+	0x30AC,0x30AE,0x30B0,0x30B2,0x30B4,
+	// ザジズゼゾ
+	0x30B6,0x30B8,0x30BA,0x30BC,0x30BE,
+	// ダヂヅデド
+	0x30C0,0x30C2,0x30C5,0x30C7,0x30C9,
+	// バビブベボ
+	0x30D0,0x30D3,0x30D6,0x30D9,0x30DC,
+	// パピプペポ
+	0x30D1,0x30D4,0x30D7,0x30DA,0x30DD,
+};
+
+static uint8_t __ucs2_to_n64(wchar_t c)
+{
+	int i;
+	for (i=0; i<ARRAY_SIZE(n64codepoints); i++) {
+		if (n64codepoints[i] == c) {
+			return i + 15;
+		}
+	}
+	return 0;
+}
+
+static wchar_t __n64_to_ucs2( uint8_t c )
+{
+	c -= 15;
+
+	if (c < ARRAY_SIZE(n64codepoints)) {
+		return n64codepoints[c];
+	}
+
+    /* Default to space for unprintables */
+    return ' ';
+}
+
+#if 0
 /**
  * @brief Convert an ASCII character to a N64 mempak character
  *
@@ -312,6 +412,7 @@ static char __ascii_to_n64( char c )
     /* Default to space for unprintables */
     return 0x0F;
 }
+#endif
 
 /**
  * @brief Check a region read from a mempak entry for validity
@@ -383,24 +484,27 @@ int mempak_parse_entry( const uint8_t *tnote, entry_structure_t *note )
     note->entry_id = 255;
 
     /* Translate n64 to ascii */
-    memset( note->name, 0, sizeof( note->name ) );
+    memset( note->wname, 0, sizeof( note->wname ) );
 
     for( int i = 0; i < 16; i++ )
     {
-        note->name[i] = __n64_to_ascii( tnote[0x10 + i] );
+        note->wname[i] = __n64_to_ucs2( tnote[0x10 + i] );
     }
 
     /* Find the last position */
     for( int i = 0; i < 17; i++ )
     {
-        if( note->name[i] == 0 )
+        if( note->wname[i] == 0 )
         {
             /* Here it is! */
-            note->name[i]   = '.';
-            note->name[i+1] = __n64_to_ascii( tnote[0xC] );
+            note->wname[i]   = '.';
+            note->wname[i+1] = __n64_to_ucs2( tnote[0xC] );
             break;
         }
     }
+
+	memset(note->utf8_name, 0, sizeof(note->utf8_name));
+	ucs2_to_utf8(note->wname, 19, note->utf8_name);
 
     /* Validate entries */
     if( note->inode < BLOCK_VALID_FIRST || note->inode > BLOCK_VALID_LAST )
@@ -435,7 +539,7 @@ int mempak_parse_entry( const uint8_t *tnote, entry_structure_t *note )
  */
 static int __write_note( entry_structure_t *note, uint8_t *out_note )
 {
-    char tname[19];
+    wchar_t tname[19];
     if( !out_note || !note ) { return -1; }
 
     /* Start with baseline */
@@ -459,13 +563,13 @@ static int __write_note( entry_structure_t *note, uint8_t *out_note )
     out_note[9] = 0x03;
 
     /* Translate ascii to n64 */
-    memcpy( tname, note->name, sizeof( note->name ) );
+    memcpy( tname, note->wname, sizeof( note->wname ) );
     for( int i = 18; i >= 0; i-- )
     {
         if( tname[i] == '.' )
         {
             /* Found extension */
-            out_note[0xC] = __ascii_to_n64( tname[i+1] );
+            out_note[0xC] = __ucs2_to_n64( tname[i+1] );
 
             /* Erase these as they have been taken care of */
             tname[i] = 0;
@@ -475,7 +579,7 @@ static int __write_note( entry_structure_t *note, uint8_t *out_note )
 
     for( int i = 0; i < 16; i++ )
     {
-        out_note[0x10 + i] = __ascii_to_n64( tname[i] );
+        out_note[0x10 + i] = __ucs2_to_n64( tname[i] );
     }
 
     return 0;
@@ -990,7 +1094,7 @@ int write_mempak_entry_data( mempak_structure_t *mpk, entry_structure_t *entry, 
     if( !entry || !data ) { return -1; }
     if( entry->blocks < 1 ) { return -1; }
     if( __validate_region( entry->region ) ) { return -1; }
-    if( strlen( entry->name ) == 0 ) { return -1; }
+    if( wcslen( entry->wname ) == 0 ) { return -1; }
 
     /* Grab valid TOC */
     if( (toc = __get_valid_toc( mpk )) <= 0 )

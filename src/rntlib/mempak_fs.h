@@ -8,6 +8,7 @@
 
 #include "mempak.h"
 #include <stdint.h>
+#include <wchar.h>
 
 /**
  * @addtogroup mempak
@@ -43,15 +44,24 @@ typedef struct entry_structure
      * The complete list of valid ASCII characters in a note name is:
      *
      * <pre>
-     * ABCDEFGHIJKLMNOPQRSTUVWXYZ!"#`*+,-./:=?\@
+     *  0123456789
+	 * ABCDEFGHIJKLMNOPQRSTUVWXYZ!"#`*+,-./:=?\@
+	 * 。゛゜ァィゥェォッャュョヲンアイウエオ
+	 * カキクケコサシスセソタチツテトナ
+	 * ニヌネノハヒフヘホマミムメモヤユ
+	 * ヨラリルレロワガギグゲゴザジズゼ
+	 * ゾダヂヅデドバビブベボパピプペポ
      * </pre>
+	 * 
      *
      * The space character is also allowed.  Any other character will be
      * converted to a space before writing to the mempak.
      *
      * @see #__n64_to_ascii and #__ascii_to_n64
      */
-    char name[19];
+    //char name[19];
+	wchar_t wname[19];
+	char utf8_name[19*4];
 
 	/** @brief A copy of the raw note data (from the note table). */
 	unsigned char raw_data[32];

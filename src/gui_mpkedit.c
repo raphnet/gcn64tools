@@ -154,7 +154,7 @@ void mpke_syncModel(struct application *app)
 			gtk_list_store_set(n64_notes, &iter, 0, i, 1, "!!ERROR!!", 2, 0, -1);
 		} else {
 			if (note_data.valid) {
-				gtk_list_store_set(n64_notes, &iter, 0, i, 1, note_data.name, 2, note_data.blocks, 3, app->mpke->mpk->note_comments[i], -1);
+				gtk_list_store_set(n64_notes, &iter, 0, i, 1, note_data.utf8_name, 2, note_data.blocks, 3, app->mpke->mpk->note_comments[i], -1);
 			} else {
 				gtk_list_store_set(n64_notes, &iter, 0, i, -1);
 			}
@@ -204,7 +204,7 @@ G_MODULE_EXPORT void mpke_export_note(GtkWidget *win, gpointer data)
 										GTK_RESPONSE_ACCEPT,
 										NULL);
 			chooser = GTK_FILE_CHOOSER(dialog);
-			snprintf(namebuf, sizeof(namebuf), "%s.note", entry.name);
+			snprintf(namebuf, sizeof(namebuf), "%s.note", entry.utf8_name);
 			gtk_file_chooser_set_current_name(chooser, namebuf);
 			gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(dialog), n64_note_filter);
 

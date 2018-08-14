@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 			printf("Error!\n");
 		} else {
 			if (note_data.valid) {
-				printf("%s (%d blocks) ", note_data.name, note_data.blocks);
+				printf("%s (%d blocks) ", note_data.utf8_name, note_data.blocks);
 //				printf("%08x ", note_data.vendor);
 //				printf("%04x ", note_data.game_id);
 //				printf("%02x ", note_data.region);

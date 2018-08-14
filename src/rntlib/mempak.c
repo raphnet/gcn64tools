@@ -140,7 +140,7 @@ int mempak_importNote(mempak_structure_t *mpk, const char *notefile, int dst_not
 		entry.blocks = filesize / MEMPAK_BLOCK_SIZE;
 
 		printf("Note size: %d blocks\n", entry.blocks);
-		printf("Note name: %s\n", entry.name);
+		printf("Note name: %s\n", entry.utf8_name);
 
 		if (entry.blocks > free_blocks) {
 			fprintf(stderr, "Not enough space (note is %d blocks and only %d free blocks in mempak)\n",
