@@ -274,6 +274,13 @@ struct rnt_adap_info *rnt_listDevices(struct rnt_adap_info *info, struct rnt_ada
 				info->usb_pid = ctx->cur_dev->product_id;
 				info->version_major = ctx->cur_dev->release_number >> 8;
 				info->version_minor = ctx->cur_dev->release_number & 0xff;
+				if (!ctx->cur_dev->product_string || !ctx->cur_dev->serial_number) {
+					if (IS_VERBOSE()) {
+						printf("Warning: Skipping device wihout product string or serial\n");
+					}
+					continue;
+				}
+
 				wcsncpy(info->str_prodname, ctx->cur_dev->product_string, PRODNAME_MAXCHARS-1);
 				wcsncpy(info->str_serial, ctx->cur_dev->serial_number, SERIAL_MAXCHARS-1);
 				strncpy(info->str_path, ctx->cur_dev->path, PATH_MAXCHARS-1);
