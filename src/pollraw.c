@@ -356,6 +356,37 @@ int pollraw_db9(rnt_hdl_t hdl, int chn)
 
 		printHexBuf(buf, res);
 
+		if (res >= 10) {
+			// Mouse mode
+			if (buf[9]) {
+				uint8_t *mouse_data = buf + 10;
+
+				uint8_t buttons = mouse_data[3];
+				int8_t x, y;
+
+				x = (mouse_data[4] << 4) | (mouse_data[5] & 0xf);
+				y = (mouse_data[6] << 4) | (mouse_data[7] & 0xf);
+				x ^= 0xff;
+				y ^= 0xff;
+
+				printf("X = %4d  Y= %4d\n", x, y);
+
+				if (!(buttons&0x01)) {
+					printf("LEFT ");
+				}
+				if (!(buttons&0x02)) {
+					printf("RIGHT ");
+				}
+				if (!(buttons&0x04)) {
+					printf("CENTER ");
+				}
+				if (!(buttons&0x08)) {
+					printf("START ");
+				}
+				printf("\n");
+			}
+		}
+
 		sleep(1);
 	}
 
