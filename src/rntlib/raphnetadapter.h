@@ -16,6 +16,7 @@
 #define RNTF_POLL_RATE				0x000008
 #define RNTF_CONTROLLER_TYPE		0x000010
 #define RNTF_SNES_MOUSE				0x000020
+#define RNTF_SET_MAPPING			0x000040
 
 #define RNTF_GC_FULL_SLIDERS		0x001000
 #define RNTF_GC_INVERT_TRIG			0x002000
@@ -53,6 +54,10 @@ struct rnt_dyn_features {
 	/* Which of CFG_PARAM_* have an effect */
 	int n_supported_cfg_params;
 	uint8_t supported_cfg_params[256];
+
+	/* Which mappings are supported */
+	int n_supported_mappings;
+	uint8_t supported_mappings[256];
 };
 
 struct rnt_adap_caps {
@@ -137,6 +142,8 @@ int rnt_reset(rnt_hdl_t hdl);
 int rnt_getSupportedFeatures(rnt_hdl_t hdl, struct rnt_dyn_features *dst_dynfeat);
 int rnt_getInfo(rnt_hdl_t hdl, struct rnt_adap_info *info);
 
+int rnt_setMapping(rnt_hdl_t hdl, unsigned char *data, unsigned char len);
+int rnt_getMapping(rnt_hdl_t hdl, unsigned char *rx);
 
 #endif // _raphnetadapter_h__
 

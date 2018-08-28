@@ -193,6 +193,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 		{ 0, GET_ELEMENT(GtkWidget, lbl_controller_type), RNTF_CONTROLLER_TYPE, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, label_controller_type), RNTF_CONTROLLER_TYPE, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, frame_adapter_mode), RNTF_ADAPTER_MODE, TRUE },
+		{ 0, GET_ELEMENT(GtkWidget, frame_mapping), RNTF_SET_MAPPING, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, box_snes_mouse_speed), RNTF_SNES_MOUSE, TRUE },
 
 		{ CFG_PARAM_FULL_SLIDERS, GET_ELEMENT(GtkWidget, chkbtn_gc_full_sliders), RNTF_GC_FULL_SLIDERS, TRUE },
@@ -223,6 +224,11 @@ void syncGuiToCurrentAdapter(struct application *app)
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_4p_joystick_mode);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_5p_joystick_mode);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_mouse_mode);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_mapping_0x30);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_mapping_0x31);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_mapping_0x32);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_mapping_0x33);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_mapping_0x34);
 	int i;
 	struct rnt_adap_info *info = &app->current_adapter_info;
 	char adap_sig[64];
@@ -253,22 +259,24 @@ void syncGuiToCurrentAdapter(struct application *app)
 					{	rbtn_mouse_mode, CFG_MODE_MOUSE },
 					{	}
 				};
+				
+				/* Set visiblity on adapter mode radio buttons */
 				for (i=0; availableModes[i].w; i++) {
 					int available = 0;
 					if (memchr(features.supported_modes, availableModes[i].mode, features.n_supported_modes)) {
 						available = 1;
 					}
 					if (available) {
-						printf("Mode %d available\n", availableModes[i].mode);
 						gtk_widget_show(GTK_WIDGET(availableModes[i].w));
 					} else {
-						printf("Mode %d unavailable\n", availableModes[i].mode);
 						gtk_widget_hide(GTK_WIDGET(availableModes[i].w));
 					}
 				}
+
 			}
 		}
 
+		/* Enable the proper radio button for the adapter mode */
 		switch(cur_mode)
 		{
 			case CFG_MODE_STANDARD:
@@ -289,6 +297,47 @@ void syncGuiToCurrentAdapter(struct application *app)
 			case CFG_MODE_MOUSE:
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_mouse_mode), buf[0]);
 				break;
+		}
+	}
+
+	if (info->caps.features & RNTF_SET_MAPPING) {
+		uint8_t cur_mapping;
+
+		struct {
+			GtkRadioButton *w;
+			uint8_t mapping;
+		} availableMappings[] = {
+			{	rbtn_mapping_0x30, MAPPING_ID_SATURN_DEFAULT	},
+			{	rbtn_mapping_0x31, MAPPING_ID_SATURN_DPAD_AS_BUTTONS	},
+			{	rbtn_mapping_0x32, MAPPING_ID_SATURN_SLS		},
+			{	rbtn_mapping_0x33, MAPPING_ID_SATURN_SLS_ALT	},
+			{	rbtn_mapping_0x34, MAPPING_ID_SATURN_VIP		},
+			{	}
+		};
+
+
+		/* Set visiblity of mapping radio buttons */
+		for (i=0; availableMappings[i].w; i++) {
+			int available = 0;
+			if (memchr(features.supported_mappings, availableMappings[i].mapping, features.n_supported_mappings)) {
+				available = 1;
+			}
+			if (available) {
+				gtk_widget_show(GTK_WIDGET(availableMappings[i].w));
+			} else {
+				gtk_widget_hide(GTK_WIDGET(availableMappings[i].w));
+			}
+		}
+
+		/* Read the current mapping, and check the proper radio button */
+		if (1 == rnt_getMapping(app->current_adapter_handle, &cur_mapping)) {
+			printf("Current mapping: 0x%02x\n", cur_mapping);
+
+			for (i=0; availableMappings[i].w; i++) {
+				if (availableMappings[i].mapping == cur_mapping) {
+					gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(availableMappings[i].w), TRUE);
+				}
+			}
 		}
 	}
 
@@ -461,6 +510,51 @@ G_MODULE_EXPORT void reset_adapter(GtkButton *button, gpointer data)
 	gtk_widget_hide(GTK_WIDGET(dialog_please_wait));
 }
 
+G_MODULE_EXPORT void cfg_adapter_mapping_changed(GtkWidget *win, gpointer data)
+{
+	struct application *app = data;
+	struct {
+		GtkRadioButton *w;
+		uint8_t mapping;
+	} availableMappings[] = {
+		{	GET_ELEMENT(GtkRadioButton, rbtn_mapping_0x30), MAPPING_ID_SATURN_DEFAULT	},
+		{	GET_ELEMENT(GtkRadioButton, rbtn_mapping_0x31), MAPPING_ID_SATURN_DPAD_AS_BUTTONS	},
+		{	GET_ELEMENT(GtkRadioButton, rbtn_mapping_0x32), MAPPING_ID_SATURN_SLS		},
+		{	GET_ELEMENT(GtkRadioButton, rbtn_mapping_0x33), MAPPING_ID_SATURN_SLS_ALT	},
+		{	GET_ELEMENT(GtkRadioButton, rbtn_mapping_0x34), MAPPING_ID_SATURN_VIP		},
+		{	}
+	};
+	uint8_t cur_mapping;
+	int next_mapping, i;
+	uint8_t mapdata[16];
+
+	if (1 != rnt_getMapping(app->current_adapter_handle, &cur_mapping)) {
+		printf("Could not read current mapping\n");
+		return;
+	}
+
+	/* find which radio button is enabled */
+	for (next_mapping = MAPPING_ID_RESERVED, i=0; availableMappings[i].w; i++) {
+		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(availableMappings[i].w))) {
+			next_mapping = availableMappings[i].mapping;
+			break;
+		}
+	}
+
+	/* no radio button selected? */
+	if (next_mapping == MAPPING_ID_RESERVED) {
+		return;
+	}
+
+	/* no change */
+	if (next_mapping == cur_mapping) {
+		return;
+	}
+
+	mapdata[0] = next_mapping;
+	printf("Changing mapping to: 0x%02x\n", next_mapping);
+	rnt_setMapping(app->current_adapter_handle, mapdata, 1);
+}
 
 G_MODULE_EXPORT void cfg_adapter_mode_changed(GtkWidget *win, gpointer data)
 {

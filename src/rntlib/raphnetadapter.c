@@ -76,6 +76,7 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x004B, 1, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter (2 player mode)
 	{ OUR_VENDOR_ID, 0x004C, 1, { 63, 3, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter (3 player mode)
 	{ OUR_VENDOR_ID, 0x004D, 1, { 63, 4, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter (4 player mode)
+	{ OUR_VENDOR_ID, 0x004E, 1, { 63, 4, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter (mouse mode)
 
 	{ OUR_VENDOR_ID, 0x0050, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // PC Engine to USB v1.0.0
 	{ OUR_VENDOR_ID, 0x0051, 1, { 63, 5, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // PC Engine to USB v1.0.0 (5 player mode)
@@ -624,6 +625,50 @@ int rnt_getConfig(rnt_hdl_t hdl, unsigned char param, unsigned char *rx, unsigne
 	return n;
 }
 
+int rnt_setMapping(rnt_hdl_t hdl, unsigned char *data, unsigned char len)
+{
+	unsigned char cmd[2 + len];
+	int n;
+
+	if (!hdl) {
+		return -1;
+	}
+
+	cmd[0] = RQ_RNT_SET_MAPPING;
+	memcpy(cmd + 1, data, len);
+
+	n = rnt_exchange(hdl, cmd, 1 + len, cmd, sizeof(cmd));
+	if (n<0)
+		return n;
+
+	return 0;
+}
+
+int rnt_getMapping(rnt_hdl_t hdl, unsigned char *rx)
+{
+	unsigned char cmd[2];
+	int n;
+
+	if (!hdl) {
+		return -1;
+	}
+
+	cmd[0] = RQ_RNT_GET_MAPPING;
+
+	n = rnt_exchange(hdl, cmd, 1, cmd, 2);
+	if (n<2)
+		return n;
+
+	n -= 1;
+
+	if (n) {
+		*rx = cmd[1];
+	}
+
+	return 1;
+}
+
+
 int rnt_getVersion(rnt_hdl_t hdl, char *dst, int dstmax)
 {
 	unsigned char cmd[32];
@@ -864,6 +909,12 @@ static int rnt_readSupportedFeatures(rnt_hdl_t hdl, struct rnt_dyn_features *dst
 			&dst_dynfeat->n_supported_modes,
 			sizeof(dst_dynfeat->supported_modes),
 		},
+		{
+			RQ_RNT_GET_SUPPORTED_MAPPINGS,
+			dst_dynfeat->supported_mappings,
+			&dst_dynfeat->n_supported_mappings,
+			sizeof(dst_dynfeat->supported_mappings),
+		},
 
 		{	}
 	};
@@ -930,6 +981,7 @@ static int rnt_featToCaps(const struct rnt_dyn_features *dyn, struct rnt_adap_ca
 		{	RNTF_BLOCK_IO,			RQ_GCN64_BLOCK_IO			},
 		{	RNTF_SUSPEND_POLLING,	RQ_RNT_SUSPEND_POLLING		},
 		{	RNTF_CONTROLLER_TYPE,	RQ_RNT_GET_CONTROLLER_TYPE	},
+		{	RNTF_SET_MAPPING,		RQ_RNT_SET_MAPPING			},
 
 		{	}
 	};
