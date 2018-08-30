@@ -228,6 +228,11 @@ Author: Raphaël Assénat
     <property name="use_fallback">True</property>
     <property name="icon_size">1</property>
   </object>
+  <object class="GtkImage" id="image10">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="pixbuf">mouse.png</property>
+  </object>
   <object class="GtkImage" id="image2">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -1373,6 +1378,25 @@ Author: Raphaël Assénat
                                             <property name="expand">False</property>
                                             <property name="fill">True</property>
                                             <property name="position">5</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkRadioButton" id="rbtn_mouse_mode2">
+                                            <property name="label" translatable="yes">Mouse mode</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">False</property>
+                                            <property name="image">image10</property>
+                                            <property name="xalign">0</property>
+                                            <property name="image_position">right</property>
+                                            <property name="always_show_image">True</property>
+                                            <property name="draw_indicator">True</property>
+                                            <property name="group">rbtn_1p_joystick_mode</property>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">6</property>
                                           </packing>
                                         </child>
                                       </object>

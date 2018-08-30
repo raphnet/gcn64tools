@@ -108,7 +108,7 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0047, 1, { 63, 4, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE, 6, RNTF_PORT_PSX } }, // PS1/PS2 controller to USB adapter (4-player mode)
 
 	{ OUR_VENDOR_ID, 0x0056, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // SNES to USB adapter v2.1 (w/advXarch)
-	{ OUR_VENDOR_ID, 0x0057, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES } }, // Dual SNES to USB adapter v2.1 (w/advXarch)
+	{ OUR_VENDOR_ID, 0x0057, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Dual SNES to USB adapter v2.1 (w/advXarch)
 	{ OUR_VENDOR_ID, 0x0058, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // SNES mouse to USB adapter v2.2
 
 	// Legacy devices (vusb, non-upgradeable and typically without configurable features)

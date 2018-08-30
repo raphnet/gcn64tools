@@ -93,6 +93,7 @@
 #define CFG_MODE_2P_GC_ONLY		0x12
 
 #define CFG_MODE_MOUSE			0x20
+#define CFG_MODE_MOUSE2			0x21
 
 #define CFG_PARAM_RESERVED		0x00
 #define CFG_PARAM_SERIAL		0x01

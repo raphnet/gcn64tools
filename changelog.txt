@@ -1,3 +1,7 @@
+=== Version 2.1.11 ===
+ - New firmware for the SNES to GC/Wii adapter: Switch + Wii U gamecube
+ adapter compatibility fix
+
 === Version 2.1.10 ===
  - New firmware for the Megadrive to USB adapter: Now supports the Sega Megamouse
  - New firmware for Saturn to USB adapter: Adds the 3 mappings (SLS, SLS-Alt and VIP) from version 2. (Great for PS3 use)
