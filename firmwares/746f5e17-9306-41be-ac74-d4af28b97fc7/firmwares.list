@@ -1,3 +1,9 @@
+[x2gcwii.snes-2.2.hex]
+md5=bf01f8ff96d2176992f1b02609de914d
+version=2.2
+date=2018-08-30
+notes=- Switch + Wii U gamecube adapter compatibility fix
+
 [x2gcwii.snes-2.1.hex]
 md5=7a9f39ae71bf8ae22d1179b4279c8d16
 version=2.1
