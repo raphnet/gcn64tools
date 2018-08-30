@@ -1,6 +1,9 @@
 === Version 2.1.11 ===
  - New firmware for the SNES to GC/Wii adapter: Switch + Wii U gamecube
- adapter compatibility fix
+   adapter compatibility fix
+ - New firmware for the SNES to USB adapter: Add basic mouse support to
+   2-player adapter
+ - Support for enabling mouse mode on 2-player SNES to USB adapter
 
 === Version 2.1.10 ===
  - New firmware for the Megadrive to USB adapter: Now supports the Sega Megamouse
