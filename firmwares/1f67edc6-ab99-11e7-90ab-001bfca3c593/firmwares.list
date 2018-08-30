@@ -1,3 +1,9 @@
+[snes2usb_v2-2.2.1.hex]
+md5=5a52fcc538289e81e9ff965948daf451
+version=2.2.1
+date=2018-08-30
+notes=- Add basic mouse support to 2 player adapter
+
 [snes2usb_v2-2.2.0.hex]
 md5=b2c0cbab8b987ed41317ec9b81b19c87
 version=2.2.0
