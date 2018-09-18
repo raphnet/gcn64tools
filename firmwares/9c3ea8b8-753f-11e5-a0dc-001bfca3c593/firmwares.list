@@ -1,3 +1,9 @@
+[gcn64usb-3.5.2.hex]
+md5=6b78baf41cbe0cf26b18677a44647835
+version=3.5.2
+date=2018-09-18
+notes=- Improve PID (force feedback) implementation
+
 [gcn64usb-3.5.1.hex]
 md5=9104d56c74a6764094906e8dcd9c74fd
 version=3.5.1
