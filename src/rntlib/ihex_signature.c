@@ -15,6 +15,13 @@ char check_ihex_for_signature(const char *filename, const char *signature)
 	unsigned char *buf;
 	int max_address;
 
+	if (!filename) {
+		return 0;
+	}
+	if (!signature) {
+		return 0;
+	}
+
 	buf = malloc(IHEX_MAX_FILE_SIZE);
 	if (!buf) {
 		perror("malloc");
