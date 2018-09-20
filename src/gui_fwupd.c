@@ -369,6 +369,7 @@ G_MODULE_EXPORT void recover_usbadapter_firmware(GtkWidget *w, gpointer data)
 		app->updateHexFile = filename;
 		updatelog_appendln("Selected file: %s", filename);
 
+#if 0
 		if (check_ihex_for_signature(filename, "e106420a-7c54-11e5-ae9a-001bfca3c593")) {
 			app->at90usb1287 = 1;
 		} else if (check_ihex_for_signature(filename, "9c3ea8b8-753f-11e5-a0dc-001bfca3c593")) {
@@ -380,6 +381,7 @@ G_MODULE_EXPORT void recover_usbadapter_firmware(GtkWidget *w, gpointer data)
 			goto done;
 		}
 		updatelog_append("Signature OK\n");
+#endif
 
 		res = update_progress_dialog_run(app, mainWindow, basename, gcn64usb_updateFunc);
 #if 0

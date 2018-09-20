@@ -1,3 +1,6 @@
+=== Version x.x.xx ===
+ - Disable signature test when recovering an adapter
+
 === Version 2.1.12 ===
  - New firmware for GC/N64 to USB adapters (Improve force feedback/vibration)
  - Add support for the N64 to GC/Wii adapter version 2
