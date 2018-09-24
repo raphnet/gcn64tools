@@ -893,6 +893,7 @@ static int rnt_readSupportedFeatures(rnt_hdl_t hdl, struct rnt_dyn_features *dst
 {
 	unsigned char cmd[64];
 	int n, i;
+	int skip_get_supported_mappings = 0;
 	struct fetchData { uint8_t cmd; uint8_t *dst; int *size; int maxsize; } fdat[] = {
 		{ 	RQ_RNT_GET_SUPPORTED_REQUESTS,
 			dst_dynfeat->supported_requests,
@@ -925,6 +926,8 @@ static int rnt_readSupportedFeatures(rnt_hdl_t hdl, struct rnt_dyn_features *dst
 	}
 
 	for (i=0; fdat[i].dst; i++) {
+		if (fdat[i].cmd == RQ_RNT_GET_SUPPORTED_MAPPINGS && skip_get_supported_mappings)
+			continue;
 
 		cmd[0] = fdat[i].cmd;
 		n = rnt_exchange(hdl, cmd, 1, cmd, sizeof(cmd));
@@ -938,6 +941,12 @@ static int rnt_readSupportedFeatures(rnt_hdl_t hdl, struct rnt_dyn_features *dst
 		*(fdat[i].size) = n - 1;
 		if (n > 1) {
 			memcpy(fdat[i].dst, cmd + 1, n - 1);
+		}
+
+		if (fdat[i].cmd == RQ_RNT_GET_SUPPORTED_REQUESTS) {
+			if (!memchr(fdat[i].dst, RQ_RNT_GET_SUPPORTED_MAPPINGS, *fdat[i].size)) {
+				skip_get_supported_mappings = 1;
+			}
 		}
 	}
 
