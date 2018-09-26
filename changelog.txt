@@ -1,4 +1,5 @@
-=== Version x.x.xx ===
+=== Version 2.1.13 ===
+ - Fix an error when opening some adapter model/versions
  - Disable signature test when recovering an adapter
 
 === Version 2.1.12 ===
