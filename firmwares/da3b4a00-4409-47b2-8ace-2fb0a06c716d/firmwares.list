@@ -1,3 +1,9 @@
+[db9v2-2.0.2.hex]
+md5=14b952b7adb9e8593a9f1e0066a401dd
+version=2.0.2
+date=2018-10-15
+notes=- Add SMS mode (alternate product ID and name)
+
 [db9v2-2.0.1.hex]
 md5=48dff092628d001f2ddaab23a02129fe
 version=2.0.1
