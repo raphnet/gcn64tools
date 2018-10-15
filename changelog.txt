@@ -1,3 +1,7 @@
+=== Version 2.1.14 ===
+ - New firmware for the DB9 to USB adapter (version 2.0.2):
+   - Add an SMS mode (alternate product ID and name)
+
 === Version 2.1.13 ===
  - Fix an error when opening some adapter model/versions
  - Disable signature test when recovering an adapter
