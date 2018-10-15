@@ -225,6 +225,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_5p_joystick_mode);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_mouse_mode);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_mouse_mode2);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_sms_mode);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_mapping_0x30);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_mapping_0x31);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_mapping_0x32);
@@ -259,9 +260,10 @@ void syncGuiToCurrentAdapter(struct application *app)
 					{	rbtn_5p_joystick_mode, CFG_MODE_5P_STANDARD	},
 					{	rbtn_mouse_mode, CFG_MODE_MOUSE },
 					{	rbtn_mouse_mode2, CFG_MODE_MOUSE2 },
+					{	rbtn_sms_mode, CFG_MODE_SMS },
 					{	}
 				};
-				
+
 				/* Set visiblity on adapter mode radio buttons */
 				for (i=0; availableModes[i].w; i++) {
 					int available = 0;
@@ -301,6 +303,9 @@ void syncGuiToCurrentAdapter(struct application *app)
 				break;
 			case CFG_MODE_MOUSE2:
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_mouse_mode2), buf[0]);
+				break;
+			case CFG_MODE_SMS:
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_sms_mode), buf[0]);
 				break;
 		}
 	}
@@ -575,6 +580,7 @@ G_MODULE_EXPORT void cfg_adapter_mode_changed(GtkWidget *win, gpointer data)
 		{ CFG_MODE_5P_STANDARD, GET_ELEMENT(GtkRadioButton, rbtn_5p_joystick_mode) },
 		{ CFG_MODE_MOUSE, GET_ELEMENT(GtkRadioButton, rbtn_mouse_mode) },
 		{ CFG_MODE_MOUSE2, GET_ELEMENT(GtkRadioButton, rbtn_mouse_mode2) },
+		{ CFG_MODE_SMS, GET_ELEMENT(GtkRadioButton, rbtn_sms_mode) },
 		{ },
 	};
 	int i;

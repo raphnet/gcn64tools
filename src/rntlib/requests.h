@@ -88,6 +88,8 @@
 #define CFG_MODE_4P_STANDARD	0x04
 #define CFG_MODE_5P_STANDARD	0x05
 
+#define CFG_MODE_SMS			0x0A // DB9 adapter in SMS mode
+
 #define CFG_MODE_2P_STANDARD	0x10
 #define CFG_MODE_2P_N64_ONLY	0x11
 #define CFG_MODE_2P_GC_ONLY		0x12

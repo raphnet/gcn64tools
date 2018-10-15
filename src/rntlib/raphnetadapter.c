@@ -76,7 +76,8 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x004B, 1, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter (2 player mode)
 	{ OUR_VENDOR_ID, 0x004C, 1, { 63, 3, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter (3 player mode)
 	{ OUR_VENDOR_ID, 0x004D, 1, { 63, 4, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter (4 player mode)
-	{ OUR_VENDOR_ID, 0x004E, 1, { 63, 4, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter (mouse mode)
+	{ OUR_VENDOR_ID, 0x004E, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter (mouse mode)
+	{ OUR_VENDOR_ID, 0x004F, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter (SMS mode)
 
 	{ OUR_VENDOR_ID, 0x0050, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // PC Engine to USB v1.0.0
 	{ OUR_VENDOR_ID, 0x0051, 1, { 63, 5, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // PC Engine to USB v1.0.0 (5 player mode)
