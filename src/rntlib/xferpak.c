@@ -455,6 +455,56 @@ int xferpak_gb_mbc1_writeRAM(xferpak *xpak, unsigned int ram_size, const unsigne
 	return 0;
 }
 
+int xferpak_gb_pocketcam_writeRAM(xferpak *xpak, unsigned int ram_size, const unsigned char *data)
+{
+	int i, res;
+	unsigned char bankbuf[0x2000]; // 8K banks
+	int cur_bank = -1;
+
+	if (ram_size & 0x1FFF) {
+		fprintf(stderr, "ram size must be a multiple of 8K\n");
+		return XFERPAK_BAD_PARAM;
+	}
+
+	res = xferpak_gb_mbc1235_enable_ram(xpak, 1);
+	if (res < 0) {
+		return res;
+	}
+
+	res = xferpak_gb_mbc1_select_ram_mode(xpak);
+	if (res < 0) {
+		return res;
+	}
+
+	for (i=0; i<ram_size; i+= sizeof(bankbuf))
+	{
+		if ((i/sizeof(bankbuf)) != cur_bank) {
+			cur_bank = i/sizeof(bankbuf);
+			res = xferpak_gb_mbc135_select_ram_bank(xpak, cur_bank);
+			if (res < 0) {
+				fprintf(stderr, "failed to set ram bank\n");
+				xferpak_gb_mbc1235_enable_ram(xpak, 0);
+				return XFERPAK_IO_ERROR;
+			}
+		}
+
+		memcpy(bankbuf, data, sizeof(bankbuf));
+		data += sizeof(bankbuf);
+
+		res = xferpak_writeCart(xpak, 0xA000, sizeof(bankbuf), bankbuf);
+		if (res < 0) {
+			fprintf(stderr, "transfer pak io error (%d)\n", res);
+			xferpak_gb_mbc1235_enable_ram(xpak, 0);
+			return XFERPAK_IO_ERROR;
+		}
+	}
+
+	xferpak_gb_mbc1235_enable_ram(xpak, 0);
+
+	return 0;
+}
+
+
 int xferpak_gb_mbc2_writeRAM(xferpak *xpak, unsigned int ram_size, const unsigned char *data)
 {
 	int res;
@@ -594,6 +644,55 @@ int xferpak_gb_mbc1_readRAM(xferpak *xpak, unsigned int ram_size, unsigned char 
 
 	return 0;
 }
+
+int xferpak_gb_pocketcam_readRAM(xferpak *xpak, unsigned int ram_size, unsigned char *dstbuf)
+{
+	int i, res;
+	unsigned char bankbuf[0x2000]; // 8K banks
+	int cur_bank = -1;
+
+	if (ram_size & 0x1FFF) {
+		fprintf(stderr, "ram size must be a multiple of 8K\n");
+		return XFERPAK_BAD_PARAM;
+	}
+
+	res = xferpak_gb_mbc1235_enable_ram(xpak, 1);
+	if (res < 0) {
+		return res;
+	}
+
+	res = xferpak_gb_mbc1_select_ram_mode(xpak);
+	if (res < 0) {
+		return res;
+	}
+
+	for (i=0; i<ram_size; i+= sizeof(bankbuf))
+	{
+		if ((i/sizeof(bankbuf)) != cur_bank) {
+			cur_bank = i/sizeof(bankbuf);
+			res = xferpak_gb_mbc135_select_ram_bank(xpak, cur_bank);
+			if (res < 0) {
+				fprintf(stderr, "failed to set mbc1 ram bank\n");
+				xferpak_gb_mbc1235_enable_ram(xpak, 0);
+				return XFERPAK_IO_ERROR;
+			}
+		}
+
+		res = xferpak_readCart(xpak, 0xA000, sizeof(bankbuf), bankbuf);
+		if (res < 0) {
+			xferpak_gb_mbc1235_enable_ram(xpak, 0);
+			return res;
+		}
+
+		memcpy(dstbuf, bankbuf, sizeof(bankbuf));
+		dstbuf += sizeof(bankbuf);
+	}
+
+	xferpak_gb_mbc1235_enable_ram(xpak, 0);
+
+	return 0;
+}
+
 
 
 int xferpak_gb_mbc35_readRAM(xferpak *xpak, unsigned int ram_size, unsigned char *dstbuf)
@@ -790,6 +889,36 @@ int xferpak_gb_mbc1_readROM(xferpak *xpak, unsigned int rom_size, unsigned char 
 	return 0;
 }
 
+// Note: This is the same code as MBC5, no idea if this is correct
+int xferpak_gb_pocketcam_readROM(xferpak *xpak, unsigned int rom_size, unsigned char *dstbuf)
+{
+	int i, res;
+	unsigned char bankbuf[0x4000];
+	int cur_bank = -1;
+
+	for (i=0; i<rom_size; i+= sizeof(bankbuf))
+	{
+		if ((i/sizeof(bankbuf)) != cur_bank) {
+			cur_bank = i/sizeof(bankbuf);
+			res = xferpak_gb_mbc5_select_rom_bank(xpak, cur_bank);
+			if (res < 0) {
+				fprintf(stderr, "failed to set mbc5 bank\n");
+				return XFERPAK_IO_ERROR;
+			}
+		}
+
+		res = xferpak_readCart(xpak, 0x4000, sizeof(bankbuf), bankbuf);
+		if (res < 0) {
+			return res;
+		}
+
+		memcpy(dstbuf, bankbuf, sizeof(bankbuf));
+		dstbuf += sizeof(bankbuf);
+	}
+
+	return 0;
+}
+
 int xferpak_gb_32k_read(xferpak *xpak, unsigned char *dstbuf)
 {
 	unsigned int rom_size = 0x8000;
@@ -908,12 +1037,19 @@ static int xferpak_gb_readMEMORY(xferpak *xpak, struct gbcart_info *inf, int typ
 	{
 		switch(GB_MBC_MASK(cartinfo.flags))
 		{
-			case 0: /* ROM ONLY */
-				if (memory_size != 0x8000) {
-					res = XFERPAK_UNSUPPORTED;
-					break;
+			case 0:
+				if (cartinfo.type == GB_TYPE_POCKET_CAMERA) {
+					res = xferpak_gb_pocketcam_readROM(xpak, memory_size, mem);
 				}
-				res = xferpak_gb_32k_read(xpak, mem);
+				else {
+					/* ROM ONLY */
+					if (memory_size != 0x8000) {
+						fprintf(stderr, "Unsupported memory size\n");
+						res = XFERPAK_UNSUPPORTED;
+						break;
+					}
+					res = xferpak_gb_32k_read(xpak, mem);
+				}
 				break;
 			case GB_FLAG_MBC5:
 				res = xferpak_gb_mbc5_readROM(xpak, memory_size, mem);
@@ -945,6 +1081,11 @@ static int xferpak_gb_readMEMORY(xferpak *xpak, struct gbcart_info *inf, int typ
 			case GB_FLAG_MBC1:
 				res = xferpak_gb_mbc1_readRAM(xpak, memory_size, mem);
 				break;
+			case 0:
+				if (cartinfo.type == GB_TYPE_POCKET_CAMERA) {
+					res = xferpak_gb_pocketcam_readRAM(xpak, memory_size, mem);
+					break;
+				}
 			default:
 				fprintf(stderr, "Cartridge type not yet supported\n");
 				res = XFERPAK_UNSUPPORTED;
@@ -1007,6 +1148,11 @@ int xferpak_gb_writeRAM(xferpak *xpak, unsigned int mem_size, const unsigned cha
 		case GB_FLAG_MBC1:
 			res = xferpak_gb_mbc1_writeRAM(xpak, mem_size, mem);
 			break;
+		case 0:
+			if (cartinfo.type == GB_TYPE_POCKET_CAMERA) {
+				res = xferpak_gb_pocketcam_writeRAM(xpak, mem_size, mem);
+				break;
+			}
 		default:
 			fprintf(stderr, "Cartridge type not yet supported\n");
 

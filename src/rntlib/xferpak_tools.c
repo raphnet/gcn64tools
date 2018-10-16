@@ -44,14 +44,17 @@ int gcn64lib_xferpak_writeRAM_from_file(rnt_hdl_t hdl, int channel, const char *
 		return -1;
 	}
 
-	if (!(cartinfo.flags & GB_FLAG_RAM)) {
-		u->error("Current cartridge does not have RAM");
-		xferpak_free(xpak);
-		return -1;
-	}
 
-	if (!(cartinfo.flags & GB_FLAG_BATTERY)) {
-		u->error("Warning: Current cartridge does not have a battery. Writing probably makes no sense...");
+	if (cartinfo.type != GB_TYPE_POCKET_CAMERA) {
+		if (!(cartinfo.flags & GB_FLAG_RAM)) {
+			u->error("Current cartridge does not have RAM");
+			xferpak_free(xpak);
+			return -1;
+		}
+
+		if (!(cartinfo.flags & GB_FLAG_BATTERY)) {
+			u->error("Warning: Current cartridge does not have a battery. Writing probably makes no sense...");
+		}
 	}
 
 	/* Allocate memory buffer */
