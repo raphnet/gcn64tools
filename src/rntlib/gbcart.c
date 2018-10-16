@@ -17,8 +17,10 @@ const char *getCartTypeString(unsigned char type)
 
 	switch(type)
 	{
-		case 0xFC: strcat(cbuf, "POCKET CAMERA"); break;
-		case 0xFD: strcat(cbuf, "BANDAI TAMA5"); break;
+		case GB_TYPE_POCKET_CAMERA:
+			strcat(cbuf, "POCKET CAMERA"); return cbuf;
+		case GB_TYPE_TAMA5:
+			strcat(cbuf, "BANDAI TAMA5"); break;
 	}
 
 	flags = getGBCartTypeFlags(type);
@@ -87,6 +89,9 @@ int getGBCartRAMSize(unsigned char code)
 		case 0x01: return 2048;
 		case 0x02: return 8192;
 		case 0x03: return 32768; // 4 banks of 8KB
+		case 0x04: return 16*8192; // 16 banks of 8KB (gameboy camera)
+		default:
+			fprintf(stderr, "Unknown RAM size code 0x%02x\n", code);
 	}
 	return 0;
 }

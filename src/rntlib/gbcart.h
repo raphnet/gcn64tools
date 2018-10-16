@@ -19,6 +19,9 @@
 
 #define GB_MBC_MASK(a)	((a) & 0xFF)
 
+#define GB_TYPE_POCKET_CAMERA	0xFC
+#define GB_TYPE_TAMA5			0xFD
+
 struct gbcart_info {
 	char title[17]; // Zero-terminated string
 	unsigned char type;
