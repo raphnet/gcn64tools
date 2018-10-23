@@ -484,10 +484,18 @@ int x2gcn64_adapter_getInfo(rnt_hdl_t hdl, int channel, struct x2gcn64_adapter_i
 		inf->in_bootloader = buf[0];
 		inf->adapter_type = buf[8];
 
-		// SNES to N64 v1.1 reports 2 in the upgradeable field.
 		if (!inf->in_bootloader) {
-			if (buf[8] == 0 && buf[9] == 2) {
+			// SNES to N64 v1.1 reports 2 in the upgradeable field, 0 in the adapter type.
+			if (buf[9] == 2) {
 				inf->adapter_type = ADAPTER_TYPE_SNES_TO_N64;
+			}
+			else if (inf->adapter_type == 1) {
+				// buf[8] should be adapter type, but the GC to N64
+				// adapter uses this field to indicate presence of
+				// a Gamecube controller. 0 when absent, 1 when present.
+				// 0 is the value of ADAPTER_TYPE_GC_TO_N64, but 1 is the
+				// value of ADAPTER_TYPE_SNES_TO_N64.
+				inf->adapter_type = ADAPTER_TYPE_GC_TO_N64;
 			}
 		}
 
