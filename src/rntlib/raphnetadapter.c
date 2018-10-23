@@ -833,6 +833,7 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_SMS_PADDLE: return "SMS Paddle Control";
 		case CTL_TYPE_MD_MOUSE: return "Megadrive mouse";
 		case CTL_TYPE_MSX_2BUTTON: return "MSX 2-button controller";
+		case CTL_TYPE_WII_GUITAR: return "Guitar controller";
 		default:
 			return "Unknown";
 	}
