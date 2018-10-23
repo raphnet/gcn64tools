@@ -1,7 +1,17 @@
 === Version 2.1.14 ===
  - New firmware for the DB9 to USB adapter (version 2.0.2):
    - Add an SMS mode (alternate product ID and name)
+ - New firmware for the Wii accessory to USB adapter (version 2.1.1):
+   - Add 8bitdo SF30 support.
+   - Report the controller type as "Guitar" instead of "Classic controller"
+     when a guitar is connected.
+   - Set unused/meaningless axes to zero when using a guitar.
  - Transfer pak: Add support for reading/writing Gameboy Camera ram
+ - Fix a bug where a Gamecube controller to N64 adapter would be detected
+   as an SNES controller to N64 adapter, but only when a Gamecube controller
+   was connected.
+ - Display the correct controller type when a Guitar is connected to a Wiimote
+   accessory to USB adapter.
 
 === Version 2.1.13 ===
  - Fix an error when opening some adapter model/versions
