@@ -6,6 +6,9 @@
    - Report the controller type as "Guitar" instead of "Classic controller"
      when a guitar is connected.
    - Set unused/meaningless axes to zero when using a guitar.
+ - New firmware for the Classic controller to Gamecube/Wii adapter (version 1.2):
+   - Compatibility fix for the 8BitDo SF30 and other similar controllers.
+   - Add basic Nunchuk support (Stick, C and Z mapped to Gamecube Stick, B and A)
  - Transfer pak: Add support for reading/writing Gameboy Camera ram
  - Fix a bug where a Gamecube controller to N64 adapter would be detected
    as an SNES controller to N64 adapter, but only when a Gamecube controller
