@@ -1,3 +1,9 @@
+[x2gcwii.classic-1.2.hex]
+md5=b98accd254db6bba602231f8c15fa9b0
+version=1.2
+date=2018-10-30
+notes=- Compatibility fix for the 8BitDo SF30 (and possibly other models)\n- Add basic Nunchuk support (Stick, C and Z mapped to Gamecube Stick, B and A)
+
 [x2gcwii.classic-1.1.hex]
 md5=7da478237146cf4bbdf025f0607751fb
 version=1.1
