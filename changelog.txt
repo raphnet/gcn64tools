@@ -1,3 +1,7 @@
+=== Version 2.1.15 ===
+ - Rerelease with corrected Classic controller to Gc/Wii firmware (The
+ firmware was returning version 1.1, even though it really was 1.2...)
+
 === Version 2.1.14 ===
  - New firmware for the DB9 to USB adapter (version 2.0.2):
    - Add an SMS mode (alternate product ID and name)
