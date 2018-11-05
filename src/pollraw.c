@@ -273,7 +273,7 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 	classic_pad_data pad_data;
 	udraw_tablet_data udraw_data;
 
-	printf("Polling PSX controller\n");
+	printf("Polling Wii controller\n");
 	printf("CTRL+C to stop\n");
 
 	printf("Suspending polling. Please use --resume_polling later.\n");
