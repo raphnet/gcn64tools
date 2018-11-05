@@ -271,6 +271,7 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 	uint8_t high_res = 0;
 	int res;
 	classic_pad_data pad_data;
+	udraw_tablet_data udraw_data;
 
 	printf("Polling PSX controller\n");
 	printf("CTRL+C to stop\n");
@@ -284,16 +285,21 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 	ext_id = extmem[0xFA] << 8 | extmem[0xFF];
 	switch (ext_id)
 	{
+		case ID_UDRAW: printf("UDraw tablet detected\n"); break;
 		case ID_NUNCHUK: printf("Nunchuk detected\n"); break;
-		case ID_CLASSIC: printf("Classic Controller detected\n"); break;
-		case ID_CLASSIC_PRO: printf("Classic Controller Pro detected\n"); break;
+		case ID_GH_GUITAR: printf("Guitar detected\n"); break;
+		case ID_CLASSIC: printf("Classic Controller detected\n");
+			break;
+			high_res = 1;
+		case ID_CLASSIC_PRO: printf("Classic Controller Pro detected\n");
+			high_res = 1;
+			break;
 		default:
 			printf("Extension ID 0x%04x not implemented\n", ext_id); return 0;
 		break;
 	}
 
 	// Enable high-resolution mode
-	high_res = 1;
 	if (high_res)
 	{
 		uint8_t regval = 0x03;
@@ -328,7 +334,18 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 				printf("LX: %4d, LY: %4d, RX: %4d, RY: %4d, LT: %4d, RT: %4d\n",
 						pad_data.lx, pad_data.ly, pad_data.rx, pad_data.ry,
 						pad_data.lt, pad_data.rt);
+				break;
+			case ID_UDRAW:
+				wusbmotelib_bufferToUdrawData(status, &udraw_data);
+				printf("X: %6d, Y: %6d, P=%3d, Buttons: 0x%02x  (%3d %3d)\n",
+						udraw_data.x,
+						udraw_data.y,
+						udraw_data.pressure,
+						udraw_data.buttons,
+						(udraw_data.x - 90 - (1440-90)/2),
+						(udraw_data.y - 90 - (1920-90)/2)
 
+						);
 				break;
 		}
 	}

@@ -8,6 +8,7 @@
 #define ID_CLASSIC	0x0001
 #define ID_CLASSIC_PRO	0x0101
 #define ID_GH_GUITAR	0x0003 // GH3 or GHWT
+#define ID_UDRAW		0xFF12
 
 #define PAD_TYPE_CLASSIC    1
 #define PAD_TYPE_CLASSIC_PRO	13
@@ -48,6 +49,15 @@ typedef struct _nunchuk_pad_data {
 #define NUNCHK_BTN_Z    0x0001
 #define NUNCHK_BTN_C    0x0002
 
+typedef struct _udraw_data {
+	uint16_t x, y;
+	uint8_t pressure;
+	uint8_t buttons;
+} udraw_tablet_data;
+
+#define UDRAW_BTN_UPPER	0x01
+#define UDRAW_BTN_LOWER	0x02
+#define UDRAW_BTN_NIB	0x04
 
 struct i2c_transaction {
 	/** Adapter channel / port number */
@@ -133,6 +143,13 @@ int wusbmotelib_writeRegs(rnt_hdl_t hdl, uint8_t chn, uint8_t start_reg, const u
  * \param high_res_mode Non-zero if high resolution is used.
  */
 void wusbmotelib_bufferToClassicPadData(const uint8_t *buf, classic_pad_data *dst, uint16_t peripheral_id, uint8_t high_res_mode);
+
+/** Convert a status buffer to a structure
+ *
+ * \param buf The input buffer (min. 8 bytes)
+ * \param dst The destination structure
+ */
+void wusbmotelib_bufferToUdrawData(const uint8_t *buf, udraw_tablet_data *dst);
 
 #endif // _wusbmotelib_h__
 

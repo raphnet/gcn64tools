@@ -407,3 +407,12 @@ void wusbmotelib_bufferToClassicPadData(const uint8_t *buf, classic_pad_data *ds
 	}
 }
 
+
+void wusbmotelib_bufferToUdrawData(const uint8_t *buf, udraw_tablet_data *dst)
+{
+	dst->x = ((buf[2] & 0x0f) << 8) | buf[0];
+	dst->y = ((buf[2] & 0xf0) << 4) | buf[1];
+	dst->pressure = buf[3];
+	dst->buttons = buf[5] ^ 0xfb;
+}
+
