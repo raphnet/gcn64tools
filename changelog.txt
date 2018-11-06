@@ -1,3 +1,7 @@
+=== Version 2.1.16 ===
+ - New 3.6.0 firmware for N64/Gamecube to USB adapters (adds Gamecube keyboard support)
+ - Add support for GC/N64 to USB adapters v3.6.x
+
 === Version 2.1.15 ===
  - Rerelease with corrected Classic controller to Gc/Wii firmware (The
  firmware was returning version 1.1, even though it really was 1.2...)
