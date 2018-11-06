@@ -68,9 +68,16 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x003C, 2, { 0, 2, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES } }, // (2x N64-only mode)
 	{ OUR_VENDOR_ID, 0x003D, 2, { 0, 2, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES } }, // (2x GC-only mode)
 
-	// For future use...
-	{ OUR_VENDOR_ID, 0x003E, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO } },
-	{ OUR_VENDOR_ID, 0x003F, 1, { 0, 2, 2, RNT_V3_STD | RNTF_BLOCK_IO } },
+	// GC/N64 USB v3.6.x versions
+	{ OUR_VENDOR_ID, 0x0060, 1, { 0, 1, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // (GC/N64 mode)
+	{ OUR_VENDOR_ID, 0x0061, 1, { 0, 1, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES } }, // (N64 mode)
+	{ OUR_VENDOR_ID, 0x0062, 1, { 0, 1, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // (GC mode)
+	{ OUR_VENDOR_ID, 0x0063, 2, { 0, 2, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES } }, // (2x GC/N64 mode)
+	{ OUR_VENDOR_ID, 0x0064, 2, { 0, 2, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES } }, // (2x N64-only mode)
+	{ OUR_VENDOR_ID, 0x0065, 2, { 0, 2, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // (2x GC-only mode)
+	{ OUR_VENDOR_ID, 0x0066, 1, { 0, 1, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Keyboard mode (alternates with GC mode)
+	{ OUR_VENDOR_ID, 0x0067, 1, { 0, 1, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Keyboard mode 2 (alternate with GC/N64 mode)
+	{ OUR_VENDOR_ID, 0x0068, 2, { 0, 2, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Keyboard (port 2) and joystick (port 1) mode
 
 	{ OUR_VENDOR_ID, 0x004A, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter
 	{ OUR_VENDOR_ID, 0x004B, 1, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter (2 player mode)

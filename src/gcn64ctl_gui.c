@@ -231,6 +231,11 @@ void syncGuiToCurrentAdapter(struct application *app)
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_mapping_0x32);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_mapping_0x33);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_mapping_0x34);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_gc_only);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_keyboard_mode);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_keyboard_mode2);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_two_gc_controllers);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_gc_js_mode);
 	int i;
 	struct rnt_adap_info *info = &app->current_adapter_info;
 	char adap_sig[64];
@@ -261,6 +266,11 @@ void syncGuiToCurrentAdapter(struct application *app)
 					{	rbtn_mouse_mode, CFG_MODE_MOUSE },
 					{	rbtn_mouse_mode2, CFG_MODE_MOUSE2 },
 					{	rbtn_sms_mode, CFG_MODE_SMS },
+					{	rbtn_gc_only, CFG_MODE_GC_ONLY },
+					{	rbtn_keyboard_mode, CFG_MODE_KEYBOARD },
+					{	rbtn_keyboard_mode2, CFG_MODE_KEYBOARD_2 },
+					{	rbtn_two_gc_controllers, CFG_MODE_2P_GC_ONLY },
+					{	rbtn_gc_js_mode, CFG_MODE_KB_AND_JS },
 					{	}
 				};
 
@@ -306,6 +316,21 @@ void syncGuiToCurrentAdapter(struct application *app)
 				break;
 			case CFG_MODE_SMS:
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_sms_mode), buf[0]);
+				break;
+			case CFG_MODE_GC_ONLY:
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_gc_only), buf[0]);
+				break;
+			case CFG_MODE_2P_GC_ONLY:
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_two_gc_controllers), buf[0]);
+				break;
+			case CFG_MODE_KEYBOARD:
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_keyboard_mode), buf[0]);
+				break;
+			case CFG_MODE_KEYBOARD_2:
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_keyboard_mode2), buf[0]);
+				break;
+			case CFG_MODE_KB_AND_JS:
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_gc_js_mode), buf[0]);
 				break;
 		}
 	}
@@ -581,6 +606,11 @@ G_MODULE_EXPORT void cfg_adapter_mode_changed(GtkWidget *win, gpointer data)
 		{ CFG_MODE_MOUSE, GET_ELEMENT(GtkRadioButton, rbtn_mouse_mode) },
 		{ CFG_MODE_MOUSE2, GET_ELEMENT(GtkRadioButton, rbtn_mouse_mode2) },
 		{ CFG_MODE_SMS, GET_ELEMENT(GtkRadioButton, rbtn_sms_mode) },
+		{ CFG_MODE_GC_ONLY, GET_ELEMENT(GtkRadioButton, rbtn_gc_only) },
+		{ CFG_MODE_KEYBOARD, GET_ELEMENT(GtkRadioButton, rbtn_keyboard_mode) },
+		{ CFG_MODE_KEYBOARD_2, GET_ELEMENT(GtkRadioButton, rbtn_keyboard_mode2) },
+		{ CFG_MODE_2P_GC_ONLY, GET_ELEMENT(GtkRadioButton, rbtn_two_gc_controllers) },
+		{ CFG_MODE_KB_AND_JS, GET_ELEMENT(GtkRadioButton, rbtn_gc_js_mode) },
 		{ },
 	};
 	int i;
