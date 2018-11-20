@@ -119,6 +119,9 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0057, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Dual SNES to USB adapter v2.1 (w/advXarch)
 	{ OUR_VENDOR_ID, 0x0058, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // SNES mouse to USB adapter v2.2
 
+	{ OUR_VENDOR_ID, 0x0069, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // 3DO to USB adapter (w/advXarch)
+	{ OUR_VENDOR_ID, 0x006A, 1, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // 3DO to USB adapter (2-player mode)
+
 	// Legacy devices (vusb, non-upgradeable and typically without configurable features)
 	{ OUR_VENDOR_ID, 0x0001, -1 }, // GCN64->USB v2.2
 	{ OUR_VENDOR_ID, 0x0003, -1, { 0, 4 } }, // 4nes4snes 1.4.2, 1.5
@@ -842,6 +845,7 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_MSX_2BUTTON: return "MSX 2-button controller";
 		case CTL_TYPE_WII_GUITAR: return "Guitar controller";
 		case CTL_TYPE_UDRAW_TABLET: return "uDraw tablet";
+		case CTL_TYPE_3DO: return "3DO controller";
 		default:
 			return "Unknown";
 	}
