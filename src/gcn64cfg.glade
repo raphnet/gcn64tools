@@ -423,7 +423,7 @@ Author: Raphaël Assénat
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can_focus">False</property>
-                        <property name="label" translatable="yes">Manage GC to N64 adapter</property>
+                        <property name="label" translatable="yes">Manage SNES/GC to N64 adapter</property>
                         <property name="use_underline">True</property>
                         <signal name="activate" handler="gc2n64_manager_show" swapped="no"/>
                       </object>
