@@ -1,0 +1,12 @@
+[nsnes_to_n64-1.3.hex]
+md5=8acc661ae833e31f175288ed04be07b2
+version=1.3
+date=2018-12-06
+notes=- Added SNES mouse support (for 64DD games such as Mario Artist)
+
+[nsnes_to_n64-1.1.hex]
+md5=2ac19762676096df25160969f7a817f3
+version=1.1
+date=2016-11-05
+notes=- Add a new mapping
+
