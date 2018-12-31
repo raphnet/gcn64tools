@@ -1027,11 +1027,11 @@ int main(int argc, char **argv)
 				break;
 
 			case OPT_DISABLE_ENCRYPTION:
-				wusbmotelib_disableEncryption(hdl, channel);
+				retval = wusbmotelib_disableEncryption(hdl, channel);
 				break;
 
 			case OPT_DUMP_WIIMOTE_EXTENSION_MEMORY:
-				wusbmotelib_dumpMemory(hdl, channel, NULL, 1);
+				retval = wusbmotelib_dumpMemory(hdl, channel, NULL, 1);
 				break;
 
 			case OPT_PCE_RAWTEST:
