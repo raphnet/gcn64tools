@@ -849,6 +849,10 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_WII_GUITAR: return "Guitar controller";
 		case CTL_TYPE_UDRAW_TABLET: return "uDraw tablet";
 		case CTL_TYPE_3DO: return "3DO controller";
+		case CTL_TYPE_WII_DRUM: return "Wii drum controller";
+		case CTL_TYPE_PC_JOYSTICK_2BTN: return "2-button PC joystick";
+		case CTL_TYPE_PC_JOYSTICK_4BTN: return "4-button PC joystick";
+		case CTL_TYPE_N64_MOUSE: return "N64 mouse";
 		default:
 			return "Unknown";
 	}

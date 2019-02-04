@@ -45,6 +45,7 @@
 #define CTL_TYPE_N64	1
 #define CTL_TYPE_GC		2
 #define CTL_TYPE_GCKB	3
+#define CTL_TYPE_N64_MOUSE	5
 // New values (follows PAD_TYPE_* + 100)
 #define CTL_TYPE_NONE_NEW	100
 #define CTL_TYPE_CLASSIC	101
@@ -76,9 +77,11 @@
 #define CTL_TYPE_WII_GUITAR		127
 #define CTL_TYPE_UDRAW_TABLET	128
 #define CTL_TYPE_3DO			129
-
+#define CTL_TYPE_WII_DRUM		130
 #define CTL_TYPE_RANDNET_KEYBOARD	140
 #define CTL_TYPE_GAMECUBE_KEYBOARD	141
+#define CTL_TYPE_PC_JOYSTICK_2BTN	142
+#define CTL_TYPE_PC_JOYSTICK_4BTN	143
 
 /* Configuration parameters and constants */
 #define CFG_PARAM_MODE			0x00
