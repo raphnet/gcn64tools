@@ -1,3 +1,9 @@
+[nsnes_to_n64-1.4.hex]
+md5=a4b15b71af47a700d7beb681c43cf3e0
+version=1.4
+date=2019-02-05
+notes=- Improved mouse support
+
 [nsnes_to_n64-1.3.hex]
 md5=8acc661ae833e31f175288ed04be07b2
 version=1.3
