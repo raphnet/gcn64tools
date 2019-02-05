@@ -1,3 +1,8 @@
+=== Version 2.1.18 ===
+ - Add SNES to N64 firmwares (incl. new firmware v1.4)
+ - Display 'N64 mouse' when a N64 mouse is connected
+ - Add support for a Gameport to USB adapter
+
 === Version 2.1.17 ===
  - Add support for 3DO controller to USB adapter (V2, w/advXarch)
 
