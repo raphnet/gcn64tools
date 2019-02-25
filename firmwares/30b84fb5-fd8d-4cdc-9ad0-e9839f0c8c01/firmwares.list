@@ -1,0 +1,14 @@
+[x2gcwii.n64-2.1.hex]
+md5=c4f70e7ca13855c9719914c46e1c48b7
+version=2.1
+date=2019-02-25
+notes=- Fix a button mapping bug
+
+[x2gcwii.n64-2.0.hex]
+md5=b81767a3703aecaaa7ce5c2e18388dbd
+version=2.0
+date=2018-09-07
+notes=- Dual mode. Auto-detects Gamecube operating frequency, supports being polled at intervals down to 1ms.\n- Tested with Mario Kart Wii, With the Game Boy player (standard and GBI), with the Nintendo Switch (through the Gamecube adapter for Wii U)\n- Supports rumble, even at high polling frequencies.\n - Firmware now updateable
+
+
+
