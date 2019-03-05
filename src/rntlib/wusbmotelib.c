@@ -253,7 +253,7 @@ int wusbmotelib_dumpMemory(rnt_hdl_t hdl, uint8_t chn, uint8_t *dstBuf, char ver
 			.rd_len = 0x10, .rd_data = memory + i,
 			.addr = 0x52,
 		};
-
+usleep(40000);
 		res = wusbmote_i2c_transaction(hdl, &txn);
 		if (res < 0) {
 			fprintf(stderr, "error executing transaction\n");

@@ -270,6 +270,7 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 	uint8_t status[16], prev_status[16];
 	uint8_t high_res = 0;
 	int res;
+	int enable_high_res = 1;
 	classic_pad_data pad_data;
 	udraw_tablet_data udraw_data;
 
@@ -278,8 +279,10 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 
 	printf("Suspending polling. Please use --resume_polling later.\n");
 	rnt_suspendPolling(hdl, 1);
+	usleep(40000);
 
 	wusbmotelib_disableEncryption(hdl, chn);
+	usleep(40000);
 	wusbmotelib_dumpMemory(hdl, chn, extmem, 1);
 
 	ext_id = extmem[0xFA] << 8 | extmem[0xFF];
@@ -289,10 +292,14 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 		case ID_NUNCHUK: printf("Nunchuk detected\n"); break;
 		case ID_GH_GUITAR: printf("Guitar detected\n"); break;
 		case ID_CLASSIC: printf("Classic Controller detected\n");
+			if (enable_high_res) {
+				high_res = 1;
+			}
 			break;
-			high_res = 1;
 		case ID_CLASSIC_PRO: printf("Classic Controller Pro detected\n");
-			high_res = 1;
+			if (enable_high_res) {
+				high_res = 1;
+			}
 			break;
 		default:
 			printf("Extension ID 0x%04x not implemented\n", ext_id); return 0;
@@ -313,6 +320,8 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 
 	while(1)
 	{
+		usleep(40000);
+
 		res = wusbmotelib_readRegs(hdl, chn, 0, status, sizeof(status));
 		if (res < 0) {
 			fprintf(stderr, "error reading registers\n");
