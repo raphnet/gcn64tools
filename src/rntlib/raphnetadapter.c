@@ -853,6 +853,7 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_MSX_2BUTTON: return "MSX 2-button controller";
 		case CTL_TYPE_WII_GUITAR: return "Guitar controller";
 		case CTL_TYPE_UDRAW_TABLET: return "uDraw tablet";
+		case CTL_TYPE_DRAWSOME_TABLET: return "Drawsome tablet";
 		case CTL_TYPE_3DO: return "3DO controller";
 		case CTL_TYPE_WII_DRUM: return "Wii drum controller";
 		case CTL_TYPE_PC_JOYSTICK_2BTN: return "2-button PC joystick";

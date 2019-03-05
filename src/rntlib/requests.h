@@ -82,6 +82,7 @@
 #define CTL_TYPE_GAMECUBE_KEYBOARD	141
 #define CTL_TYPE_PC_JOYSTICK_2BTN	142
 #define CTL_TYPE_PC_JOYSTICK_4BTN	143
+#define CTL_TYPE_DRAWSOME_TABLET	144
 
 /* Configuration parameters and constants */
 #define CFG_PARAM_MODE			0x00

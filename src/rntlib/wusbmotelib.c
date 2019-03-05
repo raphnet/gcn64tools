@@ -419,3 +419,11 @@ void wusbmotelib_bufferToUdrawData(const uint8_t *buf, udraw_tablet_data *dst)
 	dst->buttons = buf[5] ^ 0xfb;
 }
 
+void wusbmotelib_bufferToDrawsomeData(const uint8_t *buf, drawsome_tablet_data *dst)
+{
+	dst->x = buf[0] | buf[1]<<8;
+	dst->y = buf[2] | buf[3]<<8;
+	dst->pressure = buf[4] | (buf[5]&0x0f)<<8;
+	dst->status = buf[5]>>4;
+}
+

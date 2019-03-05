@@ -274,6 +274,7 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 	int enable_high_res = 1;
 	classic_pad_data pad_data;
 	udraw_tablet_data udraw_data;
+	drawsome_tablet_data drawsome_data;
 
 	printf("Polling Wii controller\n");
 	printf("CTRL+C to stop\n");
@@ -284,11 +285,13 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 
 	wusbmotelib_disableEncryption(hdl, chn);
 	_delay_us(40000);
+
 	wusbmotelib_dumpMemory(hdl, chn, extmem, 1);
 
 	ext_id = extmem[0xFA] << 8 | extmem[0xFF];
 	switch (ext_id)
 	{
+		case ID_DRAWSOME: printf("Drawsome tablet detected\n"); break;
 		case ID_UDRAW: printf("UDraw tablet detected\n"); break;
 		case ID_NUNCHUK: printf("Nunchuk detected\n"); break;
 		case ID_GH_GUITAR: printf("Guitar detected\n"); break;
@@ -319,22 +322,50 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 		}
 	}
 
+	if (ext_id == ID_DRAWSOME)
+	{
+		uint8_t regval;
+
+		printf("Enabling drawsome tablet...");
+
+		regval = 0x01;
+		res = wusbmotelib_writeRegs(hdl, chn, 0xFB, &regval, 1);
+		if (res) {
+			printf("test write failed\n");
+			return -1;
+		}
+
+		regval = 0x55;
+		res = wusbmotelib_writeRegs(hdl, chn, 0xF0, &regval, 1);
+		if (res) {
+			printf("test write failed\n");
+			return -1;
+		}
+
+		printf("Done.\n\n");
+	}
+
 	while(1)
 	{
+		int readlen = sizeof(status);
+
+		if (ext_id == ID_DRAWSOME)
+			readlen = 6;
+
 		_delay_us(40000);
 
-		res = wusbmotelib_readRegs(hdl, chn, 0, status, sizeof(status));
+		res = wusbmotelib_readRegs(hdl, chn, 0, status, readlen);
 		if (res < 0) {
 			fprintf(stderr, "error reading registers\n");
 			return -1;
 		}
 
 		// Only display changes
-		if (0 == memcmp(prev_status, status, sizeof(status)))
+		if (0 == memcmp(prev_status, status, readlen))
 			continue;
-		memcpy(prev_status, status, sizeof(status));
+		memcpy(prev_status, status, readlen);
 
-		printHexBuf(status, sizeof(status));
+		printHexBuf(status, readlen);
 
 		switch (ext_id)
 		{
@@ -345,6 +376,7 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 						pad_data.lx, pad_data.ly, pad_data.rx, pad_data.ry,
 						pad_data.lt, pad_data.rt);
 				break;
+
 			case ID_UDRAW:
 				wusbmotelib_bufferToUdrawData(status, &udraw_data);
 				printf("X: %6d, Y: %6d, P=%3d, Buttons: 0x%02x  (%3d %3d)\n",
@@ -357,7 +389,21 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 
 						);
 				break;
+
+			case ID_DRAWSOME:
+				wusbmotelib_bufferToDrawsomeData(status, &drawsome_data);
+				printf("X: %6d, Y: %6d, P=%3d, status: 0x%02x (%s)\n",
+						drawsome_data.x,
+						drawsome_data.y,
+						drawsome_data.pressure,
+						drawsome_data.status,
+						drawsome_data.status & 0x08 ? "Pen out of range":"Pen in range"
+						);
+
+				break;
+
 		}
+
 	}
 
 	return 0;
