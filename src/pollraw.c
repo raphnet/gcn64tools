@@ -9,6 +9,7 @@
 #include "psxlib.h"
 #include "db9lib.h"
 #include "sleep.h"
+#include "delay.h"
 
 int pollraw_gamecube(rnt_hdl_t hdl, int chn)
 {
@@ -279,10 +280,10 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 
 	printf("Suspending polling. Please use --resume_polling later.\n");
 	rnt_suspendPolling(hdl, 1);
-	usleep(40000);
+	_delay_us(40000);
 
 	wusbmotelib_disableEncryption(hdl, chn);
-	usleep(40000);
+	_delay_us(40000);
 	wusbmotelib_dumpMemory(hdl, chn, extmem, 1);
 
 	ext_id = extmem[0xFA] << 8 | extmem[0xFF];
@@ -320,7 +321,7 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 
 	while(1)
 	{
-		usleep(40000);
+		_delay_us(40000);
 
 		res = wusbmotelib_readRegs(hdl, chn, 0, status, sizeof(status));
 		if (res < 0) {
