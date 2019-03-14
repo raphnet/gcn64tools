@@ -306,8 +306,8 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 			}
 			break;
 		default:
-			printf("Extension ID 0x%04x not implemented\n", ext_id); return 0;
-		break;
+			printf("Warning: Extension ID 0x%04x not implemented\n", ext_id);
+			break;
 	}
 
 	// Enable high-resolution mode
