@@ -427,3 +427,17 @@ void wusbmotelib_bufferToDrawsomeData(const uint8_t *buf, drawsome_tablet_data *
 	dst->status = buf[5]>>4;
 }
 
+void wusbmotelib_bufferToTurntableData(const uint8_t *buf, djhero_turntable_data *dst)
+{	
+	uint8_t rtt = (buf[2] & 0x80) >> 7 | (buf[1] & 0xC0) >> 5 | (buf[0] & 0xC0) >> 3;
+		
+	dst->x = buf[0] & 0x3F;
+	dst->y = buf[1] & 0x3F;
+	dst->left_turntable = (buf[4] & 1) ? 32 + (0x1F - (buf[3] & 0x1F)) : 32 - (buf[3] & 0x1F);
+	dst->right_turntable = (buf[2] & 1) ? 32 + (0x1F - rtt) : 32 - rtt;	
+	dst->effect_dial = (buf[3] & 0xE0) >> 5 | (buf[2] & 0x60) >> 2;
+	dst->crossfade = (buf[2] & 0x1E) >> 1;
+	dst->buttons = ~(buf[4] << 8 | buf[5]) & 0xFEFF;
+	
+}
+

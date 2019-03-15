@@ -275,6 +275,7 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 	classic_pad_data pad_data;
 	udraw_tablet_data udraw_data;
 	drawsome_tablet_data drawsome_data;
+	djhero_turntable_data turntable_data;
 
 	printf("Polling Wii controller\n");
 	printf("CTRL+C to stop\n");
@@ -291,6 +292,7 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 	ext_id = extmem[0xFA] << 8 | extmem[0xFF];
 	switch (ext_id)
 	{
+		case ID_DJHERO: printf("DJ-Hero Turntable detected\n"); break;
 		case ID_DRAWSOME: printf("Drawsome tablet detected\n"); break;
 		case ID_UDRAW: printf("UDraw tablet detected\n"); break;
 		case ID_NUNCHUK: printf("Nunchuk detected\n"); break;
@@ -400,6 +402,20 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 						drawsome_data.status & 0x08 ? "Pen out of range":"Pen in range"
 						);
 
+				break;
+				
+			case ID_DJHERO:
+				wusbmotelib_bufferToTurntableData(status, &turntable_data);
+				printf("X: %3d, Y: %3d, LTT=%2d, RTT=%2d, Effect=%2d, Crossfade=%2d, Buttons=%04x\n",
+					turntable_data.x,
+					turntable_data.y,
+					turntable_data.left_turntable,
+					turntable_data.right_turntable,
+					turntable_data.effect_dial,
+					turntable_data.crossfade,
+					turntable_data.buttons
+					);
+				
 				break;
 
 		}
