@@ -429,6 +429,16 @@ void wusbmotelib_bufferToDrawsomeData(const uint8_t *buf, drawsome_tablet_data *
 
 void wusbmotelib_bufferToTurntableData(const uint8_t *buf, djhero_turntable_data *dst)
 {	
+	// Reference: https://wiibrew.org/wiki/Wiimote/Extension_Controllers/DJ_Hero_(Wii)_Turntable
+	//
+	//     7        6     5    4    3     2     1     0
+	// 0   RTT<4:3>       SX<5:0>
+	// 1   RTT<2:1>       SY<5:0>
+	// 2   RTT<0>   ED<4:3>    CS<3:0>                RTT<5>
+	// 3   ED<2:0>             LTT<4:0>
+	// 4   0        0     LBR  B-   0     B+    RBR   LTT<5>
+	// 5   LRB      0     RBG  BE   LBG   RBB   0     0
+	
 	uint8_t rtt = (buf[2] & 0x80) >> 7 | (buf[1] & 0xC0) >> 5 | (buf[0] & 0xC0) >> 3;
 		
 	dst->x = buf[0] & 0x3F;
