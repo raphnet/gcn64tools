@@ -10,6 +10,7 @@
 #define ID_GH_GUITAR	0x0003 // GH3 or GHWT
 #define ID_UDRAW		0xFF12
 #define ID_DRAWSOME		0xFF13
+#define ID_DJHERO		0x0303
 
 #define PAD_TYPE_CLASSIC    1
 #define PAD_TYPE_CLASSIC_PRO	13
@@ -65,6 +66,14 @@ typedef struct _drawsom_data {
 	uint16_t pressure;
 	uint8_t status;
 } drawsome_tablet_data;
+
+typedef struct _djhero_data {
+	uint8_t x, y;
+	uint8_t left_turntable, right_turntable;
+	uint8_t effect_dial;
+	uint8_t crossfade;
+	uint16_t buttons;
+} djhero_turntable_data;
 
 struct i2c_transaction {
 	/** Adapter channel / port number */
@@ -164,6 +173,8 @@ void wusbmotelib_bufferToUdrawData(const uint8_t *buf, udraw_tablet_data *dst);
  * \param dst The destination structure
  */
 void wusbmotelib_bufferToDrawsomeData(const uint8_t *buf, drawsome_tablet_data *dst);
+
+void wusbmotelib_bufferToTurntableData(const uint8_t *buf, djhero_turntable_data *dst);
 
 
 #endif // _wusbmotelib_h__
