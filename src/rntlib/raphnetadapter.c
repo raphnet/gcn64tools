@@ -123,7 +123,7 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x006A, 1, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // 3DO to USB adapter (2-player mode)
 
 	{ OUR_VENDOR_ID, 0x0070, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Gameport to USB adapter (1p)
-	{ OUR_VENDOR_ID, 0x0070, 1, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Gameport to USB adapter (2p)
+	{ OUR_VENDOR_ID, 0x0071, 1, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Gameport to USB adapter (2p)
 
 	{ OUR_VENDOR_ID, 0x0080, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // 1-player WUSBMote v2.2 (w/advXarch)
 	{ OUR_VENDOR_ID, 0x0081, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // 2-player WUSBMote v2.2 (w/advXarch)
