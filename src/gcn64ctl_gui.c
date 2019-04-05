@@ -155,6 +155,7 @@ static gboolean periodic_updater(gpointer data)
 
 		switch (app->controller_type)
 		{
+			case CTL_TYPE_N64_MOUSE:
 			case CTL_TYPE_N64:
 				gtk_widget_set_sensitive(GTK_WIDGET(btn_rumble_test), TRUE);
 				setsensitive_n64_adapter_widgets(app, TRUE);
