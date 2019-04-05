@@ -1,3 +1,9 @@
+[nsnes_to_n64-1.5.hex]
+md5=cd1a103f1d38203f4be6be86592298d9
+version=1.5
+date=2019-04-05
+notes=-  Fix broken standard controller mode\n(was incorrectly detected as a mouse)
+
 [nsnes_to_n64-1.4.hex]
 md5=a4b15b71af47a700d7beb681c43cf3e0
 version=1.4
