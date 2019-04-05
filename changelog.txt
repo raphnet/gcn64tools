@@ -1,6 +1,8 @@
 === Version 2.1.18 ===
- - Add SNES to N64 firmwares (incl. new firmware v1.4)
+ - Add SNES to N64 firmwares (incl. new firmware v1.5)
  - Display 'N64 mouse' when a N64 mouse is connected
+ - Add Wii turntable support to command-line tools. (Thanks to CaitSith2)
+ - Add Wii drawsome tablet protocol decoding
  - Add support for a Gameport to USB adapter
 
 === Version 2.1.17 ===
