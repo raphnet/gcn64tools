@@ -1,4 +1,9 @@
 === Version 2.1.18 ===
+ - New firmware for the Classic controller/Wiitar to USB adapter (version 2.1.2)
+   - Calibrate whammy bar on guitars
+   - Add support for Wii drums
+   - Remap Guitar buttons in a more logical order and matching drum colors
+   - Add support for the uDraw tablet (joystick emulation and mouse. No absolute/tablet mode yet)
  - Add SNES to N64 firmwares (incl. new firmware v1.5)
  - Display 'N64 mouse' when a N64 mouse is connected
  - Add Wii turntable support to command-line tools. (Thanks to CaitSith2)
