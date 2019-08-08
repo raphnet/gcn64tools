@@ -859,6 +859,10 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_PC_JOYSTICK_2BTN: return "2-button PC joystick";
 		case CTL_TYPE_PC_JOYSTICK_4BTN: return "4-button PC joystick";
 		case CTL_TYPE_N64_MOUSE: return "N64 mouse";
+		case CTL_TYPE_WII_TURNTABLE: return "Wii turntable";
+		case CTL_TYPE_FAMICOM_CONTROLLER: return "Famicom gamepad";
+		case CTL_TYPE_FAMICOM_KEYBOARD: return "Famicom keyboard";
+		case CTL_TYPE_NEO_GEO: return "Neo Geo controller";
 		default:
 			return "Unknown";
 	}
