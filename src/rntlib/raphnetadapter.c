@@ -862,6 +862,7 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_WII_TURNTABLE: return "Wii turntable";
 		case CTL_TYPE_FAMICOM_CONTROLLER: return "Famicom gamepad";
 		case CTL_TYPE_FAMICOM_KEYBOARD: return "Famicom keyboard";
+		case CTL_TYPE_FAMICOM_NETWORK_CTL: return "Famicom network controller";
 		case CTL_TYPE_NEO_GEO: return "Neo Geo controller";
 		default:
 			return "Unknown";
