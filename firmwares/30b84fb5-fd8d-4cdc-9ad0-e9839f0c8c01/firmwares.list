@@ -1,3 +1,9 @@
+[x2gcwii.n64-2.2.hex]
+md5=efed82263e04ce9c4857400e780b53c6
+version=2.2
+date=2019-09-20
+notes=- Fix the L+R mapping which did not work.
+
 [x2gcwii.n64-2.1.hex]
 md5=c4f70e7ca13855c9719914c46e1c48b7
 version=2.1
