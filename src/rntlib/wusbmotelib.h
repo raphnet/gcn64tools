@@ -176,6 +176,7 @@ void wusbmotelib_bufferToDrawsomeData(const uint8_t *buf, drawsome_tablet_data *
 
 void wusbmotelib_bufferToTurntableData(const uint8_t *buf, djhero_turntable_data *dst);
 
+void wusbmotelib_bufferToNunchukPadData(const uint8_t *buf, nunchuk_pad_data *dst);
 
 #endif // _wusbmotelib_h__
 

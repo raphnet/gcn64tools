@@ -451,3 +451,24 @@ void wusbmotelib_bufferToTurntableData(const uint8_t *buf, djhero_turntable_data
 	
 }
 
+void wusbmotelib_bufferToNunchukPadData(const uint8_t *buf, nunchuk_pad_data *dst)
+{
+	// Reference: http://wiibrew.org/wiki/Wiimote/Extension_Controllers/Nunchuck
+	//
+	//     7   6    5   4    3   2     1   0
+	// 0   SX<7:0>
+	// 1   SY<7:0>
+	// 2   AX<9:2>
+	// 3   AY<9:2>
+	// 4   AZ<9:2>
+	// 5   AZ<1:0>  AY<1:0>  AX<1:0>   BC  BZ
+	dst->sx = buf[0] ^ 0x80;
+	dst->sy = buf[1] + 0x80;
+	dst->ax = (((buf[5] & 0x0C) >> 2) | (buf[2] << 2)) - 0x200;
+	dst->ay = (((buf[5] & 0x30) >> 4) | (buf[3] << 2)) - 0x200;
+	dst->az = (((buf[5] & 0xC0) >> 6) | (buf[4] << 2)) - 0x200;
+	dst->buttons = 0;
+	if (!(buf[5]&0x01)) dst->buttons |= NUNCHK_BTN_Z;
+	if (!(buf[5]&0x02)) dst->buttons |= NUNCHK_BTN_C;
+}
+
