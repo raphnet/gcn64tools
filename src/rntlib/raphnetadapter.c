@@ -132,6 +132,7 @@ static struct supported_adapter supported_adapters[] = {
 
 	{ OUR_VENDOR_ID, 0x0084, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Famicom to USB adapter (1p mode)
 	{ OUR_VENDOR_ID, 0x0085, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Famicom to USB adapter (2p mode)
+	{ OUR_VENDOR_ID, 0x0086, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Famicom to USB adapter (keyboard mode)
 
 	// Legacy devices (vusb, non-upgradeable and typically without configurable features)
 	{ OUR_VENDOR_ID, 0x0001, -1 }, // GCN64->USB v2.2
