@@ -6,6 +6,7 @@
 #include "hexdump.h"
 
 //#define DEBUG_EXCHANGES
+//#define DISABLE_COMMAND_ACK_CHECK
 
 int psxlib_exchange(rnt_hdl_t hdl, unsigned char channel, unsigned char *tx, unsigned char tx_len, unsigned char *rx, unsigned char max_rx)
 {
@@ -191,6 +192,7 @@ int psxlib_writeMemoryCardSector(rnt_hdl_t hdl, uint8_t chn, uint16_t sector, co
 		return PSXLIB_ERR_NO_CARD_DETECTED;
 	}
 
+#ifndef DISABLE_COMMAND_ACK_CHECK
 	// Acknowledge?
 	if (inbuf[135] != 0x5C) {
 		return PSXLIB_ERR_NO_COMMAND_ACK;
@@ -198,6 +200,7 @@ int psxlib_writeMemoryCardSector(rnt_hdl_t hdl, uint8_t chn, uint16_t sector, co
 	if (inbuf[136] != 0x5D) {
 		return PSXLIB_ERR_NO_COMMAND_ACK;
 	}
+#endif
 
 	// Examine the end byte
 	switch(inbuf[137])
@@ -301,12 +304,14 @@ int psxlib_readMemoryCardSector(rnt_hdl_t hdl, uint8_t chn, uint16_t sector, uin
 		return PSXLIB_ERR_NO_CARD_DETECTED;
 	}
 
+#ifndef DISABLE_COMMAND_ACK_CHECK
 	// Check for command acknowledge
 	if (inbuf[6] != 0x5C ||
 		inbuf[7] != 0x5D)
 	{
 		return PSXLIB_ERR_NO_COMMAND_ACK;
 	}
+#endif
 
 	// Make sure confirmed sector matches
 	confirmed_sector = inbuf[8] << 8 | inbuf[9];
