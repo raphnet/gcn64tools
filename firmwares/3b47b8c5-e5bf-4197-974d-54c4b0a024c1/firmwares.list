@@ -1,3 +1,9 @@
+[x2gcwii.classic-1.3.hex]
+md5=8a3cf02077ae461e1f36e05df83541ac
+version=1.3
+date=2019-08-27
+notes=- Add mappings for playing Mario Kart on the Switch (though a GBros) using a Nunchuk and a NES Classic controller
+
 [x2gcwii.classic-1.2.hex]
 md5=b98accd254db6bba602231f8c15fa9b0
 version=1.2
