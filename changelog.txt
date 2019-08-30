@@ -1,3 +1,10 @@
+=== Version 2.1.19 ===
+ - New N64 to GC/Wii firmware v2.2: Fix the L+R mapping.
+ - New Classic controller to GC/Wii firmware v1.3: Special mappings for
+   playing Mario Kart on the switch with a Nunchuk or a NES classic
+   controller.
+ - Add support for a Famicom to USB adapter (controller and keyboard modes).
+
 === Version 2.1.18 ===
  - New firmware for the Classic controller/Wiitar to USB adapter (version 2.1.2)
    - Calibrate whammy bar on guitars
