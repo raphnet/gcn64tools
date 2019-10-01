@@ -1485,7 +1485,6 @@ Author: Raphaël Assénat
                                         <child>
                                           <object class="GtkRadioButton" id="rbtn_keyboard_mode2">
                                             <property name="label" translatable="yes">Keyboard mode</property>
-                                            <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">False</property>
                                             <property name="xalign">0</property>
