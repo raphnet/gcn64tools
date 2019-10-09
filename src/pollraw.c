@@ -11,6 +11,14 @@
 #include "sleep.h"
 #include "delay.h"
 
+// when defined, a roll angle is computed for the nunchuk.
+// Must also add -lm to the makefile for atan2...
+#undef DISPLAY_NUNCHUK_ROLL
+
+#ifdef DISPLAY_NUNCHUK_ROLL
+#include <math.h>
+#endif
+
 int pollraw_gamecube(rnt_hdl_t hdl, int chn)
 {
 	uint8_t getstatus[3] = { GC_GETSTATUS1, GC_GETSTATUS2, 0x00 };
@@ -276,6 +284,7 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 	udraw_tablet_data udraw_data;
 	drawsome_tablet_data drawsome_data;
 	djhero_turntable_data turntable_data;
+	nunchuk_pad_data nunchuk_data;
 
 	printf("Polling Wii controller\n");
 	printf("CTRL+C to stop\n");
@@ -371,6 +380,17 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 
 		switch (ext_id)
 		{
+			case ID_NUNCHUK:
+				wusbmotelib_bufferToNunchukPadData(status, &nunchuk_data);
+				printf("SX: %d, XY: %d, AX: %3d, AY: %3d, AZ: %3d\n",
+						nunchuk_data.sx, nunchuk_data.sy,
+						nunchuk_data.ax, nunchuk_data.ay, nunchuk_data.az);
+#ifdef DISPLAY_NUNCHUK_ROLL
+				// Z and X for roll
+				printf(" Roll angle: %2.1f\n", atan2(nunchuk_data.ax , (double)nunchuk_data.az) / M_PI * 2.0 * 90.0);
+#endif
+				break;
+
 			case ID_CLASSIC:
 			case ID_CLASSIC_PRO:
 				wusbmotelib_bufferToClassicPadData(status, &pad_data, ext_id, high_res);
