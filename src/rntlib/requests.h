@@ -103,6 +103,7 @@
 #define CFG_MODE_6P_STANDARD	0x06
 #define CFG_MODE_7P_STANDARD	0x07
 #define CFG_MODE_8P_STANDARD	0x08
+#define CFG_MODE_1P_FOR_2P_ADAPTER	0x09
 
 #define CFG_MODE_SMS			0x0A // DB9 adapter in SMS mode
 
