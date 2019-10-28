@@ -1,25 +1,26 @@
 #!/bin/bash
 
+VERSION_INC=./src/version.inc
+VERSION=`cat $VERSION_INC | cut -d '=' -f 2` # VERSION=x.x.x
 PREFIX=raphnet-tech_adapter_manager
 HEXFILE=$PREFIX.hex
+TAG=v$VERSION
 
 echo "Release script for $PREFIX"
 
-if [ $# -ne 2 ]; then
+if [ $# -ne 1 ]; then
 	echo "Syntax: ./release.sh version releasedir"
 	echo
-	echo "ex: './release 1.0' will produce $PREFIX-1.0.tar.gz in releasedir out of git HEAD,"
-	echo "and place it in the release directory."
+	echo "ex: './release.sh ../releases' will produce $PREFIX-$VERSION.tar.gz in releasedir out of git HEAD,"
+	echo "and place it in the ../releases directory."
 	echo
-	echo "It will also create a tag named v1.0"
+	echo "It will also create a tag named $TAG"
 	exit
 fi
 
-VERSION=$1
-RELEASEDIR=$2
+RELEASEDIR=$1
 DIRNAME=$PREFIX-$VERSION
 FILENAME=$PREFIX-$VERSION.tar.gz
-TAG=v$VERSION
 
 echo "Version: $VERSION"
 echo "Filename: $FILENAME"
