@@ -79,6 +79,19 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0067, 1, { 0, 1, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Keyboard mode 2 (alternate with GC/N64 mode)
 	{ OUR_VENDOR_ID, 0x0068, 2, { 0, 2, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Keyboard (port 2) and joystick (port 1) mode
 
+	// GC/N64 USB v3.7.x versions
+	{ OUR_VENDOR_ID, 0x0090, 1, { 0, 1, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // (GC/N64 mode)
+	{ OUR_VENDOR_ID, 0x0091, 1, { 0, 1, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE} }, // (N64 mode)
+	{ OUR_VENDOR_ID, 0x0092, 1, { 0, 1, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // (GC mode)
+	{ OUR_VENDOR_ID, 0x0093, 2, { 0, 2, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES } }, // (2x GC/N64 mode)
+	{ OUR_VENDOR_ID, 0x0094, 2, { 0, 2, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES } }, // (2x N64-only mode)
+	{ OUR_VENDOR_ID, 0x0095, 2, { 0, 2, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // (2x GC-only mode)
+	{ OUR_VENDOR_ID, 0x0096, 1, { 0, 1, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Keyboard mode (alternates with GC mode)
+	{ OUR_VENDOR_ID, 0x0097, 1, { 0, 1, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Keyboard mode 2 (alternate with GC/N64 mode)
+	{ OUR_VENDOR_ID, 0x0098, 2, { 0, 2, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Keyboard (port 2) and joystick (port 1) mode
+	{ OUR_VENDOR_ID, 0x0099, 1, { 0, 1, 2, RNTF_BLOCK_IO | RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Keyboard mode 3 (alternate with N64-only mode)
+
+
 	{ OUR_VENDOR_ID, 0x004A, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter
 	{ OUR_VENDOR_ID, 0x004B, 1, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter (2 player mode)
 	{ OUR_VENDOR_ID, 0x004C, 1, { 63, 3, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // DB9 Joystick to USB adapter (3 player mode)

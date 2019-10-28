@@ -221,6 +221,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 	GET_UI_ELEMENT(GtkSpinButton, snesMouseSpeed);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_1p_joystick_mode);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_1p_2p);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_1p_n64_only);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_2p_joystick_mode);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_3p_joystick_mode);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_4p_joystick_mode);
@@ -236,6 +237,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_gc_only);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_keyboard_mode);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_keyboard_mode2);
+	GET_UI_ELEMENT(GtkRadioButton, rbtn_keyboard_mode3);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_two_gc_controllers);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_gc_js_mode);
 	int i;
@@ -262,6 +264,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 				} availableModes[] = {
 					{	rbtn_1p_joystick_mode, CFG_MODE_STANDARD	},
 					{	rbtn_1p_2p, CFG_MODE_1P_FOR_2P_ADAPTER		},
+					{	rbtn_1p_n64_only, CFG_MODE_N64_ONLY			},
 					{	rbtn_2p_joystick_mode, CFG_MODE_2P_STANDARD },
 					{	rbtn_3p_joystick_mode, CFG_MODE_3P_STANDARD },
 					{	rbtn_4p_joystick_mode, CFG_MODE_4P_STANDARD },
@@ -272,6 +275,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 					{	rbtn_gc_only, CFG_MODE_GC_ONLY },
 					{	rbtn_keyboard_mode, CFG_MODE_KEYBOARD },
 					{	rbtn_keyboard_mode2, CFG_MODE_KEYBOARD_2 },
+					{	rbtn_keyboard_mode3, CFG_MODE_KEYBOARD_3 },
 					{	rbtn_two_gc_controllers, CFG_MODE_2P_GC_ONLY },
 					{	rbtn_gc_js_mode, CFG_MODE_KB_AND_JS },
 					{	}
@@ -301,6 +305,9 @@ void syncGuiToCurrentAdapter(struct application *app)
 				break;
 			case CFG_MODE_1P_FOR_2P_ADAPTER:
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_1p_2p), buf[0]);
+				break;
+			case CFG_MODE_N64_ONLY:
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_1p_n64_only), buf[0]);
 				break;
 			case CFG_MODE_2P_STANDARD:
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_2p_joystick_mode), buf[0]);
@@ -334,6 +341,9 @@ void syncGuiToCurrentAdapter(struct application *app)
 				break;
 			case CFG_MODE_KEYBOARD_2:
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_keyboard_mode2), buf[0]);
+				break;
+			case CFG_MODE_KEYBOARD_3:
+				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_keyboard_mode3), buf[0]);
 				break;
 			case CFG_MODE_KB_AND_JS:
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(rbtn_gc_js_mode), buf[0]);
@@ -606,6 +616,7 @@ G_MODULE_EXPORT void cfg_adapter_mode_changed(GtkWidget *win, gpointer data)
 	} modeButtons[] = {
 		{ CFG_MODE_STANDARD, GET_ELEMENT(GtkRadioButton, rbtn_1p_joystick_mode) },
 		{ CFG_MODE_1P_FOR_2P_ADAPTER, GET_ELEMENT(GtkRadioButton, rbtn_1p_2p) },
+		{ CFG_MODE_N64_ONLY, GET_ELEMENT(GtkRadioButton, rbtn_1p_n64_only) },
 		{ CFG_MODE_2P_STANDARD, GET_ELEMENT(GtkRadioButton, rbtn_2p_joystick_mode) },
 		{ CFG_MODE_3P_STANDARD, GET_ELEMENT(GtkRadioButton, rbtn_3p_joystick_mode) },
 		{ CFG_MODE_4P_STANDARD, GET_ELEMENT(GtkRadioButton, rbtn_4p_joystick_mode) },
@@ -616,6 +627,7 @@ G_MODULE_EXPORT void cfg_adapter_mode_changed(GtkWidget *win, gpointer data)
 		{ CFG_MODE_GC_ONLY, GET_ELEMENT(GtkRadioButton, rbtn_gc_only) },
 		{ CFG_MODE_KEYBOARD, GET_ELEMENT(GtkRadioButton, rbtn_keyboard_mode) },
 		{ CFG_MODE_KEYBOARD_2, GET_ELEMENT(GtkRadioButton, rbtn_keyboard_mode2) },
+		{ CFG_MODE_KEYBOARD_3, GET_ELEMENT(GtkRadioButton, rbtn_keyboard_mode3) },
 		{ CFG_MODE_2P_GC_ONLY, GET_ELEMENT(GtkRadioButton, rbtn_two_gc_controllers) },
 		{ CFG_MODE_KB_AND_JS, GET_ELEMENT(GtkRadioButton, rbtn_gc_js_mode) },
 		{ },
