@@ -1,3 +1,11 @@
+=== Versoin 2.1.20 ===
+ - Add Classic controller/Wiitar to USB adapter firmware version 2.2.0:
+   - Add support for Wii Turntables
+   - Add support for Drawsome tablets (mouse mode only)
+   - Faster communication (slightly improved performance in 1ms mode)
+ - Add a mode for 2 player adapters running in single-player mode
+ - Prepare for GC/N64 to USB adapter firmware 3.7
+
 === Version 2.1.19 ===
  - New N64 to GC/Wii firmware v2.2: Fix the L+R mapping.
  - New Classic controller to GC/Wii firmware v1.3: Special mappings for

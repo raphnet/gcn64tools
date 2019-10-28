@@ -1,23 +1,29 @@
+[wusbmote_v2-2.2.0.hex]
+md5=698851569f09b1dc576d9783253affb0
+version=2.2.0
+date=2019-10-24
+notes=Initial version shipped on V3 adapters.\n\n- Add support for Wii Turntables\n- Add support for Drawsome tablets (mouse mode only)\n- Faster communication (slightly improved performance in 1ms mode)
+
 [wusbmote_v2-2.1.2.hex]
 md5=703d8113bb35369c9eba1316ef63ed8c
 version=2.1.2
 date=2019-07-19
-notes=- Calibrate Whammy bar on Guitars\n- Add support for Wii Drums\n- Remap Guitar buttons in a more logical order and matching the drum colors\n- Add support for the uDraw tablet (joystick emulation and mouse)
+notes=** DO NOT INSTALL ON V3 ADAPTERS **\n\n- Calibrate Whammy bar on Guitars\n- Add support for Wii Drums\n- Remap Guitar buttons in a more logical order and matching the drum colors\n- Add support for the uDraw tablet (joystick emulation and mouse)
 
 [wusbmote_v2-2.1.1.hex]
 md5=064148b19f37ed65c96e87dbc28f37e4
 version=2.1.1
 date=2018-10-23
-notes=- Add 8Bitdo SF30 support\n- Report the controller type as "Guitar" instead of "Classic Controller" when a Guitar is detected.\n- Set unused/meaningless axes to zero when using a Guitar
+notes=** DO NOT INSTALL ON V3 ADAPTERS **\n\n- Add 8Bitdo SF30 support\n- Report the controller type as "Guitar" instead of "Classic Controller" when a Guitar is detected.\n- Set unused/meaningless axes to zero when using a Guitar
 
 [wusbmote_v2-2.0.1.hex]
 md5=4cf325d135b7b2c6abc38a580d6f3d25
 version=2.0.1
 date=2017-10-27
-notes=- Tighter I2C timing (allows 1ms poll interval with one controller,\n3ms for two controllers)
+notes=** DO NOT INSTALL ON V3 ADAPTERS **\n\n- Tighter I2C timing (allows 1ms poll interval with one controller,\n3ms for two controllers)
 
 [wusbmote_v2-2.1.0.hex]
 md5=2b49bef5ebeba51d35de1897cdf812ba
 version=2.1.0
 date=2017-11-19
-notes=- Add a feature to disable analog triggers\n- Internal changes to workaround a presumed Windows bug (Joystick ID confusion where the second controller stops working or gives an error in the Game controller test dialog)\n - Fix minor deviations from the USB standard
+notes=** DO NOT INSTALL ON V3 ADAPTERS **\n\n- Add a feature to disable analog triggers\n- Internal changes to workaround a presumed Windows bug (Joystick ID confusion where the second controller stops working or gives an error in the Game controller test dialog)\n - Fix minor deviations from the USB standard
