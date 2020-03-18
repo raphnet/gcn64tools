@@ -1,4 +1,8 @@
-=== Versoin 2.1.20 ===
+=== Next ===
+ - Add Neo Geo to USB adapter support
+ - Add --enable_highres for use with --wii_pollraw
+
+=== Version 2.1.20 ===
  - Add Classic controller/Wiitar to USB adapter firmware version 2.2.0:
    - Add support for Wii Turntables
    - Add support for Drawsome tablets (mouse mode only)
