@@ -20,7 +20,7 @@ typedef struct _classic_pad_data {
     int8_t high_resolution;
     int8_t lx, ly;
     int8_t rx, ry;
-    int8_t lt, rt;
+    uint8_t lt, rt;
     uint16_t buttons;
 } classic_pad_data;
 

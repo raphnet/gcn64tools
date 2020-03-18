@@ -272,14 +272,13 @@ int pollraw_psx(rnt_hdl_t hdl, int chn)
 	return 0;
 }
 
-int pollraw_wii(rnt_hdl_t hdl, int chn)
+int pollraw_wii(rnt_hdl_t hdl, int chn, int enable_high_res)
 {
 	uint8_t extmem[256];
 	uint16_t ext_id;
 	uint8_t status[16], prev_status[16];
 	uint8_t high_res = 0;
 	int res;
-	int enable_high_res = 1;
 	classic_pad_data pad_data;
 	udraw_tablet_data udraw_data;
 	drawsome_tablet_data drawsome_data;
@@ -394,9 +393,17 @@ int pollraw_wii(rnt_hdl_t hdl, int chn)
 			case ID_CLASSIC:
 			case ID_CLASSIC_PRO:
 				wusbmotelib_bufferToClassicPadData(status, &pad_data, ext_id, high_res);
-				printf("LX: %4d, LY: %4d, RX: %4d, RY: %4d, LT: %4d, RT: %4d\n",
+
+				if (high_res) {
+					printf("LX: %4d, LY: %4d, RX: %4d, RY: %4d, LT: %4d, RT: %4d\n",
 						pad_data.lx, pad_data.ly, pad_data.rx, pad_data.ry,
 						pad_data.lt, pad_data.rt);
+				}
+				else {
+					printf("LX: %4d, LY: %4d, RX: %4d, RY: %4d, LT: %4d, RT: %4d\n",
+						pad_data.lx, pad_data.ly, pad_data.rx, pad_data.ry,
+						pad_data.lt, pad_data.rt);
+				}
 				break;
 
 			case ID_UDRAW:

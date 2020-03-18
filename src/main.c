@@ -147,8 +147,10 @@ static void printUsage(void)
 	printf("  --n64_pollraw_keyboard             Read and display raw values from a N64 keyboard\n");
 	printf("  --psx_pollraw                      Read and display raw values from a Playstation controller\n");
 	printf("  --wii_pollraw                      Read and display raw values from a Wii Classic Controller\n");
+	printf("  --enable_highres                   Enable high resolution analog for Wii Classic controllers\n");
 	printf("  --db9_pollraw                      Read and display raw values fomr a DB9 adapter\n");
 	printf("  --usbtest                          Perform a test transfer between host and adapter\n");
+	printf("  --debug                            Read debug values from adapter.\n");
 }
 
 
@@ -217,6 +219,8 @@ static void printUsage(void)
 #define OPT_PSX_MC_WRITE				357
 #define OPT_N64_CRCA					358
 #define OPT_N64_CRCD					359
+#define OPT_HIGHRES						360
+#define OPT_DEBUG						361
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -287,6 +291,8 @@ struct option longopts[] = {
 	{ "db9_pollraw", 0, NULL, OPT_DB9_POLLRAW },
 	{ "n64_crca", required_argument, NULL, OPT_N64_CRCA },
 	{ "n64_crcd", required_argument, NULL, OPT_N64_CRCD },
+	{ "enable_highres", 0, NULL, OPT_HIGHRES },
+	{ "debug", 0, NULL, OPT_DEBUG },
 	{ },
 };
 
@@ -331,6 +337,7 @@ int main(int argc, char **argv)
 	struct rnt_adap_info *selected_device = NULL;
 	int verbose = 0, use_first = 0, serial_specified = 0;
 	int nonstop = 0;
+	int enable_highres = 0;
 	int noconfirm = 0;
 	int cmd_list = 0;
 #define TARGET_SERIAL_CHARS 128
@@ -441,6 +448,10 @@ int main(int argc, char **argv)
 					printf("CRCD: 0x%02x\n", crc);
 					return 0;
 				}
+				break;
+
+			case OPT_HIGHRES:
+				enable_highres = 1;
 				break;
 		}
 	}
@@ -659,7 +670,7 @@ int main(int argc, char **argv)
 				break;
 
 			case OPT_WII_POLLRAW:
-				retval = pollraw_wii(hdl, channel);
+				retval = pollraw_wii(hdl, channel, enable_highres);
 				break;
 
 			case OPT_GC_POLLRAW:
@@ -1045,6 +1056,21 @@ int main(int argc, char **argv)
 						break;
 					}
 				} while (nonstop);
+				break;
+
+			case OPT_DEBUG:
+				{
+					uint8_t cmd[1] = { RQ_RNT_GET_DEBUG_BUF };
+					uint8_t rxbuf[32];
+
+					res = rnt_exchange(hdl, cmd, 1, rxbuf, sizeof(rxbuf));
+					if (res < 2) {
+						printf("No data\n");
+					} else {
+						printf("Debug data[%d] : ", res-1);
+						printHexBuf(rxbuf+1, res-1);
+					}
+				}
 				break;
 
 			case OPT_PSX_MC_DUMP:
