@@ -42,8 +42,15 @@ struct supported_adapter {
 #define RNT_V3_STD	(RNTF_FW_UPDATE | RNTF_POLL_RATE | RNTF_SUSPEND_POLLING | RNTF_CONTROLLER_TYPE)
 #define RNT_V3_NOPOLLRATE	(RNTF_FW_UPDATE | RNTF_SUSPEND_POLLING | RNTF_CONTROLLER_TYPE)
 
+#define MIN_6MS 6
+#define MIN_5MS 5
+#define MIN_4MS 4
+#define MIN_3MS 3
+#define MIN_2MS	2
+#define MIN_1MS	1
+
 static struct supported_adapter supported_adapters[] = {
-	/* vid, pid, if_no, { rpsize, n_channels, n_raw_channels, features } */
+	/* vid, pid, if_no, { rpsize, n_channels, n_raw_channels, features, min_poll_interval } */
 
 	{ OUR_VENDOR_ID, 0x0017, 1, { 0, 1, 1, RNT_V3_STD | RNTF_GC_FULL_SLIDERS | RNTF_GC_INVERT_TRIG } }, // GC/N64 USB v3.0, 3.1.0, 3.1.1
 	{ OUR_VENDOR_ID, 0x001D, 1, { 0, 1, 1, RNT_V3_STD | RNTF_GC_FULL_SLIDERS | RNTF_GC_INVERT_TRIG } }, // GC/N64 USB v3.2.0 ... v3.3.x
@@ -109,10 +116,10 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0027, 1, { 63, 2, 0, RNT_V3_STD | RNTF_DPAD_AS_BUTTONS } }, // Dual SNES to USB adapter v2.0 (w/advXarch)
 
 	{ OUR_VENDOR_ID, 0x0028, 1, { 63, 1, 0, RNT_V3_STD | RNTF_DPAD_AS_AXES | RNTF_SWAP_RL_STICKS | RNTF_NUNCHUK_ACC_ENABLE | RNTF_ADAPTER_MODE } }, // 1-player WUSBMote v2.0 (w/advXarch)
-	{ OUR_VENDOR_ID, 0x0029, 1, { 63, 2, 0, RNT_V3_STD | RNTF_DPAD_AS_AXES | RNTF_SWAP_RL_STICKS | RNTF_NUNCHUK_ACC_ENABLE | RNTF_ADAPTER_MODE, 3 } }, // 2-player WUSBMote v2.0 (w/advXarch)
+	{ OUR_VENDOR_ID, 0x0029, 1, { 63, 2, 0, RNT_V3_STD | RNTF_DPAD_AS_AXES | RNTF_SWAP_RL_STICKS | RNTF_NUNCHUK_ACC_ENABLE | RNTF_ADAPTER_MODE, MIN_3MS } }, // 2-player WUSBMote v2.0 (w/advXarch)
 	{ OUR_VENDOR_ID, 0x002A, 1, { 63, 2, 0, RNT_V3_NOPOLLRATE | RNTF_SWAP_RL_STICKS | RNTF_MOUSE_INVERT_SCROLL | RNTF_ADAPTER_MODE } }, // 1-player WUSBMote v2.0 (w/advXarch) Mouse mode
 	{ OUR_VENDOR_ID, 0x002B, 1, { 63, 1, 0, RNT_V3_STD | RNTF_DPAD_AS_AXES | RNTF_SWAP_RL_STICKS | RNTF_NUNCHUK_ACC_ENABLE | RNTF_ADAPTER_MODE | RNTF_DISABLE_ANALOG_TRIGGERS } }, // 1-player WUSBMote v2.1 (w/advXarch)
-	{ OUR_VENDOR_ID, 0x002C, 2, { 63, 2, 0, RNT_V3_STD | RNTF_DPAD_AS_AXES | RNTF_SWAP_RL_STICKS | RNTF_NUNCHUK_ACC_ENABLE | RNTF_ADAPTER_MODE | RNTF_DISABLE_ANALOG_TRIGGERS, 3 } }, // 2-player WUSBMote v2.1 (w/advXarch)
+	{ OUR_VENDOR_ID, 0x002C, 2, { 63, 2, 0, RNT_V3_STD | RNTF_DPAD_AS_AXES | RNTF_SWAP_RL_STICKS | RNTF_NUNCHUK_ACC_ENABLE | RNTF_ADAPTER_MODE | RNTF_DISABLE_ANALOG_TRIGGERS, MIN_3MS } }, // 2-player WUSBMote v2.1 (w/advXarch)
 
 	{ OUR_VENDOR_ID, 0x002E, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // SNES to USB adapter v2.1 (w/advXarch)
 	{ OUR_VENDOR_ID, 0x002F, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES } }, // Dual SNES to USB adapter v2.1 (w/advXarch)
@@ -123,10 +130,12 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0043, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Saturn to USB adapter v2.0 (w/advXarch)
 	{ OUR_VENDOR_ID, 0x0055, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Saturn to USB adapter v2.0 (w/advXarch) - mouse mode
 
-	{ OUR_VENDOR_ID, 0x0044, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE, 3, RNTF_PORT_PSX } }, // PS1/PS2 controller to USB adapter (w/advXarch)
-	{ OUR_VENDOR_ID, 0x0045, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE, 4, RNTF_PORT_PSX } }, // PS1/PS2 controller to USB adapter (2-player mode)
-	{ OUR_VENDOR_ID, 0x0046, 3, { 63, 3, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE, 5, RNTF_PORT_PSX } }, // PS1/PS2 controller to USB adapter (3-player mode)
-	{ OUR_VENDOR_ID, 0x0047, 1, { 63, 4, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE, 6, RNTF_PORT_PSX } }, // PS1/PS2 controller to USB adapter (4-player mode)
+	{ OUR_VENDOR_ID, 0x0044, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE, MIN_3MS, RNTF_PORT_PSX } }, // PS1/PS2 controller to USB adapter (w/advXarch)
+	{ OUR_VENDOR_ID, 0x0045, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE, MIN_4MS, RNTF_PORT_PSX } }, // PS1/PS2 controller to USB adapter (2-player mode)
+	{ OUR_VENDOR_ID, 0x0046, 3, { 63, 3, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE, MIN_5MS, RNTF_PORT_PSX } }, // PS1/PS2 controller to USB adapter (3-player mode)
+	{ OUR_VENDOR_ID, 0x0047, 1, { 63, 4, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE, MIN_6MS, RNTF_PORT_PSX } }, // PS1/PS2 controller to USB adapter (4-player mode)
+
+	{ OUR_VENDOR_ID, 0x0048, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // NeoGeo to USB adapter v1.0 (w/advXarch)
 
 	{ OUR_VENDOR_ID, 0x0056, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // SNES to USB adapter v2.1 (w/advXarch)
 	{ OUR_VENDOR_ID, 0x0057, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Dual SNES to USB adapter v2.1 (w/advXarch)
@@ -139,7 +148,7 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0071, 1, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Gameport to USB adapter (2p)
 
 	{ OUR_VENDOR_ID, 0x0080, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // 1-player WUSBMote v2.2 (w/advXarch)
-	{ OUR_VENDOR_ID, 0x0081, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // 2-player WUSBMote v2.2 (w/advXarch)
+	{ OUR_VENDOR_ID, 0x0081, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE, MIN_2MS } }, // 2-player WUSBMote v2.2 (w/advXarch)
 	{ OUR_VENDOR_ID, 0x0082, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // WUSBMote v2.2 (mouse mode)
 	{ OUR_VENDOR_ID, 0x0083, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // WUSBMote v2.2 (tablet mode)
 
