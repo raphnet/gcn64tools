@@ -1,3 +1,9 @@
+[wusbmote_v2-2.2.2.hex]
+md5=f72556b2d597afdd3dcad13d5e747d1a
+version=2.2.2
+date=2020-05-07
+notes=- Add support for Tyco drums\n- Enable high resolution (8 bit instead of 6) classic controller reading.\n- SN30 receivers left ghost input fixed due to the above.\n- 2-player adapters now usable in 2-player mode again.
+
 [wusbmote_v2-2.2.0.hex]
 md5=698851569f09b1dc576d9783253affb0
 version=2.2.0
