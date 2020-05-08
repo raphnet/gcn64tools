@@ -1,20 +1,21 @@
-CC=i686-w64-mingw32.static-gcc
+CC=i686-w64-mingw32-gcc
 LD=$(CC)
-WINDRES=i686-w64-mingw32.static-windres
-PKGCONFIG=i686-w64-mingw32.static-pkg-config
+WINDRES=i686-w64-mingw32-windres
+PKGCONFIG=i686-w64-mingw32-pkg-config
 STRIP=i686-w64-mingw32.static-strip
 
 EXEEXT=.exe
-PLATFORM_CFLAGS=-DWINDOWS -D_WIN32_WINNT=0x0600
+PLATFORM_CFLAGS=-DWINDOWS -D_WIN32_WINNT=0x0600 -static
 COMPAT_OBJS=sleep.o memmem.o strcasestr.o app.o hid.o
+PLATFORM_LDFLAGS=-pthread
 
 ### HIDAPI
 # hidapi.h and hid.c in root directory. Not extra ldflags or cflags required.
 HIDAPI_LDFLAGS=-lsetupapi
 
 ### ZLIB
-ZLIB_CFLAGS=`pkg-config zlib --cflags`
-ZLIB_LDFLAGS=`pkg-config zlib --libs`
+ZLIB_CFLAGS=`$(PKGCONFIG) zlib --cflags`
+ZLIB_LDFLAGS=`$(PKGCONFIG) zlib --libs`
 
 ### GTK
 GTK_CFLAGS=`$(PKGCONFIG) --cflags gtk+-3.0 gmodule-2.0 gio-2.0`

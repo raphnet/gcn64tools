@@ -5,6 +5,7 @@ VERSION_INC=./src/version.inc
 VERSION=`cat $VERSION_INC | cut -d '=' -f 2` # VERSION=x.x.x
 TMPDIR="./tmp"
 GLIB_SCHEMAS=$MXE_ROOT/usr/i686-w64-mingw32.static/share/glib-2.0/schemas
+export PKG_CONFIG_PATH=$MXE_ROOT/usr/i686-w64-mingw32.static/lib/pkgconfig
 
 if [[ $# > 0 ]]; then
 	VERSION=$1
