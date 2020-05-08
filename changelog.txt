@@ -1,4 +1,9 @@
-=== Next ===
+=== Version 2.1.21 ===
+ - Add Classic controller/Wiitar to USB adapter firmware version 2.2.2:
+   - Add support for Tyco drums
+   - Enable high resolution (8 bit instead of 6) classic controller reading
+   - SN30 receivers left ghost input fixed due to the above
+   - 2-player adapters now usable in 2-player mode again
  - Add Neo Geo to USB adapter support
  - Add --enable_highres for use with --wii_pollraw
 
