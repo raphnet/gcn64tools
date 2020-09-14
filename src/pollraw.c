@@ -19,6 +19,50 @@
 #include <math.h>
 #endif
 
+int pollraw_n64(rnt_hdl_t hdl, int chn)
+{
+	uint8_t getstatus[1] = { N64_GET_STATUS };
+	uint8_t status[4];
+	int res;
+	int unique_x_seen = 0;
+	uint8_t seen_x_values[256] = { };
+	int unique_y_seen = 0;
+	uint8_t seen_y_values[256] = { };
+
+	printf("Suspending polling. Please use --resume_polling later.\n");
+	rnt_suspendPolling(hdl, 1);
+
+	printf("CTRL+C to stop\n");
+	while(1)
+	{
+		res = gcn64lib_rawSiCommand(hdl, chn, getstatus, sizeof(getstatus), status, sizeof(status));
+		if (res != 4) {
+			printf("Unexpected data length\n");
+			break;
+		}
+
+		if (!seen_x_values[status[2]]) {
+			seen_x_values[status[2]] = 1;
+			unique_x_seen++;
+		}
+		if (!seen_y_values[status[3]]) {
+			seen_y_values[status[3]] = 1;
+			unique_y_seen++;
+		}
+
+		printf("X: %4d (%3d), Y: %4d (%3d), Buttons=0x%02x%02x   \r",
+			(int8_t)(status[2]),
+			unique_x_seen,
+			(int8_t)(status[3]),
+			unique_y_seen,
+			status[0], status[1]);
+		fflush(stdout);
+	}
+
+	return 0;
+}
+
+
 int pollraw_gamecube(rnt_hdl_t hdl, int chn)
 {
 	uint8_t getstatus[3] = { GC_GETSTATUS1, GC_GETSTATUS2, 0x00 };

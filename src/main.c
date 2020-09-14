@@ -144,6 +144,7 @@ static void printUsage(void)
 	printf("  --i2c_detect                       Try reading one byte from each I2C address (For WUSBMote v2)\n");
 	printf("  --gc_pollraw                       Read and display raw values from a gamecube controller\n");
 	printf("  --gc_pollraw_keyboard              Read and display raw values from a gamecube keyboard\n");
+	printf("  --n64_pollraw                      Read and display raw values from a N64 controller\n");
 	printf("  --n64_pollraw_keyboard             Read and display raw values from a N64 keyboard\n");
 	printf("  --psx_pollraw                      Read and display raw values from a Playstation controller\n");
 	printf("  --wii_pollraw                      Read and display raw values from a Wii Classic Controller\n");
@@ -221,6 +222,7 @@ static void printUsage(void)
 #define OPT_N64_CRCD					359
 #define OPT_HIGHRES						360
 #define OPT_DEBUG						361
+#define OPT_N64_POLLRAW					362
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -242,6 +244,7 @@ struct option longopts[] = {
 	{ "gc_pollraw", 0, NULL, OPT_GC_POLLRAW },
 	{ "gc_pollraw_keyboard", 0, NULL, OPT_GC_POLLRAW_KEYBOARD },
 	{ "n64_pollraw_keyboard", 0, NULL, OPT_N64_POLLRAW_KEYBOARD },
+	{ "n64_pollraw", 0, NULL, OPT_N64_POLLRAW },
 	{ "psx_pollraw", 0, NULL, OPT_PSX_POLLRAW },
 	{ "n64_getcaps", 0, NULL, OPT_N64_GETCAPS },
 	{ "gc_getid", 0, NULL, OPT_GC_GETID },
@@ -683,6 +686,10 @@ int main(int argc, char **argv)
 
 			case OPT_N64_POLLRAW_KEYBOARD:
 				retval = pollraw_randnet_keyboard(hdl, channel);
+				break;
+
+			case OPT_N64_POLLRAW:
+				retval = pollraw_n64(hdl, channel);
 				break;
 
 			case OPT_PSX_POLLRAW:
