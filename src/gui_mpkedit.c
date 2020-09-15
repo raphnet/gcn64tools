@@ -189,7 +189,7 @@ G_MODULE_EXPORT void mpke_export_note(GtkWidget *win, gpointer data)
 	if (app->mpke->mpk) {
 		entry_structure_t entry;
 		if (0==get_mempak_entry(app->mpke->mpk, selection, &entry)) {
-			char namebuf[64];
+			char namebuf[81];
 			if (!entry.valid) {
 				errorPopup(app, "Please select a non-empty note");
 				return;
