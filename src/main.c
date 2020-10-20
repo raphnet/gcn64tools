@@ -149,7 +149,9 @@ static void printUsage(void)
 	printf("  --psx_pollraw                      Read and display raw values from a Playstation controller\n");
 	printf("  --wii_pollraw                      Read and display raw values from a Wii Classic Controller\n");
 	printf("  --enable_highres                   Enable high resolution analog for Wii Classic controllers\n");
-	printf("  --db9_pollraw                      Read and display raw values fomr a DB9 adapter\n");
+	printf("  --db9_pollraw                      Read and display raw values from a DB9 adapter\n");
+	printf("  --dc_pollraw                       Read and display raw values from a Dreamcast controller\n");
+	printf("  --dc_pollraw_mouse                 Read and display raw values from a Dreamcast mouse\n");
 	printf("  --usbtest                          Perform a test transfer between host and adapter\n");
 	printf("  --debug                            Read debug values from adapter.\n");
 }
@@ -223,6 +225,8 @@ static void printUsage(void)
 #define OPT_HIGHRES						360
 #define OPT_DEBUG						361
 #define OPT_N64_POLLRAW					362
+#define OPT_DC_POLLRAW					363
+#define OPT_DC_POLLRAW_MOUSE			364
 
 struct option longopts[] = {
 	{ "help", 0, NULL, 'h' },
@@ -246,6 +250,8 @@ struct option longopts[] = {
 	{ "n64_pollraw_keyboard", 0, NULL, OPT_N64_POLLRAW_KEYBOARD },
 	{ "n64_pollraw", 0, NULL, OPT_N64_POLLRAW },
 	{ "psx_pollraw", 0, NULL, OPT_PSX_POLLRAW },
+	{ "dc_pollraw", 0, NULL, OPT_DC_POLLRAW },
+	{ "dc_pollraw_mouse", 0, NULL, OPT_DC_POLLRAW_MOUSE },
 	{ "n64_getcaps", 0, NULL, OPT_N64_GETCAPS },
 	{ "gc_getid", 0, NULL, OPT_GC_GETID },
 	{ "n64_mempak_dump", 0, NULL, OPT_N64_MEMPAK_DUMP },
@@ -694,6 +700,14 @@ int main(int argc, char **argv)
 
 			case OPT_PSX_POLLRAW:
 				retval = pollraw_psx(hdl, channel);
+				break;
+
+			case OPT_DC_POLLRAW:
+				retval = pollraw_dreamcast_controller(hdl, channel);
+				break;
+
+			case OPT_DC_POLLRAW_MOUSE:
+				retval = pollraw_dreamcast_mouse(hdl, channel);
 				break;
 
 			case OPT_GC_GETSTATUS_RUMBLE:

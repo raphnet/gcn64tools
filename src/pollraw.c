@@ -10,6 +10,7 @@
 #include "db9lib.h"
 #include "sleep.h"
 #include "delay.h"
+#include "maplelib.h"
 
 // when defined, a roll angle is computed for the nunchuk.
 // Must also add -lm to the makefile for atan2...
@@ -548,6 +549,117 @@ int pollraw_db9(rnt_hdl_t hdl, int chn)
 		}
 
 		sleep(1);
+	}
+
+	return 0;
+}
+
+int pollraw_dreamcast_controller(rnt_hdl_t hdl, int chn)
+{
+	uint8_t buf[64];
+
+	int res;
+	int result, datalen;
+
+	printf("Polling DC controller\n");
+	printf("CTRL+C to stop\n");
+
+	printf("Suspending polling. Please use --resume_polling later.\n");
+	rnt_suspendPolling(hdl, 1);
+
+	while (1)
+	{
+		//res = maple_getPollData(hdl, chn, buf, sizeof(buf));
+		res = maple_sendFrame1W(hdl, chn,
+				MAPLE_CMD_GET_CONDITION,
+				MAPLE_ADDR_PORTB | MAPLE_ADDR_MAIN,
+				MAPLE_ADDR_PORTB | MAPLE_DC_ADDR,
+//				MAPLE_FUNC_MOUSE,
+				MAPLE_FUNC_CONTROLLER,
+				buf, sizeof(buf), MAPLE_FLAG_KEEP_DATA );
+
+		if (res < 0) {
+			break;
+		}
+
+		if (buf[0] == 0x86)
+		{
+			if (res < 3) {
+				fprintf(stderr, "invalid data\n");
+				return -1;
+			}
+
+			result = (int16_t)(buf[1] | buf[2] << 8);
+			datalen = res - 3;
+
+			printf("Result %d, data[%d] = ", result, datalen);
+			if (datalen > 0) {
+				printHexBuf(buf + 3, datalen);
+			} else {
+				printf(" (no data)\n");
+			}
+
+		}
+		else {
+			printHexBuf(buf, res);
+		}
+
+		_delay_us(100000);
+	}
+
+	return 0;
+}
+
+int pollraw_dreamcast_mouse(rnt_hdl_t hdl, int chn)
+{
+	uint8_t buf[64];
+
+	int res;
+	int result, datalen;
+
+	printf("Polling DC mouse\n");
+	printf("CTRL+C to stop\n");
+
+	printf("Suspending polling. Please use --resume_polling later.\n");
+	rnt_suspendPolling(hdl, 1);
+
+	while (1)
+	{
+		//res = maple_getPollData(hdl, chn, buf, sizeof(buf));
+		res = maple_sendFrame1W(hdl, chn,
+				MAPLE_CMD_GET_CONDITION,
+				MAPLE_ADDR_PORTB | MAPLE_ADDR_MAIN,
+				MAPLE_ADDR_PORTB | MAPLE_DC_ADDR,
+				MAPLE_FUNC_MOUSE,
+				buf, sizeof(buf), MAPLE_FLAG_KEEP_DATA | MAPLE_FLAG_MOUSE_RX );
+
+		if (res < 0) {
+			break;
+		}
+
+		if (buf[0] == 0x86)
+		{
+			if (res < 3) {
+				fprintf(stderr, "invalid data\n");
+				return -1;
+			}
+
+			result = (int16_t)(buf[1] | buf[2] << 8);
+			datalen = res - 3;
+
+			printf("Result %d, data[%d] = ", result, datalen);
+			if (datalen > 0) {
+				printHexBuf(buf + 3, datalen);
+			} else {
+				printf(" (no data)\n");
+			}
+
+		}
+		else {
+			printHexBuf(buf, res);
+		}
+
+		_delay_us(100000);
 	}
 
 	return 0;
