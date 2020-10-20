@@ -50,9 +50,16 @@ G_MODULE_EXPORT void gc2n64_manager_on_show(GtkWidget *win, gpointer data)
 		gtk_label_set_text(label_gc2n64_adapter_type, x2gcn64_adapter_type_name(app->inf.adapter_type));
 		gtk_label_set_text(label_gc2n64_firmware, (char*)app->inf.app.version);
 		gtk_label_set_text(label_gc2n64_upgradeable, app->inf.app.upgradeable ? "Yes":"No");
-		gtk_label_set_text(label_gc2n64_conversion_mode, gc2n64_adapter_getConversionModeName(&app->inf.app.gc2n64));
-		gtk_label_set_text(label_gc2n64_deadzone, app->inf.app.gc2n64.deadzone_enabled ? "Enabled":"Disabled");
-		gtk_label_set_text(label_gc2n64_gamecube_controller_present, app->inf.app.gc2n64.gc_controller_detected ? "Present":"Absent");
+		gtk_label_set_text(label_gc2n64_conversion_mode, x2gcn64_adapter_getConversionModeName(&app->inf));
+
+		if (app->inf.adapter_type == ADAPTER_TYPE_GC_TO_N64) {
+			gtk_label_set_text(label_gc2n64_deadzone, app->inf.app.gc2n64.deadzone_enabled ? "Enabled":"Disabled");
+			gtk_label_set_text(label_gc2n64_gamecube_controller_present, app->inf.app.gc2n64.gc_controller_detected ? "Present":"Absent");
+		}
+		else if (app->inf.adapter_type == ADAPTER_TYPE_CLASSIC_TO_N64) {
+			gtk_label_set_text(label_gc2n64_deadzone, "N/A");
+			gtk_label_set_text(label_gc2n64_gamecube_controller_present, app->inf.app.cc2n64.cc_controller_detected ? "Present":"Absent");
+		}
 	}
 }
 #if 0

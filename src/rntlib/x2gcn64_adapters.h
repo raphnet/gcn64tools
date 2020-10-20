@@ -19,6 +19,10 @@ struct gc2n64_adapter_mapping {
 #define GC2N64_CONVERSION_MODE_V2		2
 #define GC2N64_CONVERSION_MODE_EXTENDED	3
 
+#define CC2N64_CONVERSION_MODE_STRETCH_CORNERS						0
+#define CC2N64_CONVERSION_MODE_GLOBAL_SCALING_AND_CORNER_STRETCHING	1
+#define CC2N64_CONVERSION_MODE_DIRECT_PASS_THROUGH					2
+
 #define ADAPTER_TYPE_GC_TO_N64		0
 #define ADAPTER_TYPE_SNES_TO_N64	1
 #define ADAPTER_TYPE_CLASSIC_TO_N64	2
@@ -27,6 +31,16 @@ struct gc2n64_adapter_mapping {
 #define ADAPTER_TYPE_CLASSIC_TO_GC	5
 
 const char *x2gcn64_adapter_type_name(int t);
+
+struct cc2n64_adapter_info {
+	unsigned char default_mapping_id;
+	unsigned char cc_controller_detected;
+
+	// 0: Default (stretch corners)
+	// 1: Global scaling + corner stretching
+	// 2: Direct pass through
+	unsigned char conversion_mode;
+};
 
 struct gc2n64_adapter_info {
 	unsigned char default_mapping_id;
@@ -48,6 +62,7 @@ struct x2gcn64_adapter_info_app {
 	union {
 		struct gc2n64_adapter_info gc2n64;
 		struct snes2gc_adapter_info snes2gc;
+		struct cc2n64_adapter_info cc2n64;
 	};
 };
 
@@ -70,6 +85,7 @@ struct x2gcn64_adapter_info {
 int x2gcn64_adapter_echotest(rnt_hdl_t hdl, int channel, int verbose);
 int x2gcn64_adapter_getInfo(rnt_hdl_t hdl,  int channel, struct x2gcn64_adapter_info *inf);
 void x2gcn64_adapter_printInfo(struct x2gcn64_adapter_info *inf);
+const char *x2gcn64_adapter_getConversionModeName(struct x2gcn64_adapter_info *adapter);
 
 int x2gcn64_adapter_waitNotBusy(rnt_hdl_t hdl, int channel, int verbose);
 int x2gcn64_adapter_boot_isBusy(rnt_hdl_t hdl, int channel);
@@ -84,9 +100,9 @@ int x2gcn64_adapter_waitForBootloader(rnt_hdl_t hdl, int channel, int timeout_s)
 
 int x2gcn64_adapter_updateFirmware(rnt_hdl_t hdl, int channel, const char *hexfile, const char *signature);
 
+
 /* Gamecube to N64 adapter specific */
 void gc2n64_adapter_printMapping(struct gc2n64_adapter_mapping *map);
-const char *gc2n64_adapter_getConversionModeName(struct gc2n64_adapter_info *inf);
 
 #define MAPPING_SLOT_BUILTIN_CURRENT	0
 #define MAPPING_SLOT_DPAD_UP			1

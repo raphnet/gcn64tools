@@ -397,16 +397,38 @@ void gc2n64_adapter_printMapping(struct gc2n64_adapter_mapping *map)
 	}
 }
 
-const char *gc2n64_adapter_getConversionModeName(struct gc2n64_adapter_info *inf)
+const char *x2gcn64_adapter_getConversionModeName(struct x2gcn64_adapter_info *adapter)
 {
-	switch(inf->conversion_mode) {
-		case 0: if (!inf->old_v1_5_conversion) { return "Version 2.0 (standard)"; }
-		// fallthrough
-		case GC2N64_CONVERSION_MODE_OLD_1v5: return "Version 1.5 (old)";
-		case GC2N64_CONVERSION_MODE_V2: return "Version 2.0 (standard)";
-		case GC2N64_CONVERSION_MODE_EXTENDED: return "Extended (no transform)";
+	if (adapter->in_bootloader) {
+		return "unknown (in bootloader)";
 	}
-	return "(unknown - invalid)";
+
+	if (adapter->adapter_type == ADAPTER_TYPE_GC_TO_N64) {
+		struct gc2n64_adapter_info *inf = &adapter->app.gc2n64;
+
+		switch(inf->conversion_mode) {
+			case 0: if (!inf->old_v1_5_conversion) { return "Version 2.0 (standard)"; }
+			// fallthrough
+			case GC2N64_CONVERSION_MODE_OLD_1v5: return "Version 1.5 (old)";
+			case GC2N64_CONVERSION_MODE_V2: return "Version 2.0 (standard)";
+			case GC2N64_CONVERSION_MODE_EXTENDED: return "Extended (no transform)";
+		}
+		return "(unknown - invalid)";
+	}
+
+	if (adapter->adapter_type == ADAPTER_TYPE_CLASSIC_TO_N64) {
+		struct cc2n64_adapter_info *inf = &adapter->app.cc2n64;
+
+		switch(inf->conversion_mode) {
+			case CC2N64_CONVERSION_MODE_STRETCH_CORNERS: return "Default (stretch corners)";
+			case CC2N64_CONVERSION_MODE_GLOBAL_SCALING_AND_CORNER_STRETCHING: return "Global scaling + corner stretching";
+			case CC2N64_CONVERSION_MODE_DIRECT_PASS_THROUGH: return "Direct pass through";
+		}
+		return "(unknown - invalid)";
+	}
+
+
+	return "(unknown)";
 }
 
 const char *x2gcn64_adapter_type_name(int t)
@@ -438,7 +460,7 @@ void x2gcn64_adapter_printInfo(struct x2gcn64_adapter_info *inf)
 			printf("\tDefault mapping id: %d (%s)\n", inf->app.gc2n64.default_mapping_id, gc2n64_adapter_getMappingSlotName(inf->app.gc2n64.default_mapping_id, 1) );
 			printf("\tDeadzone enabled: %d\n", inf->app.gc2n64.deadzone_enabled);
 			if (inf->app.gc2n64.conversion_mode) {
-				printf("\tConversion mode: %s\n", gc2n64_adapter_getConversionModeName(&inf->app.gc2n64));
+				printf("\tConversion mode: %s\n", x2gcn64_adapter_getConversionModeName(inf));
 			} else {
 				printf("\tOld v1.5 conversion: %d\n", inf->app.gc2n64.old_v1_5_conversion);
 			}
@@ -449,6 +471,13 @@ void x2gcn64_adapter_printInfo(struct x2gcn64_adapter_info *inf)
 				printf(" }\n");
 			}
 		}
+
+		if (inf->adapter_type == ADAPTER_TYPE_CLASSIC_TO_N64)
+		{
+			printf("\tClassic Controller: %s\n", inf->app.cc2n64.cc_controller_detected ? "Present":"Not present");
+			printf("\tConversion mode: %s\n", x2gcn64_adapter_getConversionModeName(inf));
+		}
+
 	} else {
 		printf("gc_to_n64 adapter in bootloader mode: {\n");
 
@@ -515,6 +544,13 @@ int x2gcn64_adapter_getInfo(rnt_hdl_t hdl, int channel, struct x2gcn64_adapter_i
 				for (n=0; n<GC2N64_NUM_MAPPINGS; n++) {
 					gc2n64_adapter_getMapping(hdl, channel, n, &inf->app.gc2n64.mappings[n]);
 				}
+			}
+
+			/* cc2n64 specific */
+			if (inf->adapter_type == ADAPTER_TYPE_CLASSIC_TO_N64) {
+				inf->app.cc2n64.default_mapping_id = buf[1];
+				inf->app.cc2n64.conversion_mode = buf[4];
+				inf->app.cc2n64.cc_controller_detected = buf[7];
 			}
 		} else {
 			inf->bootldr.mcu_page_size = buf[1];
