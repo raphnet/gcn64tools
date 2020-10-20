@@ -10,5 +10,6 @@
 		<file>4players.png</file>
 		<file>5players.png</file>
 		<file>mouse.png</file>
+		<file>style.css</file>
 	</gresource>
 </gresources>
