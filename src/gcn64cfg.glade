@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.20.0 
+<!-- Generated with glade 3.22.1 
 
 Copyright (C) Raphaël Assénat
 
@@ -38,6 +38,9 @@ Author: Raphaël Assénat
     <property name="logo">project_image.png</property>
     <property name="license_type">gpl-3-0</property>
     <signal name="response" handler="gtk_widget_hide" swapped="no"/>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="aboutdialog-vbox1">
         <property name="can_focus">False</property>
@@ -78,6 +81,9 @@ Author: Raphaël Assénat
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="can_focus">False</property>
@@ -344,6 +350,9 @@ Author: Raphaël Assénat
     <property name="title" translatable="yes">raphnet-tech adapter manager</property>
     <signal name="destroy" handler="gtk_main_quit" swapped="no"/>
     <signal name="show" handler="onMainWindowShow" swapped="no"/>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkBox" id="box1">
         <property name="visible">True</property>
@@ -1830,11 +1839,11 @@ configurable parameters.</property>
         </child>
         <child>
           <object class="GtkBox" id="box5">
+            <property name="name">logobox</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_top">5</property>
             <child>
-              <object class="GtkImage" id="image3">
+              <object class="GtkImage" id="raphnet_logo">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="pixbuf">raphnet_logo.png</property>
@@ -1846,14 +1855,14 @@ configurable parameters.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkBox" id="box14">
+              <object class="GtkBox" id="raphnet_website">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
+                <property name="halign">end</property>
                 <property name="valign">end</property>
                 <property name="orientation">vertical</property>
                 <child>
                   <object class="GtkLabel" id="label11">
-                    <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">start</property>
                     <property name="valign">end</property>
@@ -1888,7 +1897,7 @@ configurable parameters.</property>
                 </child>
               </object>
               <packing>
-                <property name="expand">False</property>
+                <property name="expand">True</property>
                 <property name="fill">True</property>
                 <property name="position">2</property>
               </packing>
@@ -1908,6 +1917,9 @@ configurable parameters.</property>
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">mainWindow</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can_focus">False</property>
@@ -1951,6 +1963,9 @@ configurable parameters.</property>
     <property name="modal">True</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">mainWindow</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox3">
         <property name="can_focus">False</property>
@@ -2098,6 +2113,9 @@ configurable parameters.</property>
     <property name="modal">True</property>
     <property name="transient_for">mainWindow</property>
     <signal name="show" handler="gc2n64_manager_on_show" swapped="no"/>
+    <child>
+      <placeholder/>
+    </child>
     <child>
       <object class="GtkBox" id="box10">
         <property name="visible">True</property>
@@ -2434,6 +2452,9 @@ configurable parameters.</property>
     <signal name="delete-event" handler="gtk_widget_hide" swapped="no"/>
     <signal name="show" handler="onMempakWindowShow" swapped="no"/>
     <child>
+      <placeholder/>
+    </child>
+    <child>
       <object class="GtkBox" id="box8">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
@@ -2681,6 +2702,9 @@ configurable parameters.</property>
     <property name="type_hint">dialog</property>
     <property name="transient_for">win_mempak_edit</property>
     <property name="attached_to">win_mempak_edit</property>
+    <child>
+      <placeholder/>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox2">
         <property name="can_focus">False</property>

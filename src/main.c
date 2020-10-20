@@ -1,5 +1,5 @@
 /*	gc_n64_usb : Gamecube/N64 to USB adapter management tools
-	Copyright (C) 2007-2018  Raphael Assenat <raph@raphnet.net>
+	Copyright (C) 2007-2020  Raphael Assenat <raph@raphnet.net>
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
