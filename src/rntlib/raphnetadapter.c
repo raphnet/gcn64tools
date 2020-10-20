@@ -156,6 +156,10 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0085, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Famicom to USB adapter (2p mode)
 	{ OUR_VENDOR_ID, 0x0086, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Famicom to USB adapter (keyboard mode)
 
+	{ OUR_VENDOR_ID, 0x00D0, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Dreamcast to USB adapter v2 - joystick mode
+	{ OUR_VENDOR_ID, 0x00D1, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Dreamcast to USB adapter v2 - keyboard mode
+	{ OUR_VENDOR_ID, 0x00D2, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Dreamcast to USB adapter v2 - mouse mode
+
 	// Legacy devices (vusb, non-upgradeable and typically without configurable features)
 	{ OUR_VENDOR_ID, 0x0001, -1 }, // GCN64->USB v2.2
 	{ OUR_VENDOR_ID, 0x0003, -1, { 0, 4 } }, // 4nes4snes 1.4.2, 1.5
@@ -890,6 +894,11 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_FAMICOM_KEYBOARD: return "Famicom keyboard";
 		case CTL_TYPE_FAMICOM_NETWORK_CTL: return "Famicom network controller";
 		case CTL_TYPE_NEO_GEO: return "Neo Geo controller";
+		case CTL_TYPE_DC_CONTROLLER: return "Dreamcast Controller";
+		case CTL_TYPE_DC_ARCADE_STICK: return "Dreamcast Arcade Stick";
+		case CTL_TYPE_DC_MOUSE: return "Dreamcast mouse";
+		case CTL_TYPE_DC_KEYBOARD: return "Dreamcast keyboard";
+		case CTL_TYPE_DC_STEERING_WHEEL: return "Dreamcast Steering Wheel";
 		default:
 			return "Unknown";
 	}

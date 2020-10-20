@@ -40,6 +40,13 @@
 /* DB9 (Atari/SMS/Genesis) to USB specific */
 #define RQ_DB9_RAW						0x85
 
+/* Dreamcast to USB specific */
+#define RQ_MAPLE_RAW					0x86
+#define FLG_KEEP_DATA	0x01
+#define FLG_SLOW_RX		0x02
+#define FLG_MOUSE_RX	0x04
+
+
 /* Get controller type values */
 // Legacy values (GC/N64 specific)
 #define CTL_TYPE_NONE	0
@@ -90,6 +97,12 @@
 #define CTL_TYPE_PC_JOYSTICK_2BTN	142
 #define CTL_TYPE_PC_JOYSTICK_4BTN	143
 #define CTL_TYPE_DRAWSOME_TABLET	144
+
+#define CTL_TYPE_DC_CONTROLLER		145
+#define CTL_TYPE_DC_ARCADE_STICK	146
+#define CTL_TYPE_DC_MOUSE			147
+#define CTL_TYPE_DC_KEYBOARD		148
+#define CTL_TYPE_DC_STEERING_WHEEL	149
 
 /* Configuration parameters and constants */
 #define CFG_PARAM_MODE			0x00
