@@ -1,3 +1,7 @@
+=== Version 2.1.22 ===
+ - Add support for Dreamcast to USB v2 adapters
+ - Improve Classic controller to N64 adapter support
+
 === Version 2.1.21 ===
  - Add Classic controller/Wiitar to USB adapter firmware version 2.2.2:
    - Add support for Tyco drums
