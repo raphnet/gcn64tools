@@ -1,3 +1,8 @@
+=== Version next ===
+ - New Classic controller to N64 adapter firmware: Fixes a joystick value
+   overflow (Corrects a problem with some controllers, such as Wired Fight Pads,
+   where pointing the stick all the way down did the same as pointing it up)
+
 === Version 2.1.22 ===
  - Add support for Dreamcast to USB v2 adapters
  - Improve Classic controller to N64 adapter support
