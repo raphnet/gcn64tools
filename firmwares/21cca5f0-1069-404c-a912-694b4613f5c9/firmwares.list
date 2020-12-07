@@ -1,0 +1,5 @@
+[classic_to_n64-2.1.0.hex]
+md5=d2f4adb7f5047051046988b3e3892ad4
+version=2.1.0
+date=2020-12-07
+notes=- Fix a joystick value overflow (Fixes a problem with some controllers, such as Wired Fight Pads, where pointing the stick all the way down did the same as pointing it up)
