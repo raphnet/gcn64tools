@@ -50,6 +50,8 @@ struct gc2n64_adapter_info {
 	unsigned char conversion_mode;
 	// gc_controller_detected: New field in v2.2. Always zero on previous versions.
 	unsigned char gc_controller_detected;
+	// new in v2.3
+	unsigned char mempak_disabled;
 	struct gc2n64_adapter_mapping mappings[GC2N64_NUM_MAPPINGS];
 };
 

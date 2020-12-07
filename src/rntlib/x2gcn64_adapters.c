@@ -464,6 +464,7 @@ void x2gcn64_adapter_printInfo(struct x2gcn64_adapter_info *inf)
 			} else {
 				printf("\tOld v1.5 conversion: %d\n", inf->app.gc2n64.old_v1_5_conversion);
 			}
+			printf("\tMempak disabled (v2.3): %s\n", inf->app.gc2n64.mempak_disabled ? "Yes":"No");
 			printf("\tGamecube controller: %s\n", inf->app.gc2n64.gc_controller_detected ? "Present":"Not present");
 			for (i=0; i<GC2N64_NUM_MAPPINGS; i++) {
 				printf("\tMapping %d (%-13s): { ", i, gc2n64_adapter_getMappingSlotName(i, 0));
@@ -540,6 +541,7 @@ int x2gcn64_adapter_getInfo(rnt_hdl_t hdl, int channel, struct x2gcn64_adapter_i
 				inf->app.gc2n64.deadzone_enabled = buf[2];
 				inf->app.gc2n64.old_v1_5_conversion = buf[3];
 				inf->app.gc2n64.conversion_mode = buf[4];
+				inf->app.gc2n64.mempak_disabled = buf[5];
 				inf->app.gc2n64.gc_controller_detected = buf[8];
 				for (n=0; n<GC2N64_NUM_MAPPINGS; n++) {
 					gc2n64_adapter_getMapping(hdl, channel, n, &inf->app.gc2n64.mappings[n]);
