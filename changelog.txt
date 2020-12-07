@@ -1,7 +1,12 @@
 === Version next ===
- - New Classic controller to N64 adapter firmware: Fixes a joystick value
+ - New Classic controller to N64 adapter firmware v2.1.0: Fixes a joystick value
    overflow (Corrects a problem with some controllers, such as Wired Fight Pads,
    where pointing the stick all the way down did the same as pointing it up)
+ - New Gamecube to N64 adapter firmware v2.3:
+   - Add a way to invert Joystick and C-Stick values (For instance, inverted up/down)
+   - The C-Stick is now auto-calibrated like the main joystick (Fixes drifting)
+   - The Controller Pak (Memory card) can now be disabled (In management mode,
+     press R, then Y to enable/disable it)
 
 === Version 2.1.22 ===
  - Add support for Dreamcast to USB v2 adapters

@@ -1,0 +1,5 @@
+[gc_to_n64-2.3.hex]
+md5=447119687c88252ae1e798eefd696806
+version=2.3
+date=2020-12-07
+notes=- Add a way to invert Joystick and C-Stick values (For instance, inverted up/down)\n- The C-Stick is now auto-calibrated like the main joystick (Fixes drifting)\n- The Controller Pak (Memory card) can now be disabled (In management mode, press R, then Y to enable/disable it)
