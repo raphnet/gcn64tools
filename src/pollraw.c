@@ -95,13 +95,14 @@ int pollraw_gamecube(rnt_hdl_t hdl, int chn)
 			unique_y_seen++;
 		}
 
-		printf("X: %4d (%3d), Y: %4d (%3d), CX: %4d, CY: %4d, LT: %4d, RT: %4d\r",
+		printf("X: %4d (%3d), Y: %4d (%3d), CX: %4d, CY: %4d, LT: %4d, RT: %4d, Buttons: %02x %02x\r",
 			(int8_t)(status[2]+0x80),
 			unique_x_seen,
 			(int8_t)(status[3]+0x80),
 			unique_y_seen,
 			(int8_t)(status[4]+0x80), (int8_t)(status[5]+0x80),
-			status[6], status[7]);
+			status[6], status[7],
+			status[0], status[1]);
 		fflush(stdout);
 	}
 
