@@ -1,3 +1,9 @@
+[dc2usb-2.0.1.hex]
+md5=b4c35e6041950f5c7b6972d2345a03bc
+version=2.0.1
+date=2021-01-07
+notes=Fix a problem where the triggers were too sensitive and\nwould jump to a negative value when fully held down under Windows.
+
 [dc2usb-2.0.0.hex]
 md5=5d6716d3cf877b617b04421db78837a5
 version=2.0.0
