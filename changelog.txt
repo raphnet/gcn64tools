@@ -1,4 +1,6 @@
 === Version next ===
+ - GC/N64 to USB adapter firmware version 3.6.1: Brawler 64 wireless support
+   and new "Swap main joystick and D-Pad" feature.
  - New Classic controller to N64 adapter firmware v2.1.0: Fixes a joystick value
    overflow (Corrects a problem with some controllers, such as Wired Fight Pads,
    where pointing the stick all the way down did the same as pointing it up)
@@ -7,6 +9,7 @@
    - The C-Stick is now auto-calibrated like the main joystick (Fixes drifting)
    - The Controller Pak (Memory card) can now be disabled (In management mode,
      press R, then Y to enable/disable it)
+ - Support for the "Swap main joystick and D-Pad" feature of some adapters
 
 === Version 2.1.22 ===
  - Add support for Dreamcast to USB v2 adapters
