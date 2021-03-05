@@ -1,3 +1,9 @@
+[gcn64usb-3.6.1.hex]
+md5=27ff00d5702dd70592187ea3b21afc85
+version=3.6.1
+date=2021-03-05
+notes=- Brawler 64 wireless support. (Set poll interval to >= 2ms on single port adapters, >= 4ms on dual port adapters)\n- Add a feature to swap the main analog stick and the D-Pad.
+
 [gcn64usb-3.6.0.hex]
 md5=c2865ee86ea31266d6f0c1a29b722b3d
 version=3.6.0
