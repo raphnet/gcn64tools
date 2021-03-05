@@ -515,9 +515,11 @@ G_MODULE_EXPORT void pollIntervalChanged(GtkWidget *win, gpointer data)
 {
 	struct application *app = data;
 	GET_UI_ELEMENT(GtkSpinButton, pollInterval0);
+	GET_UI_ELEMENT(GtkLabel, lbl_hz_value);
 	gdouble value;
 	int n;
 	unsigned char buf;
+	char hzstr[32];
 
 	value = gtk_spin_button_get_value(pollInterval0);
 	printf("Value: %d\n", (int)value);
@@ -531,6 +533,14 @@ G_MODULE_EXPORT void pollIntervalChanged(GtkWidget *win, gpointer data)
 			rebuild_device_list_store(data, NULL);
 		}
 	}
+
+	if (value > 0) {
+		snprintf(hzstr, sizeof(hzstr), "(%.1f Hz)", 1.0 / value * 1000.0);
+	} else {
+		snprintf(hzstr, sizeof(hzstr), "(Max)");
+	}
+
+	gtk_label_set_text(lbl_hz_value, hzstr);
 }
 
 G_MODULE_EXPORT void reset_adapter(GtkButton *button, gpointer data)

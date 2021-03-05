@@ -1202,11 +1202,12 @@ Author: Raphaël Assénat
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="tooltip_text" translatable="yes">Controls the N64 or Gamecube controller polling rate. Default: 5ms</property>
+                                    <property name="halign">start</property>
                                     <property name="xpad">5</property>
                                     <property name="label" translatable="yes">Poll interval (ms):</property>
                                   </object>
                                   <packing>
-                                    <property name="expand">False</property>
+                                    <property name="expand">True</property>
                                     <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
@@ -1231,6 +1232,18 @@ Author: Raphaël Assénat
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
+                                <child>
+                                  <object class="GtkLabel" id="lbl_hz_value">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">(?? Hz)</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -1240,17 +1253,17 @@ Author: Raphaël Assénat
                             </child>
                             <child>
                               <object class="GtkBox" id="box_snes_mouse_speed">
-                                <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
                                     <property name="hexpand">False</property>
                                     <property name="label" translatable="yes">Mouse speed:</property>
                                   </object>
                                   <packing>
-                                    <property name="expand">False</property>
+                                    <property name="expand">True</property>
                                     <property name="fill">True</property>
                                     <property name="position">0</property>
                                   </packing>
@@ -1274,6 +1287,57 @@ Author: Raphaël Assénat
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
                                 <property name="position">18</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkBox" id="box_button_holdoff">
+                                <property name="can_focus">False</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="hexpand">False</property>
+                                    <property name="label" translatable="yes">Button trigger holdoff (cycles):</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">True</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="triggerHoldoff">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="hexpand">False</property>
+                                    <property name="text" translatable="yes">3</property>
+                                    <property name="adjustment">snes_mouse_speed_adj</property>
+                                    <property name="value">3</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="lbl_holdoff_ms">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">(?? ms)</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">19</property>
                               </packing>
                             </child>
                             <child>
@@ -1604,7 +1668,7 @@ Author: Raphaël Assénat
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
                                 <property name="padding">2</property>
-                                <property name="position">19</property>
+                                <property name="position">20</property>
                               </packing>
                             </child>
                             <child>
@@ -1629,7 +1693,7 @@ configurable parameters.</property>
                               <packing>
                                 <property name="expand">True</property>
                                 <property name="fill">True</property>
-                                <property name="position">20</property>
+                                <property name="position">21</property>
                               </packing>
                             </child>
                           </object>
