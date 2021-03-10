@@ -1,3 +1,9 @@
+[wusbmote_v2-2.2.4.hex]
+md5=90a4d9c2cb568b93f5ecd7e8bf317b81
+version=2.2.4
+date=2021-03-10
+notes=-Support an external button connected to the RJ11 connector on Wii Guitars."
+
 [wusbmote_v2-2.2.2.hex]
 md5=f72556b2d597afdd3dcad13d5e747d1a
 version=2.2.2
