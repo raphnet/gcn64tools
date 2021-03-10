@@ -191,6 +191,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 		{ 0, GET_ELEMENT(GtkWidget, menuitem_resume_polling), RNTF_FW_UPDATE, FALSE },
 		{ 0, GET_ELEMENT(GtkWidget, btn_update_firmware), RNTF_FW_UPDATE, FALSE },
 		{ 0, GET_ELEMENT(GtkWidget, box_poll_interval), RNTF_POLL_RATE, TRUE },
+		{ 0, GET_ELEMENT(GtkWidget, box_button_holdoff), RNTF_BUTTON_HOLDOFF, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, lbl_controller_type), RNTF_CONTROLLER_TYPE, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, label_controller_type), RNTF_CONTROLLER_TYPE, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, frame_adapter_mode), RNTF_ADAPTER_MODE, TRUE },
@@ -220,6 +221,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 	GET_UI_ELEMENT(GtkLabel, label_n_ports);
 	GET_UI_ELEMENT(GtkSpinButton, pollInterval0);
 	GET_UI_ELEMENT(GtkSpinButton, snesMouseSpeed);
+	GET_UI_ELEMENT(GtkSpinButton, triggerHoldoff);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_1p_joystick_mode);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_1p_2p);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_1p_n64_only);
@@ -420,6 +422,15 @@ void syncGuiToCurrentAdapter(struct application *app)
 		}
 	}
 
+	if (app->current_adapter_info.caps.features & RNTF_BUTTON_HOLDOFF) {
+		n = rnt_getConfig(app->current_adapter_handle, CFG_PARAM_BUTTON_HOLDOFF, buf, sizeof(buf));
+		if (n == 1) {
+			printf("button holdoff: %d cycles\n", buf[0]);
+			gtk_spin_button_set_value(triggerHoldoff, (gdouble)buf[0]);
+		}
+	}
+
+
 
 	if (app->current_adapter_info.caps.min_poll_interval) {
 		gtk_spin_button_set_range(pollInterval0, (gdouble)app->current_adapter_info.caps.min_poll_interval, 40);
@@ -511,6 +522,52 @@ G_MODULE_EXPORT void snesMouseSpeedChanged(GtkWidget *win, gpointer data)
 	}
 }
 
+static void syncHoldoffTimingInfo(gpointer data)
+{
+	struct application *app = data;
+	GET_UI_ELEMENT(GtkSpinButton, pollInterval0);
+	GET_UI_ELEMENT(GtkSpinButton, triggerHoldoff);
+	GET_UI_ELEMENT(GtkLabel, lbl_holdoff_ms);
+	gdouble value, interval;
+	char hzstr[32];
+
+	interval = gtk_spin_button_get_value(pollInterval0);
+	value = gtk_spin_button_get_value(triggerHoldoff);
+
+	if (value > 0) {
+		snprintf(hzstr, sizeof(hzstr), "(%d ms)", (int)(interval * value));
+	} else {
+		snprintf(hzstr, sizeof(hzstr), "(disabled)", (int)(interval * value));
+	}
+
+	gtk_label_set_text(lbl_holdoff_ms, hzstr);
+}
+
+G_MODULE_EXPORT void buttonHoldoffChanged(GtkWidget *win, gpointer data)
+{
+	struct application *app = data;
+	GET_UI_ELEMENT(GtkSpinButton, triggerHoldoff);
+	gdouble value;
+	int n;
+	unsigned char buf;
+
+	value = gtk_spin_button_get_value(triggerHoldoff);
+	printf("Value: %d\n", (int)value);
+	buf = (int)value;
+
+	if (app->current_adapter_info.caps.features & RNTF_BUTTON_HOLDOFF) {
+		n = rnt_setConfig(app->current_adapter_handle, CFG_PARAM_BUTTON_HOLDOFF, &buf, 1);
+		if (n != 0) {
+			errorPopup(app, "Error setting configuration");
+			deselect_adapter(app);
+			rebuild_device_list_store(data, NULL);
+		}
+	}
+
+	syncHoldoffTimingInfo(data);
+}
+
+
 G_MODULE_EXPORT void pollIntervalChanged(GtkWidget *win, gpointer data)
 {
 	struct application *app = data;
@@ -541,6 +598,9 @@ G_MODULE_EXPORT void pollIntervalChanged(GtkWidget *win, gpointer data)
 	}
 
 	gtk_label_set_text(lbl_hz_value, hzstr);
+
+	// This has an effect on the button holder/debouncer which is cycle based
+	syncHoldoffTimingInfo(data);
 }
 
 G_MODULE_EXPORT void reset_adapter(GtkButton *button, gpointer data)
