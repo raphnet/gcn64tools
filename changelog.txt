@@ -1,4 +1,10 @@
-=== Version next ===
+=== Version 2.1.23 ===
+
+Updates for Classic to USB, GC/N64 to USB, Dreamcast to USB, Classic to N64,
+Gamecube to N64..
+
+ - New Classic controller to USB adapter firmware version 2.2.4: Add support
+   for connecting a button to the RJ11 connector on Wii Guitars.
  - GC/N64 to USB adapter firmware version 3.6.1: Brawler 64 wireless support
    and new "Swap main joystick and D-Pad" feature.
  - New Classic controller to N64 adapter firmware v2.1.0: Fixes a joystick value
@@ -9,7 +15,12 @@
    - The C-Stick is now auto-calibrated like the main joystick (Fixes drifting)
    - The Controller Pak (Memory card) can now be disabled (In management mode,
      press R, then Y to enable/disable it)
+ - New Dreamcast to USB adapter firmware 2.0.1: Fix a problem where the sliders were
+   too sensitive and would jump to a negative value when fully held down under Windows.
  - Support for the "Swap main joystick and D-Pad" feature of some adapters
+ - The poll frequency (in Hz) resulting from the current poll interval setting
+   is now shown for reference.
+ - Support for a future "button holder" option.
 
 === Version 2.1.22 ===
  - Add support for Dreamcast to USB v2 adapters
