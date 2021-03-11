@@ -25,10 +25,17 @@ G_MODULE_EXPORT void gui_xferpak_readram(GtkWidget *win, gpointer data)
 	if (!app->current_adapter_handle)
 		return;
 
+	// Suspend polling for better performance
+	rnt_suspendPolling(app->current_adapter_handle, 1);
+
+
 	/* Prepare xferpak */
 	xpak = gcn64lib_xferpak_init(app->current_adapter_handle, 0, u);
 	if (!xpak) {
 		u->error("Transfer Pak not found or no cartridge present");
+
+		// Resume polling
+		rnt_suspendPolling(app->current_adapter_handle, 0);
 		return;
 	}
 
@@ -36,12 +43,18 @@ G_MODULE_EXPORT void gui_xferpak_readram(GtkWidget *win, gpointer data)
 	if (res < 0) {
 		u->error("Error reading cartridge header");
 		xferpak_free(xpak);
+
+		// Resume polling
+		rnt_suspendPolling(app->current_adapter_handle, 0);
 		return;
 	}
 
 	if (cartinfo.ram_size <= 0) {
 		u->error("This cartridge does not contain RAM\nNothing to do.");
 		xferpak_free(xpak);
+
+		// Resume polling
+		rnt_suspendPolling(app->current_adapter_handle, 0);
 		return;
 	}
 
@@ -89,6 +102,9 @@ G_MODULE_EXPORT void gui_xferpak_readram(GtkWidget *win, gpointer data)
 	gtk_widget_destroy(dialog);
 
 	xferpak_free(xpak);
+
+	// Resume polling
+	rnt_suspendPolling(app->current_adapter_handle, 0);
 }
 
 G_MODULE_EXPORT void gui_xferpak_readrom(GtkWidget *win, gpointer data)
@@ -109,10 +125,16 @@ G_MODULE_EXPORT void gui_xferpak_readrom(GtkWidget *win, gpointer data)
 	if (!app->current_adapter_handle)
 		return;
 
+	// Suspend polling for better performance
+	rnt_suspendPolling(app->current_adapter_handle, 1);
+
 	/* Prepare xferpak */
 	xpak = gcn64lib_xferpak_init(app->current_adapter_handle, 0, u);
 	if (!xpak) {
 		u->error("Transfer Pak not found or no cartridge present");
+
+		// Resume polling
+		rnt_suspendPolling(app->current_adapter_handle, 0);
 		return;
 	}
 
@@ -120,6 +142,9 @@ G_MODULE_EXPORT void gui_xferpak_readrom(GtkWidget *win, gpointer data)
 	if (res < 0) {
 		u->error("Error reading cartridge header");
 		xferpak_free(xpak);
+
+		// Resume polling
+		rnt_suspendPolling(app->current_adapter_handle, 0);
 		return;
 	}
 
@@ -167,6 +192,9 @@ G_MODULE_EXPORT void gui_xferpak_readrom(GtkWidget *win, gpointer data)
 	gtk_widget_destroy(dialog);
 
 	xferpak_free(xpak);
+
+	// Resume polling
+	rnt_suspendPolling(app->current_adapter_handle, 0);
 }
 
 G_MODULE_EXPORT void gui_xferpak_writeram(GtkWidget *win, gpointer data)
@@ -185,10 +213,17 @@ G_MODULE_EXPORT void gui_xferpak_writeram(GtkWidget *win, gpointer data)
 	if (!app->current_adapter_handle)
 		return;
 
+	// Suspend polling for better performance
+	rnt_suspendPolling(app->current_adapter_handle, 1);
+
+
 	/* Prepare xferpak */
 	xpak = gcn64lib_xferpak_init(app->current_adapter_handle, 0, u);
 	if (!xpak) {
 		u->error("Transfer Pak not found or no cartridge present");
+
+		// Resume polling
+		rnt_suspendPolling(app->current_adapter_handle, 0);
 		return;
 	}
 
@@ -196,12 +231,18 @@ G_MODULE_EXPORT void gui_xferpak_writeram(GtkWidget *win, gpointer data)
 	if (res < 0) {
 		u->error("Error reading cartridge header");
 		xferpak_free(xpak);
+
+		// Resume polling
+		rnt_suspendPolling(app->current_adapter_handle, 0);
 		return;
 	}
 
 	if (cartinfo.ram_size <= 0) {
 		u->error("This cartridge does not contain RAM\nNothing to do.");
 		xferpak_free(xpak);
+
+		// Resume polling
+		rnt_suspendPolling(app->current_adapter_handle, 0);
 		return;
 	}
 
@@ -229,6 +270,9 @@ G_MODULE_EXPORT void gui_xferpak_writeram(GtkWidget *win, gpointer data)
 	gtk_widget_destroy(dialog);
 
 	xferpak_free(xpak);
+
+	// Resume polling
+	rnt_suspendPolling(app->current_adapter_handle, 0);
 }
 
 

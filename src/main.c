@@ -625,21 +625,30 @@ int main(int argc, char **argv)
 				break;
 
 			case OPT_XFERPAK_DUMP_ROM:
+				rnt_suspendPolling(hdl, 1);
 				res = gcn64lib_xferpak_readROM_to_file(hdl, channel, optarg, NULL);
+				rnt_suspendPolling(hdl, 0);
+
 				if (res == 0) {
 					printf("Wrote %s\n", optarg);
 				}
 				break;
 
 			case OPT_XFERPAK_DUMP_RAM:
+				rnt_suspendPolling(hdl, 1);
 				res = gcn64lib_xferpak_readRAM_to_file(hdl, channel, optarg, NULL);
+				rnt_suspendPolling(hdl, 0);
+
 				if (res == 0) {
 					printf("Wrote %s\n", optarg);
 				}
 				break;
 
 			case OPT_XFERPAK_WRITE_RAM:
+				rnt_suspendPolling(hdl, 1);
 				res = gcn64lib_xferpak_writeRAM_from_file(hdl, channel, optarg, 1, NULL);
+				rnt_suspendPolling(hdl, 0);
+
 				if (res == 0) {
 					printf("Wrote %s to cartridge\n", optarg);
 				}
