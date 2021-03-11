@@ -1,3 +1,12 @@
+=== Version next ===
+
+ - Classic controller to GC/Wii firmware v1.4. (Internal preventive changes,
+   no user visible effects)
+ - Correct Classic Controller to GC/Wii firmware v1.3. (The file included in
+   previous adapter manager versions was incorrect)
+ - Improvoved N64 transfer pak performance by automatically disabling
+   controller polling during operations.
+
 === Version 2.1.23 ===
 
 Updates for Classic to USB, GC/N64 to USB, Dreamcast to USB, Classic to N64,
