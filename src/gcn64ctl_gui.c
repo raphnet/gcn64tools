@@ -537,7 +537,7 @@ static void syncHoldoffTimingInfo(gpointer data)
 	if (value > 0) {
 		snprintf(hzstr, sizeof(hzstr), "(%d ms)", (int)(interval * value));
 	} else {
-		snprintf(hzstr, sizeof(hzstr), "(disabled)", (int)(interval * value));
+		snprintf(hzstr, sizeof(hzstr), "(disabled)");
 	}
 
 	gtk_label_set_text(lbl_holdoff_ms, hzstr);
