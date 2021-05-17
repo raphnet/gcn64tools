@@ -1,3 +1,9 @@
+[satusbv2-3.0.2.hex]
+md5=ed7b8b7804db5e9e71de8853fe90cf7c
+version=3.0.2
+date=2021-05-17
+notes=- Fix to support the Hori Fighting Stiuck SS (HSS-07)
+
 [satusbv2-3.0.1.hex]
 md5=f059e0e00300e45cddf9d92d86d9abdb
 version=3.0.1
