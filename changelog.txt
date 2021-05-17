@@ -6,6 +6,8 @@
    previous adapter manager versions was incorrect)
  - Improvoved N64 transfer pak performance by automatically disabling
    controller polling during operations.
+ - Firmware update for the Saturn to USB v2 adapter (HSS-07 fix)
+ - Add support for AnodeSNES v2
 
 === Version 2.1.23 ===
 
