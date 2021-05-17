@@ -141,6 +141,11 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0057, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Dual SNES to USB adapter v2.1 (w/advXarch)
 	{ OUR_VENDOR_ID, 0x0058, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // SNES mouse to USB adapter v2.2
 
+	{ OUR_VENDOR_ID, 0x0059, 4, { 63, 4, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // AnodeSNES v2 - 4 player mode (default)
+	{ OUR_VENDOR_ID, 0x005A, 3, { 63, 3, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // AnodeSNES v2 - 3 player mode
+	{ OUR_VENDOR_ID, 0x005B, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // AnodeSNES v2 - 2 player mode
+	{ OUR_VENDOR_ID, 0x005C, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // AnodeSNES v2 - 1 player mode
+
 	{ OUR_VENDOR_ID, 0x0069, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // 3DO to USB adapter (w/advXarch)
 	{ OUR_VENDOR_ID, 0x006A, 1, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // 3DO to USB adapter (2-player mode)
 
