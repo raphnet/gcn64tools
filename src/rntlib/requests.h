@@ -104,6 +104,10 @@
 #define CTL_TYPE_DC_KEYBOARD		148
 #define CTL_TYPE_DC_STEERING_WHEEL	149
 
+#define CTL_TYPE_PCFX_CONTROLLER	150
+#define CTL_TYPE_INTELLIVISION		151
+#define CTL_TYPE_VIRTUAL_BOY		152
+
 /* Configuration parameters and constants */
 #define CFG_PARAM_MODE			0x00
 
