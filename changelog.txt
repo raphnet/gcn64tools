@@ -1,7 +1,6 @@
 === Version next ===
-
- - Classic controller to GC/Wii firmware v1.4. (Internal preventive changes,
-   no user visible effects)
+ - Add Classic to GC/Wii firmware version 1.5
+ - Add N64 to GC/Wii firmware version 2.4
  - Correct Classic Controller to GC/Wii firmware v1.3. (The file included in
    previous adapter manager versions was incorrect)
  - Improvoved N64 transfer pak performance by automatically disabling
