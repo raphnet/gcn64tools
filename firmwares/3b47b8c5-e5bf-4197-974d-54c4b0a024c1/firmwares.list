@@ -1,3 +1,9 @@
+[x2gcwii.classic-1.5.hex]
+md5=642f44d16e681303151eaf9ac7d21ed4
+version=1.5
+date=2021-07-13
+notes=- Fix joystick centering for games/emulators where the dead zone is very small.
+
 [x2gcwii.classic-1.4.hex]
 md5=61f80181d2f23a98cce1f61bb2d8ad0d
 version=1.4
