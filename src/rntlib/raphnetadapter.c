@@ -910,6 +910,9 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_DC_MOUSE: return "Dreamcast mouse";
 		case CTL_TYPE_DC_KEYBOARD: return "Dreamcast keyboard";
 		case CTL_TYPE_DC_STEERING_WHEEL: return "Dreamcast Steering Wheel";
+		case CTL_TYPE_VIRTUAL_BOY: return "Virtual Boy Controller";
+		case CTL_TYPE_INTELLIVISION: return "Intellivision Controller";
+		case CTL_TYPE_PCFX_CONTROLLER: return "PCFX Controller";
 		default:
 			return "Unknown";
 	}
