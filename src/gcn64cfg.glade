@@ -1080,6 +1080,36 @@ Author: Raphaël Assenat
                               </packing>
                             </child>
                             <child>
+                              <object class="GtkCheckButton" id="chkbtn_invert_y_axis">
+                                <property name="label" translatable="yes">Invert Y Axis</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="toggled" handler="config_checkbox_changed" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">16</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="chkbtn_invert_x_axis">
+                                <property name="label" translatable="yes">Invert X Axis</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="xalign">0</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="toggled" handler="config_checkbox_changed" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">17</property>
+                              </packing>
+                            </child>
+                            <child>
                               <object class="GtkFrame" id="frame_mapping">
                                 <property name="can_focus">False</property>
                                 <property name="label_xalign">0</property>
@@ -1196,7 +1226,7 @@ Author: Raphaël Assenat
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">16</property>
+                                <property name="position">18</property>
                               </packing>
                             </child>
                             <child>
@@ -1253,7 +1283,7 @@ Author: Raphaël Assenat
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">17</property>
+                                <property name="position">19</property>
                               </packing>
                             </child>
                             <child>
@@ -1295,7 +1325,7 @@ Author: Raphaël Assenat
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">18</property>
+                                <property name="position">20</property>
                               </packing>
                             </child>
                             <child>
@@ -1348,7 +1378,7 @@ Author: Raphaël Assenat
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">19</property>
+                                <property name="position">21</property>
                               </packing>
                             </child>
                             <child>
@@ -1679,7 +1709,7 @@ Author: Raphaël Assenat
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
                                 <property name="padding">2</property>
-                                <property name="position">20</property>
+                                <property name="position">22</property>
                               </packing>
                             </child>
                             <child>
@@ -1704,7 +1734,7 @@ configurable parameters.</property>
                               <packing>
                                 <property name="expand">True</property>
                                 <property name="fill">True</property>
-                                <property name="position">21</property>
+                                <property name="position">23</property>
                               </packing>
                             </child>
                           </object>

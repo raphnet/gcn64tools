@@ -211,6 +211,8 @@ void syncGuiToCurrentAdapter(struct application *app)
 		{ CFG_PARAM_ENABLE_NUNCHUK_Z_ACCEL, GET_ELEMENT(GtkWidget, chkbtn_enable_nunchuk_z_accel), RNTF_NUNCHUK_ACC_ENABLE, TRUE },
 		{ CFG_PARAM_DISABLE_ANALOG_TRIGGERS, GET_ELEMENT(GtkWidget, chkbtn_disable_analog_triggers), RNTF_DISABLE_ANALOG_TRIGGERS, TRUE },
 		{ CFG_PARAM_AUTO_ENABLE_ANALOG, GET_ELEMENT(GtkWidget, chkbtn_auto_enable_analog), RNTF_AUTO_ENABLE_ANALOG, TRUE },
+		{ CFG_PARAM_INVERT_Y_AXIS, GET_ELEMENT(GtkWidget, chkbtn_invert_y_axis), RNTF_INVERT_Y_AXIS, TRUE },
+		{ CFG_PARAM_INVERT_X_AXIS, GET_ELEMENT(GtkWidget, chkbtn_invert_x_axis), RNTF_INVERT_X_AXIS, TRUE },
 		{ },
 	};
 
@@ -758,6 +760,8 @@ G_MODULE_EXPORT void config_checkbox_changed(GtkWidget *win, gpointer data)
 		{ CFG_PARAM_DISABLE_ANALOG_TRIGGERS, GET_ELEMENT(GtkToggleButton, chkbtn_disable_analog_triggers) },
 		{ CFG_PARAM_AUTO_ENABLE_ANALOG, GET_ELEMENT(GtkToggleButton, chkbtn_auto_enable_analog) },
 		{ CFG_PARAM_SWAP_STICK_AND_DPAD, GET_ELEMENT(GtkToggleButton, chkbtn_swap_dpad_and_stick) },
+		{ CFG_PARAM_INVERT_Y_AXIS, GET_ELEMENT(GtkToggleButton, chkbtn_invert_y_axis) },
+		{ CFG_PARAM_INVERT_X_AXIS, GET_ELEMENT(GtkToggleButton, chkbtn_invert_x_axis) },
 		{ },
 	};
 	int i, n;
