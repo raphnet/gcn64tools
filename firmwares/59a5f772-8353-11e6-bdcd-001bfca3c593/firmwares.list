@@ -1,3 +1,9 @@
+[nsnes_to_n64-1.6.hex]
+md5=e11254b7bbbb78ba1e4c974a16adfe67
+version=1.6
+date=2021-08-10
+notes=- Added a new mapping (mode 4)
+
 [nsnes_to_n64-1.5.hex]
 md5=cd1a103f1d38203f4be6be86592298d9
 version=1.5
