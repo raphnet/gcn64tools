@@ -1,3 +1,9 @@
+[x2gcwii.snes-2.4.hex]
+md5=2e7ec67d278885050b8cb06ad4dbce20
+version=2.4
+date=2021-07-13
+notes=- Fix joystick centering for games/emulators where the dead zone is very small.
+
 [x2gcwii.snes-2.2.hex]
 md5=d921b3baeed8371ec4bbe36d44f926ae
 version=2.2
