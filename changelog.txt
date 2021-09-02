@@ -1,3 +1,9 @@
+=== Version 2.1.25 ===
+ - Support for inverting X/Y joystick axis (for firmwares supporting it)
+ - Classic to GC/Wii firmware version 1.6 : New button mapping added
+ - SNES to GC/Wii firmware version 2.4 : Fix a centering/drift issue in games where the dead zone is very small
+ - SNES to N64 firmware version 1.6 : Added a new mapping (mode 4)
+
 === Version 2.1.24 ===
  - Add Classic to GC/Wii firmware version 1.5 : Fix a centering/drift issue in games where the dead zone is very small
  - Add N64 to GC/Wii firmware version 2.4 : Fix a centering/drift issue in games where the dead zone is very small
