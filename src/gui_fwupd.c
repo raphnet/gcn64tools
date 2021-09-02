@@ -414,7 +414,7 @@ G_MODULE_EXPORT void recover_usbadapter_firmware(GtkWidget *w, gpointer data)
 		app->inhibit_periodic_updates = 0;
 	}
 
-done:
+//done:
 	updatelog_shutdown();
 
 	if (filename)
