@@ -1,3 +1,9 @@
+=== Next version ===
+ - New Classic controller to USB adapter firmware version 2.2.6:
+   - Add an option to invert the Y or X joystick axis.
+   - Mouse mode: Wii Guitars now supported.
+   - Correct values used for D-Pad as axes option (was broken since v2.2.2)
+
 === Version 2.1.25 ===
  - Support for inverting X/Y joystick axis (for firmwares supporting it)
  - Classic to GC/Wii firmware version 1.6 : New button mapping added
