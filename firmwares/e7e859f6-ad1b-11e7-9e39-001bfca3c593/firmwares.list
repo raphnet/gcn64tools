@@ -1,3 +1,9 @@
+[wusbmote_v2-2.2.6.hex]
+md5=2ec59b9d0b176e9aa23cbfa65e49f106
+version=2.2.6
+date=2021-11-17
+notes=- Add an option to invert the Y or X joystick axis.\n- Mouse mode: Wii Guitars now supported.\n- Correct values used for D-Pad as axes option (was broken since v2.2.2)
+
 [wusbmote_v2-2.2.4.hex]
 md5=90a4d9c2cb568b93f5ecd7e8bf317b81
 version=2.2.4
