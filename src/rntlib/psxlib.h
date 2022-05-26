@@ -55,6 +55,8 @@ int psxlib_writeMemoryCardToFile(const struct psx_memorycard *mc_data, const cha
 #define PSX_CTL_ID_NEGCON		0x23
 #define PSX_CTL_ID_DIGITAL		0x41
 #define PSX_CTL_ID_ANALOG_RED	0x73
+#define PSX_CTL_ID_ANALOG_GREEN	0x53
+#define PSX_CTL_ID_MOUSE		0x12
 #define PSX_CTL_ID_CONFIG		0xF3
 
 const char *psxlib_idToString(uint16_t id);
