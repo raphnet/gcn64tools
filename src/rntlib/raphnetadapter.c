@@ -888,6 +888,7 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_PSX_ANALOG: return "PSX Analog";
 		case CTL_TYPE_PSX_NEGCON: return "NEGCON";
 		case CTL_TYPE_PSX_MOUSE: return "PSX Mouse";
+		case CTL_TYPE_PSX_ANALOG_GREEN: return "PSX Analog Joystick";
 		case CTL_TYPE_MD6: return "Megadrive 6 button controller";
 		case CTL_TYPE_SMS_PADDLE: return "SMS Paddle Control";
 		case CTL_TYPE_MD_MOUSE: return "Megadrive mouse";
