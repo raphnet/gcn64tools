@@ -213,6 +213,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 		{ CFG_PARAM_AUTO_ENABLE_ANALOG, GET_ELEMENT(GtkWidget, chkbtn_auto_enable_analog), RNTF_AUTO_ENABLE_ANALOG, TRUE },
 		{ CFG_PARAM_INVERT_Y_AXIS, GET_ELEMENT(GtkWidget, chkbtn_invert_y_axis), RNTF_INVERT_Y_AXIS, TRUE },
 		{ CFG_PARAM_INVERT_X_AXIS, GET_ELEMENT(GtkWidget, chkbtn_invert_x_axis), RNTF_INVERT_X_AXIS, TRUE },
+		{ CFG_PARAM_MOUSE_NOSCROLL, GET_ELEMENT(GtkWidget, chkbtn_mouse_noscroll), RNTF_MOUSE_NOSCROLL, TRUE },
 		{ },
 	};
 
@@ -762,6 +763,7 @@ G_MODULE_EXPORT void config_checkbox_changed(GtkWidget *win, gpointer data)
 		{ CFG_PARAM_SWAP_STICK_AND_DPAD, GET_ELEMENT(GtkToggleButton, chkbtn_swap_dpad_and_stick) },
 		{ CFG_PARAM_INVERT_Y_AXIS, GET_ELEMENT(GtkToggleButton, chkbtn_invert_y_axis) },
 		{ CFG_PARAM_INVERT_X_AXIS, GET_ELEMENT(GtkToggleButton, chkbtn_invert_x_axis) },
+		{ CFG_PARAM_MOUSE_NOSCROLL, GET_ELEMENT(GtkToggleButton, chkbtn_mouse_noscroll) },
 		{ },
 	};
 	int i, n;

@@ -1024,6 +1024,21 @@ Author: Raphaël Assenat
                               </packing>
                             </child>
                             <child>
+                              <object class="GtkCheckButton" id="chkbtn_mouse_noscroll">
+                                <property name="label" translatable="yes">Disable Nunchuk scrolling</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">Normally, when holding the C button, the stick controls scrolling and Z becomes the right button. If this option is checked, the C button will function normally as the mouse right button and scrolling will not be possible.</property>
+                                <property name="draw_indicator">True</property>
+                                <signal name="toggled" handler="config_checkbox_changed" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">12</property>
+                              </packing>
+                            </child>
+                            <child>
                               <object class="GtkCheckButton" id="chkbtn_enable_nunchuk_x_accel">
                                 <property name="label" translatable="yes">Enable Nunchuk X accelerometer</property>
                                 <property name="can_focus">True</property>
@@ -1034,7 +1049,7 @@ Author: Raphaël Assenat
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">12</property>
+                                <property name="position">13</property>
                               </packing>
                             </child>
                             <child>
@@ -1048,7 +1063,7 @@ Author: Raphaël Assenat
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">13</property>
+                                <property name="position">14</property>
                               </packing>
                             </child>
                             <child>
@@ -1062,7 +1077,7 @@ Author: Raphaël Assenat
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">14</property>
+                                <property name="position">15</property>
                               </packing>
                             </child>
                             <child>
@@ -1076,7 +1091,7 @@ Author: Raphaël Assenat
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">15</property>
+                                <property name="position">16</property>
                               </packing>
                             </child>
                             <child>
@@ -1091,7 +1106,7 @@ Author: Raphaël Assenat
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">16</property>
+                                <property name="position">17</property>
                               </packing>
                             </child>
                             <child>
@@ -1106,7 +1121,7 @@ Author: Raphaël Assenat
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">17</property>
+                                <property name="position">18</property>
                               </packing>
                             </child>
                             <child>
@@ -1226,7 +1241,7 @@ Author: Raphaël Assenat
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">18</property>
+                                <property name="position">19</property>
                               </packing>
                             </child>
                             <child>
@@ -1283,7 +1298,7 @@ Author: Raphaël Assenat
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">19</property>
+                                <property name="position">20</property>
                               </packing>
                             </child>
                             <child>
@@ -1325,7 +1340,7 @@ Author: Raphaël Assenat
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">20</property>
+                                <property name="position">21</property>
                               </packing>
                             </child>
                             <child>
@@ -1378,7 +1393,7 @@ Author: Raphaël Assenat
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">21</property>
+                                <property name="position">22</property>
                               </packing>
                             </child>
                             <child>
@@ -1709,7 +1724,7 @@ Author: Raphaël Assenat
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
                                 <property name="padding">2</property>
-                                <property name="position">22</property>
+                                <property name="position">23</property>
                               </packing>
                             </child>
                             <child>
@@ -1734,7 +1749,7 @@ configurable parameters.</property>
                               <packing>
                                 <property name="expand">True</property>
                                 <property name="fill">True</property>
-                                <property name="position">23</property>
+                                <property name="position">24</property>
                               </packing>
                             </child>
                           </object>

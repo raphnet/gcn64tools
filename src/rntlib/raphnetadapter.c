@@ -1066,6 +1066,7 @@ static int rnt_featToCaps(const struct rnt_dyn_features *dyn, struct rnt_adap_ca
 		{	RNTF_SWAP_STICK_AND_DPAD,	CFG_PARAM_SWAP_STICK_AND_DPAD },
 		{	RNTF_INVERT_Y_AXIS,			CFG_PARAM_INVERT_Y_AXIS },
 		{	RNTF_INVERT_X_AXIS,			CFG_PARAM_INVERT_X_AXIS },
+		{	RNTF_MOUSE_NOSCROLL,		CFG_PARAM_MOUSE_NOSCROLL },
 
 		{	}
 	};
