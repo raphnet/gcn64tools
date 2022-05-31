@@ -164,6 +164,7 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x00A0, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // PCFX controller to USB adapter
 	{ OUR_VENDOR_ID, 0x00A1, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // Intellivision to USB adapter
 	{ OUR_VENDOR_ID, 0x00A2, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // Virtual Boy to USB adapter
+	{ OUR_VENDOR_ID, 0x00A3, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // PSX to USB v1.0.2+ - mouse mode
 
 	{ OUR_VENDOR_ID, 0x00D0, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Dreamcast to USB adapter v2 - joystick mode
 	{ OUR_VENDOR_ID, 0x00D1, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Dreamcast to USB adapter v2 - keyboard mode
