@@ -1,3 +1,9 @@
+[wusbmote_v2-2.2.7.hex]
+md5=9b69621d878fd068497c07fa8b14fde5
+version=2.2.7
+date=2022-06-10
+notes=- [Mouse mode] Add an option to disabled Nunchuk scrolling. (C becomes the right button)
+
 [wusbmote_v2-2.2.6.hex]
 md5=2ec59b9d0b176e9aa23cbfa65e49f106
 version=2.2.6
