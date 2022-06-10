@@ -1,8 +1,13 @@
-=== Next version ===
- - New Classic controller to USB adapter firmware version 2.2.6:
+=== Version 2.2.26 ===
+ - New Classic controller to USB adapter firmware version 2.2.7:
    - Add an option to invert the Y or X joystick axis.
    - Mouse mode: Wii Guitars now supported.
+   - Mouse mode: Add an option to disable Nunchuk scrolling.
    - Correct values used for D-Pad as axes option (was broken since v2.2.2)
+ - New PSX Controller to USB adapter firmware version 1.0.2:
+   - Add support for the PSX Analog Joystick (SCPH-1110). Should also work for the Dual Analog Controller.
+   - Add support for the Playstation mouse (SCPH-1030)
+   - Use slower timing when poll interval is >= 10ms. With this change, some 3rd party controllers may work.
 
 === Version 2.1.25 ===
  - Support for inverting X/Y joystick axis (for firmwares supporting it)
