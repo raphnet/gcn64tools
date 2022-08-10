@@ -1,3 +1,9 @@
+[x2gcwii.n64-2.5.hex]
+md5=1c29f2c428f30e80b037b8e07c21e44c
+version=2.5
+date=2022-08-10
+notes=- Implement seldom used Gamecube status reporting (C-stick and/or\nL/R analog can be made to use 4 bit instead of 8 bit).
+
 [x2gcwii.n64-2.4.hex]
 md5=497253d5a5b205a5e2134517a35374ea
 version=2.4

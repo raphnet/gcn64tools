@@ -1,3 +1,9 @@
+[x2gcwii.classic-1.7.hex]
+md5=c9e1b807d03a2936d3e7495ee7ac01d4
+version=1.7
+date=2022-08-10
+notes=- Implement seldom used Gamecube status reporting (C-stick and/or\nL/R analog can be made to use 4 bit instead of 8 bit).\n(Fixes Luigi's mansion vacuum.)
+
 [x2gcwii.classic-1.6.hex]
 md5=770d85a57e1057f7ef9b27114f31f159
 version=1.6
