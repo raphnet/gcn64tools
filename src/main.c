@@ -142,7 +142,7 @@ static void printUsage(void)
 	printf("  --n64_mempak_stresstest            Perform a set of controller pak tests (WARNING: Erases the pack with random data)\n");
 	printf("  --n64_mempak_fill_with_ff          Fill a controller pak with 0xFF (WARNING: Erases your data)\n");
 	printf("  --i2c_detect                       Try reading one byte from each I2C address (For WUSBMote v2)\n");
-	printf("  --gc_pollraw                       Read and display raw values from a gamecube controller\n");
+	printf("  --gc_pollraw mode                  Read and display raw values from a gamecube controller (mode range is 0-7)\n");
 	printf("  --gc_pollraw_keyboard              Read and display raw values from a gamecube keyboard\n");
 	printf("  --n64_pollraw                      Read and display raw values from a N64 controller\n");
 	printf("  --n64_pollraw_keyboard             Read and display raw values from a N64 keyboard\n");
@@ -245,7 +245,7 @@ struct option longopts[] = {
 	{ "gc_calibrate", 0, NULL, OPT_GC_CALIBRATE },
 	{ "gc_getstatus_rumble", 0, NULL, OPT_GC_GETSTATUS_RUMBLE },
 	{ "wii_pollraw", 0, NULL, OPT_WII_POLLRAW },
-	{ "gc_pollraw", 0, NULL, OPT_GC_POLLRAW },
+	{ "gc_pollraw", 1, NULL, OPT_GC_POLLRAW },
 	{ "gc_pollraw_keyboard", 0, NULL, OPT_GC_POLLRAW_KEYBOARD },
 	{ "n64_pollraw_keyboard", 0, NULL, OPT_N64_POLLRAW_KEYBOARD },
 	{ "n64_pollraw", 0, NULL, OPT_N64_POLLRAW },
@@ -692,7 +692,7 @@ int main(int argc, char **argv)
 				break;
 
 			case OPT_GC_POLLRAW:
-				retval = pollraw_gamecube(hdl, channel);
+				retval = pollraw_gamecube(hdl, channel, atoi(optarg));
 				break;
 
 			case OPT_GC_POLLRAW_KEYBOARD:

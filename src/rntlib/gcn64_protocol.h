@@ -44,6 +44,22 @@
  * controls motor. */
 #define GC_GETSTATUS1				0x40
 #define GC_GETSTATUS2				0x03
+
+/* Apparently the second byte controls how many bits are used
+ * for the analog C stick and L/R buttons. In mode 3 everything
+ * is 8 bit.
+ *
+ * Source https://sandas.hatenablog.com/entry/2020/02/07/202523
+ *
+ * Mode        Cstick   L/R
+ *   0         8 bits   4 bits
+ *   1         4 bits   8 bits
+ *   2         4 bits   4 bits
+ *   3         8 bits   8 bits
+ *   4         8 bits   0 bits
+ *   Others    8 bits   4 bits
+ */
+#define GC_GETSTATUS2_MODE(m)		(m&7)
 #define GC_GETSTATUS3(rumbling)		((rumbling) ? 0x01 : 0x00)
 #define GC_GETSTATUS_REPLY_LENGTH	8
 

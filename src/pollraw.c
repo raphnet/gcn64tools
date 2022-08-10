@@ -64,9 +64,10 @@ int pollraw_n64(rnt_hdl_t hdl, int chn)
 }
 
 
-int pollraw_gamecube(rnt_hdl_t hdl, int chn)
+
+int pollraw_gamecube(rnt_hdl_t hdl, int chn, int mode)
 {
-	uint8_t getstatus[3] = { GC_GETSTATUS1, GC_GETSTATUS2, 0x00 };
+	uint8_t getstatus[3] = { GC_GETSTATUS1, GC_GETSTATUS2_MODE(mode), 0x00 };
 	uint8_t status[8];
 	int res;
 	int unique_x_seen = 0;
@@ -74,6 +75,10 @@ int pollraw_gamecube(rnt_hdl_t hdl, int chn)
 	int unique_y_seen = 0;
 	uint8_t seen_y_values[256] = { };
 
+	uint8_t lt, rt;
+	int8_t cx, cy;
+
+	printf("pollraw_gamecube, mode %d\n", mode);
 	printf("Suspending polling. Please use --resume_polling later.\n");
 	rnt_suspendPolling(hdl, 1);
 
@@ -95,13 +100,52 @@ int pollraw_gamecube(rnt_hdl_t hdl, int chn)
 			unique_y_seen++;
 		}
 
+		switch (mode)
+		{
+			case 3: // C-Stick 8 bit, L/R 8 bits
+				cx = (int8_t)(status[4]+0x80);
+				cy = (int8_t)(status[5]+0x80);
+				lt = status[6];
+				rt = status[7];
+				break;
+
+			default: // C-Stick 8 bit, L/R 4 bits
+			case 0:
+				cx = (int8_t)(status[4]+0x80);
+				cy = (int8_t)(status[5]+0x80);
+				lt = status[6] >> 4;
+				rt = status[6] & 0xf;
+				break;
+
+			case 1: // C-Stick 4 bits, L/R 8 bits
+				cx = (int8_t)((status[4]&0xf0)+0x80);
+				cy = (int8_t)((status[4]<<4)+0x80);
+				lt = status[5];
+				rt = status[6];
+				break;
+
+			case 2: // C-Stick 4 bits, L/R 4 bits
+				cx = (int8_t)((status[4]&0xf0)+0x80);
+				cy = (int8_t)((status[4]<<4)+0x80);
+				lt = status[5] >> 4;
+				rt = status[5] & 0xf;
+				break;
+
+			case 4: // C-Stick 8 bits, L/R 0 bits
+				cx = (int8_t)(status[4]+0x80);
+				cy = (int8_t)(status[5]+0x80);
+				lt = rt = 0;
+				break;
+		}
+
+
 		printf("X: %4d (%3d), Y: %4d (%3d), CX: %4d, CY: %4d, LT: %4d, RT: %4d, Buttons: %02x %02x\r",
 			(int8_t)(status[2]+0x80),
 			unique_x_seen,
 			(int8_t)(status[3]+0x80),
 			unique_y_seen,
-			(int8_t)(status[4]+0x80), (int8_t)(status[5]+0x80),
-			status[6], status[7],
+			cx, cy,
+			lt, rt,
 			status[0], status[1]);
 		fflush(stdout);
 	}
