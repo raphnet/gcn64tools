@@ -197,6 +197,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 		{ 0, GET_ELEMENT(GtkWidget, frame_adapter_mode), RNTF_ADAPTER_MODE, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, frame_mapping), RNTF_SET_MAPPING, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, box_snes_mouse_speed), RNTF_SNES_MOUSE, TRUE },
+		{ 0, GET_ELEMENT(GtkWidget, box_accel_sensitivity), RNTF_ACCEL_SENS, TRUE },
 
 		{ CFG_PARAM_FULL_SLIDERS, GET_ELEMENT(GtkWidget, chkbtn_gc_full_sliders), RNTF_GC_FULL_SLIDERS, TRUE },
 		{ CFG_PARAM_INVERT_TRIG, GET_ELEMENT(GtkWidget, chkbtn_gc_invert_trig), RNTF_GC_INVERT_TRIG, TRUE },
@@ -225,6 +226,7 @@ void syncGuiToCurrentAdapter(struct application *app)
 	GET_UI_ELEMENT(GtkSpinButton, pollInterval0);
 	GET_UI_ELEMENT(GtkSpinButton, snesMouseSpeed);
 	GET_UI_ELEMENT(GtkSpinButton, triggerHoldoff);
+	GET_UI_ELEMENT(GtkSpinButton, accelSensitivity);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_1p_joystick_mode);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_1p_2p);
 	GET_UI_ELEMENT(GtkRadioButton, rbtn_1p_n64_only);
@@ -433,6 +435,15 @@ void syncGuiToCurrentAdapter(struct application *app)
 		}
 	}
 
+	if (app->current_adapter_info.caps.features & RNTF_ACCEL_SENS) {
+		n = rnt_getConfig(app->current_adapter_handle, CFG_PARAM_ACCEL_SENS, buf, sizeof(buf));
+//		if (n == 1) {
+			printf("acceleration sensitivity: %d\n", buf[0]);
+			gtk_spin_button_set_value(accelSensitivity, (gdouble)buf[0]);
+//		}
+	}
+
+
 
 
 	if (app->current_adapter_info.caps.min_poll_interval) {
@@ -514,7 +525,7 @@ G_MODULE_EXPORT void snesMouseSpeedChanged(GtkWidget *win, gpointer data)
 	unsigned char buf;
 
 	value = gtk_spin_button_get_value(snesMouseSpeed);
-	printf("Value: %d\n", (int)value);
+	printf("Mouse speed value: %d\n", (int)value);
 	buf = (int)value;
 
 	n = rnt_setConfig(app->current_adapter_handle, CFG_PARAM_SNES_MOUSE_SPEED, &buf, 1);
@@ -555,7 +566,7 @@ G_MODULE_EXPORT void buttonHoldoffChanged(GtkWidget *win, gpointer data)
 	unsigned char buf;
 
 	value = gtk_spin_button_get_value(triggerHoldoff);
-	printf("Value: %d\n", (int)value);
+	printf("Button holdoff value: %d\n", (int)value);
 	buf = (int)value;
 
 	if (app->current_adapter_info.caps.features & RNTF_BUTTON_HOLDOFF) {
@@ -570,6 +581,28 @@ G_MODULE_EXPORT void buttonHoldoffChanged(GtkWidget *win, gpointer data)
 	syncHoldoffTimingInfo(data);
 }
 
+G_MODULE_EXPORT void accelSensitivityChanged(GtkWidget *win, gpointer data)
+{
+	struct application *app = data;
+	GET_UI_ELEMENT(GtkSpinButton, accelSensitivity);
+	gdouble value;
+	int n;
+	unsigned char buf;
+
+	value = gtk_spin_button_get_value(accelSensitivity);
+	printf("Sens Value: %d\n", (int)value);
+	buf = (int)value;
+
+	if (app->current_adapter_info.caps.features & RNTF_ACCEL_SENS) {
+		n = rnt_setConfig(app->current_adapter_handle, CFG_PARAM_ACCEL_SENS, &buf, 1);
+		if (n != 0) {
+			errorPopup(app, "Error setting configuration");
+			deselect_adapter(app);
+			rebuild_device_list_store(data, NULL);
+		}
+	}
+}
+
 
 G_MODULE_EXPORT void pollIntervalChanged(GtkWidget *win, gpointer data)
 {
@@ -582,7 +615,7 @@ G_MODULE_EXPORT void pollIntervalChanged(GtkWidget *win, gpointer data)
 	char hzstr[32];
 
 	value = gtk_spin_button_get_value(pollInterval0);
-	printf("Value: %d\n", (int)value);
+	printf("Poll interval value: %d\n", (int)value);
 	buf = (int)value;
 
 	if (app->current_adapter_info.caps.features & RNTF_POLL_RATE) {
