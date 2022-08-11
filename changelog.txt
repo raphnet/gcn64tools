@@ -1,4 +1,17 @@
-=== Version 2.2.26 ===
+=== Version 2.1.27 ===
+ - New firmwares for SNES/N64/Classic controller to Gc/Wii adapters:
+   - N64 to Gc/Wii v2.5
+   - SNES to GC/Wii v2.5
+   - Classic to GC/Wii v1.7
+
+   Implement seldom used Gamecube status reporting (C-stick and/or
+   L/R analog can be made to use 4 bit instead of 8 bit).
+   (Fixes Luigi's mansion vacuum and possibly other games)
+ - Command-line: --gc_pollraw now takes an argument corresponding
+   to the reporting mode (Use 3 for 8 bit C-Stick and L/R triggers)
+ - Add support for adapters with acceleration sensors
+
+=== Version 2.1.26 ===
  - New Classic controller to USB adapter firmware version 2.2.7:
    - Add an option to invert the Y or X joystick axis.
    - Mouse mode: Wii Guitars now supported.
