@@ -888,10 +888,11 @@ Author: Raphaël Assenat
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="chkbtn_gc_full_sliders">
-                                <property name="label" translatable="yes">GC Full range sliders
+                                <property name="label" translatable="yes">Full range analog triggers
 (non-centered)</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
+                                <property name="tooltip_text" translatable="yes">On Gamecube and Dreamcast controllers, extends the range of values returned by the analog triggers.</property>
                                 <property name="xalign">0</property>
                                 <property name="draw_indicator">True</property>
                                 <signal name="toggled" handler="config_checkbox_changed" swapped="no"/>
