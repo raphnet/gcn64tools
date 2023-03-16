@@ -1,3 +1,10 @@
+=== Version 2.2.28 ===
+ - Add Dreamcast to USB adapter firmware v2.0.2:
+   - New option to make L/R analog triggers report values of (-32000 to 32000) instead of 0 to 32000.
+ - Add Famicom to USB adapter firmware v2.1.0:
+   - Add support for the Konami HyperShot.
+   - Keyboard is now only supported in Keyboard mode.
+
 === Version 2.1.27 ===
  - New firmwares for SNES/N64/Classic controller to Gc/Wii adapters:
    - N64 to Gc/Wii v2.5
