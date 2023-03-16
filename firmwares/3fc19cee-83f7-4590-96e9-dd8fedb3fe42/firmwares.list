@@ -1,3 +1,9 @@
+[dc2usb-2.0.2.hex]
+md5=a87ce8fa956987c6bd31c560642470de
+version=2.0.2
+date=2023-03-16
+notes=Add an option to make L/R analog triggers send values of (-32000 to 32000) instead of 0 to 32000.
+
 [dc2usb-2.0.1.hex]
 md5=b4c35e6041950f5c7b6972d2345a03bc
 version=2.0.1
