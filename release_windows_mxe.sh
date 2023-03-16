@@ -1,6 +1,16 @@
 #!/bin/bash -x
 
-MXE_ROOT=$HOME/mxe
+unset `env | \
+    grep -vi '^EDITOR=\|^HOME=\|^LANG=\|MXE\|^PATH=' | \
+    grep -vi 'PKG_CONFIG\|PROXY\|^PS1=\|^TERM=' | \
+    cut -d '=' -f1 | tr '\n' ' '`
+
+#MXE_ROOT=$HOME/mxe  # For user built toolchain
+
+MXE_ROOT=/usr/lib/mxe # For toolchain installed from packages
+
+
+export PATH=$PATH:$MXE_ROOT/usr/bin
 VERSION_INC=./src/version.inc
 VERSION=`cat $VERSION_INC | cut -d '=' -f 2` # VERSION=x.x.x
 TMPDIR="./tmp"

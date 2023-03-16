@@ -1,8 +1,9 @@
-CC=i686-w64-mingw32-gcc
+SPEC=i686-w64-mingw32.static
+CC=$(SPEC)-gcc
 LD=$(CC)
-WINDRES=i686-w64-mingw32-windres
-PKGCONFIG=i686-w64-mingw32-pkg-config
-STRIP=i686-w64-mingw32.static-strip
+WINDRES=$(SPEC)-windres
+PKGCONFIG=$(SPEC)-pkg-config
+STRIP=$(SPEC)-strip
 
 EXEEXT=.exe
 PLATFORM_CFLAGS=-DWINDOWS -D_WIN32_WINNT=0x0600 -static
