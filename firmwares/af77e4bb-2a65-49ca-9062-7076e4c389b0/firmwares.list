@@ -1,0 +1,12 @@
+[fc_usb_v2-2.1.0.hex]
+md5=059972c2490c3317e13cd7ffcf7fefaf
+version=2.1.0
+date=2021-08-05
+notes=- Add support for the Konami HyperShot.\n- Keyboard is now only supported in Keyboard mode.
+
+[fc_usb_v2-2.0.0.hex]
+md5=96adce1d7ea9fe380f85ca43647a533e
+version=2.0.0
+date=2019-10-01
+notes=- Initial release
+
