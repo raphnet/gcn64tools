@@ -9,7 +9,7 @@ TAG=v$VERSION
 echo "Release script for $PREFIX"
 
 if [ $# -ne 1 ]; then
-	echo "Syntax: ./release.sh version releasedir"
+	echo "Syntax: ./release.sh releasedir"
 	echo
 	echo "ex: './release.sh ../releases' will produce $PREFIX-$VERSION.tar.gz in releasedir out of git HEAD,"
 	echo "and place it in the ../releases directory."
