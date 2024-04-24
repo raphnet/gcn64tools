@@ -170,6 +170,9 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x00D1, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Dreamcast to USB adapter v2 - keyboard mode
 	{ OUR_VENDOR_ID, 0x00D2, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Dreamcast to USB adapter v2 - mouse mode
 
+	{ OUR_VENDOR_ID, 0x00D3, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Dreamcast to USB adapter v2.1 - joystick mode
+	{ OUR_VENDOR_ID, 0x00D4, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Dreamcast to USB adapter v2.1 - keyboard mode
+	{ OUR_VENDOR_ID, 0x00D5, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Dreamcast to USB adapter v2.1 - mouse mode
 
 
 	// Legacy devices (vusb, non-upgradeable and typically without configurable features)
