@@ -31,10 +31,10 @@ Author: Raphaël Assenat
     <property name="can_focus">False</property>
     <property name="type_hint">dialog</property>
     <property name="program_name">raphnet-tech adapter manager</property>
-    <property name="copyright" translatable="yes">Copyright (C) 2015-2021 Raphaël Assenat &lt;raph@raphnet.net&gt;</property>
+    <property name="copyright" translatable="yes">Copyright (C) 2015-2024 Raphaël Assenat &lt;raph@raphnet.net&gt;</property>
     <property name="website">http://www.raphnet-tech.com</property>
     <property name="website_label" translatable="yes">www.raphnet-tech.com</property>
-    <property name="authors">Raphaël Assénat</property>
+    <property name="authors">Raphaël Assenat</property>
     <property name="logo">project_image.png</property>
     <property name="license_type">gpl-3-0</property>
     <signal name="response" handler="gtk_widget_hide" swapped="no"/>
