@@ -234,6 +234,33 @@ static HANDLE open_device(const char *path, BOOL enumerate)
 		FILE_FLAG_OVERLAPPED,/*FILE_ATTRIBUTE_NORMAL,*/
 		0);
 
+	// RA : 2024-04
+	//
+	// Opening in non-shared mode fails on many systems due to
+	// presence of RGB control software (RGB Fusion, etc) which
+	// apparently open the adapter in shared mode.
+	//
+	// Once a process has a shared mode handle, opening in exclusive mode
+	// is not possible and causes an error here.
+	//
+	// This was reproduced on Windows 11 with the following combination:
+	//
+	// Logitech G-hub + G512 keyboard + Windows Dynamic Lighting.
+	//
+	// I think it is still a good thing to open the device in exclusive
+	// mode if it works. But if it fails, fall-back to a shared open
+	//
+	if (handle == INVALID_HANDLE_VALUE) {
+		share_mode = FILE_SHARE_READ | FILE_SHARE_WRITE;
+		handle = CreateFileA(path,
+		desired_access,
+		share_mode,
+		NULL,
+		OPEN_EXISTING,
+		FILE_FLAG_OVERLAPPED,/*FILE_ATTRIBUTE_NORMAL,*/
+		0);
+	}
+
 	return handle;
 }
 
