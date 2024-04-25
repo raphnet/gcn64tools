@@ -1,3 +1,9 @@
+[dc2usb-2.1.0.hex]
+md5=dce6c8915d4272f1e69ebd7e0831dc87
+version=2.1.0
+date=2024-04-25
+notes=-Append firmware version to USB product name\n-Provide a separate name for the configuration interface.
+
 [dc2usb-2.0.2.hex]
 md5=a87ce8fa956987c6bd31c560642470de
 version=2.0.2
