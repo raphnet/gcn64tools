@@ -18,6 +18,9 @@
  These files may also be found in the public source
  code repository located at:
         http://github.com/signal11/hidapi .
+
+ 2024-04 : Modified by Raphael Assenat
+
 ********************************************************/
 
 #include <windows.h>
