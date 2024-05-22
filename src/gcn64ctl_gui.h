@@ -15,6 +15,7 @@
 #define GET_ELEMENT(TYPE, ELEMENT)	(TYPE *)gtk_builder_get_object(app->builder, #ELEMENT)
 #define GET_UI_ELEMENT(TYPE, ELEMENT)   TYPE *ELEMENT = GET_ELEMENT(TYPE, ELEMENT)
 
+#define MAX_CONTROLLER_TYPES	2
 
 struct application {
 	GtkBuilder *builder;
@@ -35,7 +36,7 @@ struct application {
 	struct mpkedit_data *mpke;
 	int stop_mempak_io;
 	int inhibit_periodic_updates;
-	int controller_type;
+	int controller_type[MAX_CONTROLLER_TYPES];
 	int firmware_maj, firmware_min, firmware_build;
 	int at90usb1287;
 

@@ -142,18 +142,24 @@ void errorPopup(struct application *app, const char *message)
 static gboolean periodic_updater(gpointer data)
 {
 	struct application *app = data;
+	int i;
 	GET_UI_ELEMENT(GtkLabel, label_controller_type);
+	GET_UI_ELEMENT(GtkLabel, label_controller_type2);
 	GET_UI_ELEMENT(GtkButton, btn_rumble_test);
 
 	if (app->current_adapter_handle && !app->inhibit_periodic_updates) {
-		app->controller_type = rnt_getControllerType(app->current_adapter_handle, 0);
-		gtk_label_set_text(label_controller_type, rnt_controllerName(app->controller_type));
+		for (i=0; i<MAX_CONTROLLER_TYPES; i++) {
+			app->controller_type[i] = rnt_getControllerType(app->current_adapter_handle, i);
+		}
+
+		gtk_label_set_text(label_controller_type, rnt_controllerName(app->controller_type[0]));
+		gtk_label_set_text(label_controller_type2, rnt_controllerName(app->controller_type[1]));
 
 		setsensitive_n64_adapter_widgets(app, FALSE);
 		setsensitive_gc_adapter_widgets(app, FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(btn_rumble_test), FALSE);
 
-		switch (app->controller_type)
+		switch (app->controller_type[0])
 		{
 			case CTL_TYPE_N64_MOUSE:
 			case CTL_TYPE_N64:
@@ -194,6 +200,8 @@ void syncGuiToCurrentAdapter(struct application *app)
 		{ 0, GET_ELEMENT(GtkWidget, box_button_holdoff), RNTF_BUTTON_HOLDOFF, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, lbl_controller_type), RNTF_CONTROLLER_TYPE, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, label_controller_type), RNTF_CONTROLLER_TYPE, TRUE },
+		{ 0, GET_ELEMENT(GtkWidget, lbl_controller_type2), RNTF_CONTROLLER_TYPE, TRUE },
+		{ 0, GET_ELEMENT(GtkWidget, label_controller_type2), RNTF_CONTROLLER_TYPE, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, frame_adapter_mode), RNTF_ADAPTER_MODE, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, frame_mapping), RNTF_SET_MAPPING, TRUE },
 		{ 0, GET_ELEMENT(GtkWidget, box_snes_mouse_speed), RNTF_SNES_MOUSE, TRUE },
@@ -223,6 +231,8 @@ void syncGuiToCurrentAdapter(struct application *app)
 	GET_UI_ELEMENT(GtkLabel, label_usb_id);
 	GET_UI_ELEMENT(GtkLabel, label_device_path);
 	GET_UI_ELEMENT(GtkLabel, label_n_ports);
+	GET_UI_ELEMENT(GtkLabel, label_controller_type2);
+	GET_UI_ELEMENT(GtkLabel, lbl_controller_type2);
 	GET_UI_ELEMENT(GtkSpinButton, pollInterval0);
 	GET_UI_ELEMENT(GtkSpinButton, snesMouseSpeed);
 	GET_UI_ELEMENT(GtkSpinButton, triggerHoldoff);
@@ -504,6 +514,15 @@ void syncGuiToCurrentAdapter(struct application *app)
 
 	sprintf(ports_str, "%d", info->caps.n_channels);
 	gtk_label_set_text(label_n_ports, ports_str);
+
+	// Control visiblity of second channel controller type
+	if (info->caps.n_channels > 1) {
+		gtk_widget_show(GTK_WIDGET(lbl_controller_type2));
+		gtk_widget_show(GTK_WIDGET(label_controller_type2));
+	} else {
+		gtk_widget_hide(GTK_WIDGET(lbl_controller_type2));
+		gtk_widget_hide(GTK_WIDGET(label_controller_type2));
+	}
 
 	if (info->caps.ports & RNTF_PORT_PSX) {
 		printf("PSX!\n");
