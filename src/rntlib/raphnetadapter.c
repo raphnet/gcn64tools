@@ -161,6 +161,11 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x0085, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Famicom to USB adapter (2p mode)
 	{ OUR_VENDOR_ID, 0x0086, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Famicom to USB adapter (keyboard mode)
 
+	{ OUR_VENDOR_ID, 0x0087, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Famicom to USB adapter (1p mode) - v2.2
+	{ OUR_VENDOR_ID, 0x0088, 2, { 63, 2, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Famicom to USB adapter (2p mode) - v2.2
+	{ OUR_VENDOR_ID, 0x0089, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Famicom to USB adapter (keyboard mode) - v2.2
+	{ OUR_VENDOR_ID, 0x008a, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Famicom to USB adapter (mouse mode) - v2.2
+
 	{ OUR_VENDOR_ID, 0x00A0, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // PCFX controller to USB adapter
 	{ OUR_VENDOR_ID, 0x00A1, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // Intellivision to USB adapter
 	{ OUR_VENDOR_ID, 0x00A2, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // Virtual Boy to USB adapter
