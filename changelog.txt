@@ -1,3 +1,7 @@
+=== Version 2.1.30 ===
+ - Add Famicom controller to USB adapter firmware v2.2 (Adds two player and SNES controller support)
+ - On two player adapters, also display the controller type detected in port 2.
+
 === Version 2.1.29 ===
  - Add Dreamcast to USB adapter firmware v2.1
  - Should fix most cases of "Failed to open adapter" under Windows when using
