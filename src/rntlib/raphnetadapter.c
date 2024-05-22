@@ -909,6 +909,7 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_FAMICOM_CONTROLLER: return "Famicom gamepad";
 		case CTL_TYPE_FAMICOM_KEYBOARD: return "Famicom keyboard";
 		case CTL_TYPE_FAMICOM_NETWORK_CTL: return "Famicom network controller";
+		case CTL_TYPE_FAMICOM_TRACKBALL: return "Famicom trackball";
 		case CTL_TYPE_NEO_GEO: return "Neo Geo controller";
 		case CTL_TYPE_DC_CONTROLLER: return "Dreamcast Controller";
 		case CTL_TYPE_DC_ARCADE_STICK: return "Dreamcast Arcade Stick";

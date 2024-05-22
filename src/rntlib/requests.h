@@ -110,6 +110,8 @@
 
 #define CTL_TYPE_PSX_ANALOG_GREEN	153
 
+#define CTL_TYPE_FAMICOM_TRACKBALL	154
+
 /* Configuration parameters and constants */
 #define CFG_PARAM_MODE			0x00
 
