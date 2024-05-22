@@ -1,3 +1,9 @@
+[fc_usb_v2-2.2.hex]
+md5=8c101b422daa89bbb584915963717936
+version=2.2
+date=2024-05-22
+notes=- Add two player support\n- Add support for SNES controllers connnected through additional adapter
+
 [fc_usb_v2-2.1.0.hex]
 md5=059972c2490c3317e13cd7ffcf7fefaf
 version=2.1.0
