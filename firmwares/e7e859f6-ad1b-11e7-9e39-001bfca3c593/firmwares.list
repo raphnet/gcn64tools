@@ -1,3 +1,9 @@
+[wusbmote_v2-2.2.8.hex]
+md5=fcc040f53cce4f385b71ebe932cf5835
+version=2.2.8
+date=2025-04-04
+notes=- Clamp whammy values from guitar to safe range to avoid integer overflow (prevents the whammy value from spiking back up when pressing the whammy all the way down on some guitars)\n- Added support for an optional external accelerometer
+
 [wusbmote_v2-2.2.7.hex]
 md5=9b69621d878fd068497c07fa8b14fde5
 version=2.2.7
