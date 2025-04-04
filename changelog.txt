@@ -1,3 +1,8 @@
+=== Version 2.1.31 ===
+ - Add Classic controller to USB adapter firmware version 2.2.8:
+   - Clamp whammy values from guitar to safe range to avoid integer overflow (prevents the whammy value from spiking back up when pressing the whammy all the way down on some guitars)
+   - Added support for an optional external accelerometer
+
 === Version 2.1.30 ===
  - Add Famicom controller to USB adapter firmware v2.2 (Adds two player and SNES controller support)
  - On two player adapters, also display the controller type detected in port 2.
