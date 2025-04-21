@@ -1,3 +1,6 @@
+=== Version 2.1.32 ===
+ - Add PSX to USB adapter firmware version 1.0.3
+
 === Version 2.1.31 ===
  - Add Classic controller to USB adapter firmware version 2.2.8:
    - Clamp whammy values from guitar to safe range to avoid integer overflow (prevents the whammy value from spiking back up when pressing the whammy all the way down on some guitars)

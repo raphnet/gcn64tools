@@ -1,3 +1,9 @@
+[psx2usb-1.0.3.hex]
+md5=32262662f10a4be4b85c8a8c0a909acd
+version=1.0.3
+date=2023-03-17
+notes=An attempt to support the Kramer Striker Wireless Controller:\n - Due to limitations of the current adapter design, this is not perfect.\n - The guitar may not work reliably and support is not guaranteed.\n - Poll interval _must_ be set to 5ms. Other values result in missed and/or ghost events.\n - Sometimes the Strum bar is not detected. (disconnect and reconnect the adapter in such cases)\n - Regardless of settings, button ID 15 sometimes toggles. This can be ignored, as button 15 does not physically exist on the guitar anyway.\n - Button assignments are: Orange=1, Blue=2, Red=3, Yellow=4, Start=5, Select=6, Tilt=8, Green=10, Strum up=13, Strum down=14
+
 [psx2usb-1.0.2.hex]
 md5=2a3ec0a1f1b3ca281b1ad68f5935c919
 version=1.0.2
