@@ -57,6 +57,7 @@ static void printUsage(void)
 	printf("      --noconfirm       Skip asking the user for confirmation.\n");
 	printf("  -c, --channel chn     Specify channel to use where applicable (for multi-player adapters\n");
 	printf("                        and raw commands, development commands and GC2N64 I/O)\n");
+	printf("  -v, --verbose         Increase output verbosity.\n");
 	printf("\n");
 	printf("Configuration commands:\n");
 	printf("  --get_version                      Read adapter firmware version\n");
@@ -302,6 +303,7 @@ struct option longopts[] = {
 	{ "n64_crcd", required_argument, NULL, OPT_N64_CRCD },
 	{ "enable_highres", 0, NULL, OPT_HIGHRES },
 	{ "debug", 0, NULL, OPT_DEBUG },
+	{ "verbose", 0, NULL, 'v' },
 	{ },
 };
 
@@ -375,7 +377,7 @@ int main(int argc, char **argv)
 				use_first = 1;
 				break;
 			case 'v':
-				verbose = 1;
+				verbose++;
 				break;
 			case 'h':
 				printUsage();

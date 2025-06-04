@@ -32,6 +32,7 @@ static int dusbr_verbose = 0;
 static int rnt_readSupportedFeatures(rnt_hdl_t hdl, struct rnt_dyn_features *dst_dynfeat);
 
 #define IS_VERBOSE()	(dusbr_verbose)
+#define IS_VERY_VERBOSE()	(dusbr_verbose>1)
 
 struct supported_adapter {
 	uint16_t vid, pid;
@@ -536,6 +537,7 @@ int rnt_send_cmd(rnt_hdl_t hdl, const unsigned char *cmd, int cmdlen)
 	buffer[0] = 0x00; // report ID set to 0 (device has only one)
 	memcpy(buffer + 1, cmd, cmdlen);
 
+
 	while (attempts_left--) {
 		n = hid_send_feature_report(hdev, buffer, sizeof(buffer));
 		if (n >= 0) {
@@ -596,6 +598,9 @@ int rnt_exchange(rnt_hdl_t hdl, unsigned char *outcmd, int outlen, unsigned char
 	int n;
 	uint64_t time_start, time_now;
 
+	if (IS_VERY_VERBOSE()) {
+		printf("Sending command."); fflush(stdout);
+	}
 	n = rnt_send_cmd(hdl, outcmd, outlen);
 	if (n<0) {
 		// only complain when this fails on non-legacy devices
@@ -605,6 +610,7 @@ int rnt_exchange(rnt_hdl_t hdl, unsigned char *outcmd, int outlen, unsigned char
 	}
 
 	time_start = getMilliseconds();
+	time_now = time_start;
 
 	/* Answer to the command comes later. For now, this is polled, but in
 	 * the future an interrupt-in transfer could be used. */
@@ -615,7 +621,9 @@ int rnt_exchange(rnt_hdl_t hdl, unsigned char *outcmd, int outlen, unsigned char
 			break;
 		}
 		if (n==0) {
-//			printf("."); fflush(stdout);
+//			if (IS_VERY_VERBOSE()) {
+//				printf("*"); fflush(stdout);
+//			}
 		}
 
 		time_now = getMilliseconds();
@@ -625,6 +633,10 @@ int rnt_exchange(rnt_hdl_t hdl, unsigned char *outcmd, int outlen, unsigned char
 		}
 
 	} while (n==0);
+
+	if (IS_VERY_VERBOSE()) {
+		printf("Done (%d ms)\n", (int)(time_now - time_start));
+	}
 
 	return n;
 }

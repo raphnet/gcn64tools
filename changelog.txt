@@ -1,3 +1,7 @@
+=== Next ===
+ - Command-line: Document the -v,--verbose command in the help page and
+   support multiple -v args to further increase verbosity.
+
 === Version 2.1.32 ===
  - Add PSX to USB adapter firmware version 1.0.3
 
