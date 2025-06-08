@@ -10,6 +10,10 @@ PLATFORM_CFLAGS=
 UNAME := $(shell uname -s)
 ifeq ($(UNAME), Linux)
 HIDAPI_NAME=hidapi-hidraw
+else ifeq ($(UNAME), FreeBSD)
+HIDAPI_NAME=hidapi
+PLATFORM_CFLAGS=-DFREEBSD
+CC=clang
 else
 HIDAPI_NAME=hidapi
 endif

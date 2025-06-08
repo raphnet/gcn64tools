@@ -53,8 +53,8 @@ int dfu_wrapper(const char *command, void (*lineCallback)(void *ctx, const char 
 	} else {
 		updatelog_append("Pclose: %d\n", res);
 	}
-#ifdef WINDOWS
-	/* Mingw does not seem to provide the WIFEXITED/WEXITSTATUS macros.... */
+#if defined(WINDOWS) || defined(FREEBSD)
+	/* Mingw and FreeBSD does not seem to provide the WIFEXITED/WEXITSTATUS macros.... */
 	if (res!=0) {
 		return DFU_ERROR_RETURN;
 	}
