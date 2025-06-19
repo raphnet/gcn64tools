@@ -172,6 +172,9 @@ static struct supported_adapter supported_adapters[] = {
 	{ OUR_VENDOR_ID, 0x00A2, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES } }, // Virtual Boy to USB adapter
 	{ OUR_VENDOR_ID, 0x00A3, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // PSX to USB v1.0.2+ - mouse mode
 
+	{ OUR_VENDOR_ID, 0x00A4, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // MSX to USB adapter 1.0 - joystick mode
+	{ OUR_VENDOR_ID, 0x00A5, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // MSX to USB adapter 1.0 - mouse mode
+
 	{ OUR_VENDOR_ID, 0x00D0, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Dreamcast to USB adapter v2 - joystick mode
 	{ OUR_VENDOR_ID, 0x00D1, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Dreamcast to USB adapter v2 - keyboard mode
 	{ OUR_VENDOR_ID, 0x00D2, 1, { 63, 1, 0, RNTF_DYNAMIC_FEATURES | RNTF_ADAPTER_MODE } }, // Dreamcast to USB adapter v2 - mouse mode
@@ -914,6 +917,7 @@ const char *rnt_controllerName(int type)
 		case CTL_TYPE_SMS_PADDLE: return "SMS Paddle Control";
 		case CTL_TYPE_MD_MOUSE: return "Megadrive mouse";
 		case CTL_TYPE_MSX_2BUTTON: return "MSX 2-button controller";
+		case CTL_TYPE_MSX_MOUSE: return "MSX Mouse";
 		case CTL_TYPE_WII_GUITAR: return "Guitar controller";
 		case CTL_TYPE_UDRAW_TABLET: return "uDraw tablet";
 		case CTL_TYPE_DRAWSOME_TABLET: return "Drawsome tablet";
