@@ -1,3 +1,9 @@
+[wusbmote_v2-2.2.10.hex]
+md5=a41f3f4274cc61fef2e6f399ecae9749
+version=2.2.10
+date=2025-10-23
+notes=- Add an angle-driven button output (15) which triggers when the adapter is vertical. (requires hardware version 3.1)
+
 [wusbmote_v2-2.2.8.hex]
 md5=fcc040f53cce4f385b71ebe932cf5835
 version=2.2.8
