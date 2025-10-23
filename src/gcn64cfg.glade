@@ -1434,7 +1434,8 @@ Author: Raphaël Assenat
                                     <property name="can_focus">False</property>
                                     <property name="halign">start</property>
                                     <property name="hexpand">False</property>
-                                    <property name="label" translatable="yes">Motion sensitivity:</property>
+                                    <property name="label" translatable="yes">Tilt threshold:</property>
+                                	<property name="tooltip_text" translatable="yes">Higher values mean a larger acceleration (shake) or angle is required to trigger. (Note: This value is not an angle)</property>
                                   </object>
                                   <packing>
                                     <property name="expand">True</property>
@@ -1451,6 +1452,7 @@ Author: Raphaël Assenat
                                     <property name="adjustment">accelSensRange</property>
                                     <property name="numeric">True</property>
                                     <signal name="value-changed" handler="accelSensitivityChanged" swapped="no"/>
+                                	<property name="tooltip_text" translatable="yes">Higher values mean a larger acceleration (shake) or angle is required to trigger. (Note: This value is not an angle)</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
