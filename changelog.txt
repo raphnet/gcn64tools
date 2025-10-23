@@ -1,6 +1,10 @@
-=== Next ===
+=== Version 2.1.33 ==
+ - New Classic controller to USB adapter firmware version 2.2.10:
+   - Add an angle-driven button output (button 15) which triggers when the adapter is pointing upwards (adjustable)
+ - Rename "motion sensitivity" to "tilt threshold" in the UI and add tooltips.
  - Command-line: Document the -v,--verbose command in the help page and
    support multiple -v args to further increase verbosity.
+ - Fix compilation under FreeBSD
 
 === Version 2.1.32 ===
  - Add PSX to USB adapter firmware version 1.0.3
