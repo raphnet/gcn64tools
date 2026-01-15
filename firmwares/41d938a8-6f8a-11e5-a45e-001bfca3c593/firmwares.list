@@ -1,3 +1,9 @@
+[gc_to_n64-2.4.hex]
+md5=31f306c508f9d5b61ab46250d83606b6
+version=2.4
+date=2026-01-15
+notes=- Adjusted timing to avoid occasional interrupted GC communication (which in some cases, causes rumble)
+
 [gc_to_n64-2.3.hex]
 md5=447119687c88252ae1e798eefd696806
 version=2.3

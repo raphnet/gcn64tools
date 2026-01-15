@@ -1,3 +1,6 @@
+=== next ===
+ - Add Gamecube controller to N64 adapter firmware version 2.4: Adjusted poll timing to avoid occasional interrupted GC communication (which in some cases causes rumble)
+
 === Version 2.1.33 ==
  - New Classic controller to USB adapter firmware version 2.2.10:
    - Add an angle-driven button output (button 15) which triggers when the adapter is pointing upwards (adjustable)
