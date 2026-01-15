@@ -1,5 +1,6 @@
 === next ===
  - Add Gamecube controller to N64 adapter firmware version 2.4: Adjusted poll timing to avoid occasional interrupted GC communication (which in some cases causes rumble)
+ - Add firmware for new (v3) Atari/Megadrive/SMS controller to USB adapter
 
 === Version 2.1.33 ==
  - New Classic controller to USB adapter firmware version 2.2.10:

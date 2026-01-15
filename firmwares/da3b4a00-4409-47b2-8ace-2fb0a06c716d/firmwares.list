@@ -1,3 +1,9 @@
+[db9v2-2.0.3.hex]
+md5=7594ec065c2e048141526309dbeff405
+version=2.0.3
+date=2025-11-18
+notes=- Support for new V3 hardware design
+
 [db9v2-2.0.2.hex]
 md5=14b952b7adb9e8593a9f1e0066a401dd
 version=2.0.2
