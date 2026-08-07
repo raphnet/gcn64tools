@@ -1,5 +1,5 @@
 #ifndef _strcasestr_h__
-#define _strcasestr_h_-
+#define _strcasestr_h__
 
 char *strcasestr(const char *haystack, const char *needle);
 
