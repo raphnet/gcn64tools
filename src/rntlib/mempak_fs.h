@@ -65,6 +65,15 @@ typedef struct entry_structure
 
 	/** @brief A copy of the raw note data (from the note table). */
 	unsigned char raw_data[32];
+
+	/** @brief Non-zero when raw_data holds a real note header.
+	 *
+	 * Set by #mempak_parse_entry. When set, #write_mempak_entry_data preserves
+	 * the original header bytes rather than synthesizing a new one, so that a
+	 * note taken out of a mempak and put back keeps its game code, publisher
+	 * code and region. Entries built from scratch leave this at 0 and get the
+	 * generic header instead. */
+	unsigned char raw_valid;
 } entry_structure_t;
 
 #ifdef __cplusplus

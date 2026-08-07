@@ -119,6 +119,10 @@ int mempak_importNote(mempak_structure_t *mpk, const char *notefile, int dst_not
 		entry_data[0x06] = 0x00;
 		entry_data[0x07] = 0x05; // BLOCK_VALID_FIRST;
 
+		// Clear first so entry.raw_valid cannot be read uninitialized if
+		// mempak_parse_entry ever bails out before setting it.
+		memset(&entry, 0, sizeof(entry));
+
 		if (0 != mempak_parse_entry(entry_data, &entry)) {
 			fprintf(stderr, "Error loading note (invalid)\n");
 			fclose(fptr);

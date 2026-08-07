@@ -473,6 +473,7 @@ int mempak_parse_entry( const uint8_t *tnote, entry_structure_t *note )
     note->vendor = (tnote[0] << 16) | (tnote[1] << 8) | (tnote[2]);
     note->region = tnote[3];
 	memcpy(note->raw_data, tnote, 32);
+	note->raw_valid = 1;
 
     /* Important stuff */
     note->game_id = (tnote[4] << 8) | (tnote[5]);
@@ -541,6 +542,24 @@ static int __write_note( entry_structure_t *note, uint8_t *out_note )
 {
     wchar_t tname[19];
     if( !out_note || !note ) { return -1; }
+
+    if( note->raw_valid )
+    {
+        /* This note already has a header, so keep it byte for byte. A game
+         * finds its save by matching the game code and publisher code stored
+         * here, so rebuilding those fields from scratch would orphan the note.
+         * Only the inode changes: the blocks were just reallocated.
+         *
+         * This also preserves the name and extension exactly. Rebuilding them
+         * below is lossy, because the round trip through wchar_t maps the NUL
+         * padding official saves use onto 0x0F (space). */
+        memcpy( out_note, note->raw_data, 32 );
+
+        out_note[6] = (note->inode >> 8) & 0xFF;
+        out_note[7] = note->inode & 0xFF;
+
+        return 0;
+    }
 
     /* Start with baseline */
     memset( out_note, 0, 32 );
@@ -1149,10 +1168,18 @@ int write_mempak_entry_data( mempak_structure_t *mpk, entry_structure_t *entry, 
         /* Last now contains our inode */
         entry->inode = last;
         entry->valid = 0;
-        entry->vendor = 0;
 
-        /* A value observed in most games */
-        entry->game_id = 0x4535;
+        if( !entry->raw_valid )
+        {
+            /* Nothing to preserve, so fall back to a generic header. Only do
+             * this for entries built from scratch: clobbering these on a note
+             * that came from a mempak would throw away the identity the game
+             * uses to find its save. */
+            entry->vendor = 0;
+
+            /* A value observed in most games */
+            entry->game_id = 0x4535;
+        }
     }
 
     /* Loop through allocated blocks and write data to sectors */
