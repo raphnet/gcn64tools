@@ -4,7 +4,7 @@ I am open to contributions, but as a maintainer I wish to keep understanding thi
 the task to become excessively difficult, as might happen if I were to just accept and merge anything
 without understanding and reviewing.
 
-The guildelines here are meant to make my life easier, but also set the expecations.
+The guidelines here are meant to make my life easier, but also set the expectations.
 
 ## What you should expect
 
@@ -27,11 +27,11 @@ No "AI" generated code, no "AI" assistance/co-authoring, and I want to communica
 some chatbot. (See also [NO-AI-POLICY.md](NO-AI-POLICY.md))
 
 If your contribution includes code from other project, please mention it and make sure that the
-licenses are compabible beforehand.
+licenses are compatible beforehand.
 
 Please follow the existing indentation style and coding style as much as possible. I understand
 that I am not always perfectly consistent in style depending on context, so I am reasonably flexible. But
-pull requests obfuscated with a lot of unnecessary changes to the identation of existing code, or insertions
+pull requests obfuscated with a lot of unnecessary changes to the indentation of existing code, or insertions
 in totally different style (eg: spaces instead of tabs) in the middle of a file are unacceptable.
 
 One exception would be if a feature includes a new file which came from a different or 3rd party project
